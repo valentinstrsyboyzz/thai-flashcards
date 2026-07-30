@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Thai Flashcards</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Thai Cards">
+<meta name="theme-color" content="#12100e">
+<link rel="apple-touch-icon" href="icon.png">
+<style>
+  :root{
+    --bg:#12100e; --card:#1e1a16; --card2:#26211b; --ink:#f5efe6; --muted:#a89a86;
+    --gold:#d4a24e; --gold-soft:#e8c98a; --accent:#c96f4a; --green:#7fa96b;
+    --chip:#2b251e; --chip-on:#d4a24e; --radius:20px;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0; padding:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans Thai",sans-serif;
+    height:100%; overscroll-behavior:none;}
+  #app{max-width:520px; margin:0 auto; padding:14px 16px 28px; display:flex; flex-direction:column; min-height:100dvh;}
+
+  header{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px;}
+  h1{font-size:1.15rem; margin:0; letter-spacing:.02em; font-weight:700;}
+  h1 span{color:var(--gold);}
+  .seg{display:flex; background:var(--chip); border-radius:999px; padding:3px;}
+  .seg button{border:0; background:transparent; color:var(--muted); font-size:.78rem; font-weight:600;
+    padding:7px 12px; border-radius:999px; cursor:pointer; white-space:nowrap;}
+  .seg button.on{background:var(--gold); color:#241c10;}
+
+  .row2{display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; gap:8px;}
+  .tabs{display:flex; gap:6px;}
+  .tabs button{border:0; background:var(--chip); color:var(--muted); font-size:.8rem; font-weight:600;
+    padding:8px 14px; border-radius:12px; cursor:pointer;}
+  .tabs button.on{background:var(--card2); color:var(--ink); box-shadow:inset 0 0 0 1px #3a3227;}
+  .icon-btn{border:0; background:var(--chip); color:var(--ink); width:38px; height:38px; border-radius:12px;
+    font-size:1.05rem; cursor:pointer; display:flex; align-items:center; justify-content:center;}
+  .icon-btn.off{color:#5c5245; text-decoration:line-through;}
+
+  .chips{display:flex; gap:7px; overflow-x:auto; padding:2px 2px 10px; scrollbar-width:none;}
+  .chips::-webkit-scrollbar{display:none;}
+  .chips button{flex:0 0 auto; border:0; background:var(--chip); color:var(--muted); font-size:.78rem;
+    font-weight:600; padding:8px 13px; border-radius:999px; cursor:pointer;}
+  .chips button.on{background:var(--chip-on); color:#241c10;}
+
+  /* ---- card ---- */
+  #cardWrap{flex:1; display:flex; flex-direction:column; justify-content:center; min-height:340px;}
+  .scene{perspective:1200px; width:100%;}
+  .flip{position:relative; width:100%; min-height:320px; transform-style:preserve-3d;
+    transition:transform .45s cubic-bezier(.2,.7,.3,1); cursor:pointer;}
+  .flip.flipped{transform:rotateY(180deg);}
+  .face{position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden;
+    background:linear-gradient(160deg,var(--card2),var(--card));
+    border:1px solid #362e24; border-radius:var(--radius); padding:26px 22px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:12px;
+    box-shadow:0 12px 30px rgba(0,0,0,.35);}
+  .face.back{transform:rotateY(180deg);}
+  .cat-tag{position:absolute; top:14px; left:16px; font-size:.68rem; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--muted); font-weight:700;}
+  .hint{position:absolute; bottom:12px; font-size:.7rem; color:#6d6152;}
+  .big{font-size:2rem; font-weight:700; line-height:1.25;}
+  .big.thaiScript{font-size:2.5rem; color:var(--gold-soft);}
+  .rom{font-size:1.25rem; color:var(--gold); font-weight:600;}
+  .sub{font-size:.95rem; color:var(--muted); line-height:1.45;}
+  .pattern-formula{font-size:1.3rem; font-weight:700; line-height:1.4; color:var(--gold-soft);}
+  .example{margin-top:6px; padding-top:12px; border-top:1px dashed #443a2c; width:100%;}
+  .example .th{font-size:1.5rem; color:var(--ink);}
+  .example .r{font-size:.95rem; color:var(--gold); margin-top:2px;}
+  .example .e{font-size:.85rem; color:var(--muted); margin-top:2px; font-style:italic;}
+
+  .controls{display:flex; align-items:center; justify-content:center; gap:14px; margin-top:16px;}
+  .controls .nav{width:56px; height:56px; border-radius:50%; border:0; background:var(--card2); color:var(--ink);
+    font-size:1.3rem; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,.3);}
+  .controls .speak{width:68px; height:68px; border-radius:50%; border:0; background:var(--gold); color:#241c10;
+    font-size:1.6rem; cursor:pointer; box-shadow:0 6px 16px rgba(212,162,78,.35);}
+  .meta{display:flex; align-items:center; justify-content:space-between; margin-top:14px;}
+  #progress{font-size:.82rem; color:var(--muted); font-variant-numeric:tabular-nums;}
+  .mini{border:0; background:var(--chip); color:var(--muted); font-size:.78rem; font-weight:600;
+    padding:8px 13px; border-radius:10px; cursor:pointer;}
+
+  /* ---- list ---- */
+  #listView{display:none;}
+  .group-h{font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; color:var(--gold);
+    font-weight:800; margin:20px 2px 8px;}
+  .lrow{display:flex; align-items:center; gap:12px; background:var(--card); border:1px solid #2e2820;
+    border-radius:14px; padding:11px 13px; margin-bottom:7px;}
+  .lrow .txt{flex:1; min-width:0;}
+  .lrow .t1{font-size:1.05rem; font-weight:600;}
+  .lrow .t1 .th{color:var(--gold-soft); font-size:1.15rem; margin-right:8px;}
+  .lrow .t2{font-size:.82rem; color:var(--muted); margin-top:2px;}
+  .lrow button{border:0; background:var(--chip); color:var(--gold); width:36px; height:36px; border-radius:50%;
+    font-size:1rem; cursor:pointer; flex:0 0 auto;}
+  #voiceNote{display:none; font-size:.78rem; color:#c9a15c; background:#2b2214; border:1px solid #4a3a1e;
+    padding:10px 12px; border-radius:12px; margin-bottom:10px; line-height:1.4;}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <h1>🇹🇭 Thai <span>Flashcards</span></h1>
+    <div class="seg">
+      <button id="dirEN" class="on">EN → TH</button>
+      <button id="dirTH">TH → EN</button>
+    </div>
+  </header>
+
+  <div class="row2">
+    <div class="tabs">
+      <button id="tabCards" class="on">Cards</button>
+      <button id="tabList">All words</button>
+    </div>
+    <button id="soundBtn" class="icon-btn" title="Auto-pronounce on/off">🔊</button>
+  </div>
+
+  <div id="voiceNote"></div>
+  <div class="chips" id="chips"></div>
+
+  <div id="cardWrap">
+    <div class="scene">
+      <div class="flip" id="flip">
+        <div class="face front" id="faceFront"></div>
+        <div class="face back" id="faceBack"></div>
+      </div>
+    </div>
+    <div class="controls">
+      <button class="nav" id="prevBtn">‹</button>
+      <button class="speak" id="speakBtn" title="Pronounce in Thai">🔈</button>
+      <button class="nav" id="nextBtn">›</button>
+    </div>
+    <div class="meta">
+      <span id="progress"></span>
+      <button class="mini" id="shuffleBtn">🔀 Shuffle</button>
+    </div>
+  </div>
+
+  <div id="listView"></div>
+</div>
+
+<script>
+/* ================= DATA ================= */
+const CATS = [
+  {id:"neg",   name:"Negations (mâi)"},
+  {id:"time",  name:"Time & adverbs"},
+  {id:"conn",  name:"Connectors"},
+  {id:"quest", name:"Question words"},
+  {id:"prep",  name:"Prepositions"},
+  {id:"part",  name:"Particles"},
+  {id:"num",   name:"Numbers"},
+  {id:"verb",  name:"Verbs"},
+  {id:"adj",   name:"Adjectives"},
+  {id:"noun",  name:"Nouns"},
+  {id:"core",  name:"Pronouns & core"},
+  {id:"pat",   name:"Sentence patterns"},
+];
+
+const WORDS = [
+/* --- Negations --- */
+{c:"neg", th:"ไม่ใช่", r:"mâi châi", e:"No / That's not right"},
+{c:"neg", th:"ไม่รู้", r:"mâi rúu", e:"I don't know"},
+{c:"neg", th:"ไม่เป็นไร", r:"mâi bpen rai", e:"No worries / Never mind"},
+{c:"neg", th:"ไม่มี", r:"mâi mii", e:"I don't have / There isn't"},
+{c:"neg", th:"ไม่เอา", r:"mâi ao", e:"I don't want it"},
+{c:"neg", th:"ไม่เข้าใจ", r:"mâi khâo jai", e:"I don't understand"},
+{c:"neg", th:"ไม่พูด", r:"mâi phûut", e:"I don't speak"},
+{c:"neg", th:"ไม่กิน", r:"mâi gin", e:"I don't eat"},
+/* --- Time & adverbs --- */
+{c:"time", th:"วันนี้", r:"wan níi", e:"today"},
+{c:"time", th:"พรุ่งนี้", r:"phrûng níi", e:"tomorrow"},
+{c:"time", th:"เมื่อวาน", r:"mêua waan", e:"yesterday"},
+{c:"time", th:"เร็วๆ", r:"rew rew", e:"quickly"},
+{c:"time", th:"เสมอ", r:"sà-mĕr", e:"always"},
+{c:"time", th:"บางครั้ง", r:"baang khráng", e:"sometimes"},
+{c:"time", th:"อีก", r:"ìik", e:"again"},
+{c:"time", th:"จริงๆ", r:"jing jing", e:"really"},
+/* --- Connectors --- */
+{c:"conn", th:"และ", r:"láe", e:"and"},
+{c:"conn", th:"หรือ", r:"rĕu", e:"or"},
+{c:"conn", th:"แต่", r:"dtàe", e:"but"},
+{c:"conn", th:"เพราะว่า", r:"phráw wâa", e:"because"},
+{c:"conn", th:"จึง", r:"jeung", e:"therefore / so"},
+/* --- Question words --- */
+{c:"quest", th:"อะไร", r:"arai", e:"what"},
+{c:"quest", th:"ใคร", r:"khrai", e:"who"},
+{c:"quest", th:"ที่ไหน", r:"thîi năi", e:"where"},
+{c:"quest", th:"เมื่อไหร่", r:"mêua rai", e:"when"},
+{c:"quest", th:"ทำไม", r:"thammai", e:"why"},
+{c:"quest", th:"ยังไง", r:"yang ngai", e:"how"},
+{c:"quest", th:"เท่าไหร่", r:"tâo rai", e:"how much"},
+/* --- Prepositions --- */
+{c:"prep", th:"บน", r:"bon", e:"on"},
+{c:"prep", th:"ล่าง", r:"lâang", e:"under"},
+{c:"prep", th:"ใน", r:"nai", e:"inside"},
+{c:"prep", th:"ตรง", r:"dtrong", e:"straight"},
+/* --- Particles --- */
+{c:"part", th:"นะ", r:"ná", e:"softens sentence / okay?"},
+{c:"part", th:"สิ", r:"sì", e:"emphasis (come on!)"},
+/* --- Numbers --- */
+{c:"num", th:"หนึ่ง", r:"nèung", e:"1"},
+{c:"num", th:"สอง", r:"sŏng", e:"2"},
+{c:"num", th:"สาม", r:"săam", e:"3"},
+{c:"num", th:"สี่", r:"sìi", e:"4"},
+{c:"num", th:"ห้า", r:"hâa", e:"5"},
+/* --- Verbs --- */
+{c:"verb", th:"กิน", r:"gin", e:"eat"},
+{c:"verb", th:"ไป", r:"bpai", e:"go"},
+{c:"verb", th:"มา", r:"maa", e:"come"},
+{c:"verb", th:"ทำ", r:"tham", e:"do / make"},
+{c:"verb", th:"พูด", r:"phûut", e:"speak"},
+{c:"verb", th:"ฟัง", r:"fang", e:"listen"},
+{c:"verb", th:"ดู", r:"duu", e:"look / watch"},
+{c:"verb", th:"เห็น", r:"hĕn", e:"see"},
+{c:"verb", th:"รู้", r:"rúu", e:"know"},
+{c:"verb", th:"เข้าใจ", r:"khâo jai", e:"understand"},
+{c:"verb", th:"เรียน", r:"rian", e:"study"},
+{c:"verb", th:"ขาย", r:"khăai", e:"sell"},
+{c:"verb", th:"จ่าย", r:"jàai", e:"pay"},
+{c:"verb", th:"เอา", r:"ao", e:"want / take"},
+{c:"verb", th:"ให้", r:"hâi", e:"give"},
+{c:"verb", th:"มี", r:"mii", e:"have"},
+{c:"verb", th:"รัก", r:"rák", e:"love"},
+{c:"verb", th:"คิด", r:"khít", e:"think"},
+{c:"verb", th:"ทำงาน", r:"tham ngaan", e:"work"},
+{c:"verb", th:"วิ่ง", r:"wîng", e:"run"},
+{c:"verb", th:"อยาก", r:"yàak", e:"want (to do smth)"},
+{c:"verb", th:"ช่วย", r:"chûai", e:"help"},
+{c:"verb", th:"ต้อง", r:"tông", e:"must / have to"},
+{c:"verb", th:"นั่ง", r:"nâng", e:"sit"},
+{c:"verb", th:"ขับ", r:"khàp", e:"drive"},
+{c:"verb", th:"ได้", r:"dâi", e:"can / get / receive"},
+{c:"verb", th:"สั่ง", r:"sàng", e:"order (food)"},
+/* --- Adjectives --- */
+{c:"adj", th:"ดี", r:"dii", e:"good"},
+{c:"adj", th:"ไม่ดี", r:"mâi dii", e:"bad / not good"},
+{c:"adj", th:"ใหญ่", r:"yài", e:"big"},
+{c:"adj", th:"เล็ก", r:"lék", e:"small"},
+{c:"adj", th:"เย็น", r:"yen", e:"cold / cool"},
+{c:"adj", th:"เร็ว", r:"rew", e:"fast"},
+{c:"adj", th:"ช้า", r:"cháa", e:"slow"},
+{c:"adj", th:"ถูก", r:"thùuk", e:"cheap / correct"},
+{c:"adj", th:"สวย", r:"sŭai", e:"beautiful"},
+{c:"adj", th:"ใหม่", r:"mài", e:"new"},
+{c:"adj", th:"เก่า", r:"gào", e:"old"},
+{c:"adj", th:"ง่าย", r:"ngâai", e:"easy"},
+{c:"adj", th:"ยาก", r:"yâak", e:"difficult"},
+{c:"adj", th:"อร่อย", r:"a-ròi", e:"delicious"},
+{c:"adj", th:"เผ็ด", r:"phèt", e:"spicy"},
+{c:"adj", th:"หวาน", r:"wăan", e:"sweet"},
+{c:"adj", th:"สะอาด", r:"sà-àat", e:"clean"},
+{c:"adj", th:"สูง", r:"sŭung", e:"tall / high"},
+{c:"adj", th:"ต่ำ", r:"dtàm", e:"short / low"},
+{c:"adj", th:"แข็งแรง", r:"khăeng raeng", e:"strong"},
+{c:"adj", th:"ไกล", r:"glai", e:"far"},
+{c:"adj", th:"ใกล้", r:"glâi", e:"near"},
+{c:"adj", th:"สุข", r:"sùk", e:"happy"},
+{c:"adj", th:"เสียใจ", r:"sĭa jai", e:"sad"},
+{c:"adj", th:"จริง", r:"jing", e:"true / real"},
+{c:"adj", th:"ว่าง", r:"wâang", e:"free / empty / available"},
+/* --- Nouns --- */
+{c:"noun", th:"คน", r:"khon", e:"person"},
+{c:"noun", th:"น้ำ", r:"náam", e:"water"},
+{c:"noun", th:"อาหาร", r:"aahăan", e:"food"},
+{c:"noun", th:"เงิน", r:"ngoen", e:"money"},
+{c:"noun", th:"บ้าน", r:"bâan", e:"house / home"},
+{c:"noun", th:"รถ", r:"rót", e:"car"},
+{c:"noun", th:"ถนน", r:"thanŏn", e:"street"},
+{c:"noun", th:"ตลาด", r:"talàat", e:"market"},
+{c:"noun", th:"เวลา", r:"weelaa", e:"time"},
+{c:"noun", th:"โรงเรียน", r:"rong-rian", e:"school"},
+{c:"noun", th:"โรงแรม", r:"rong-raem", e:"hotel"},
+{c:"noun", th:"วัน", r:"wan", e:"day"},
+{c:"noun", th:"อากาศ", r:"aagàat", e:"weather / air"},
+{c:"noun", th:"ร้าน", r:"ráan", e:"shop / store"},
+{c:"noun", th:"ปี", r:"bpii", e:"year"},
+/* --- Pronouns & core words --- */
+{c:"core", th:"ฉัน", r:"chán", e:"I (female)"},
+{c:"core", th:"ผม", r:"phŏm", e:"I (male)"},
+{c:"core", th:"คุณ", r:"khun", e:"you"},
+{c:"core", th:"นี่", r:"nîi", e:"this"},
+{c:"core", th:"ไหม", r:"mái?", e:"question particle"},
+{c:"core", th:"แล้ว", r:"láeo", e:"already"},
+{c:"core", th:"ยัง", r:"yang", e:"still"},
+{c:"core", th:"ยังไม่", r:"yang mâi", e:"not yet"},
+{c:"core", th:"กับ", r:"gàp", e:"with"},
+{c:"core", th:"ที่", r:"thîi", e:"at / in"},
+{c:"core", th:"อยู่", r:"yùu", e:"be / stay / located"},
+{c:"core", th:"มาก", r:"mâak", e:"very"},
+{c:"core", th:"นิดหน่อย", r:"nít nòi", e:"a little"},
+];
+
+/* --- Sentence patterns: e = English name, f = formula, ex = example --- */
+const PATTERNS = [
+{e:"I + verb", f:"phŏm/chán + verb", ex:{th:"ผมกิน", r:"phŏm gin", e:"I eat"}},
+{e:"You + verb? (question)", f:"khun + verb + mái?", ex:{th:"คุณกินไหม", r:"khun gin mái?", e:"Do you eat?"}},
+{e:"I don't + verb", f:"phŏm mâi + verb", ex:{th:"ผมไม่กิน", r:"phŏm mâi gin", e:"I don't eat"}},
+{e:"I want to + verb", f:"phŏm yàak + verb", ex:{th:"ผมอยากไป", r:"phŏm yàak bpai", e:"I want to go"}},
+{e:"I want + noun", f:"phŏm ao + noun", ex:{th:"ผมเอาน้ำ", r:"phŏm ao náam", e:"I want water"}},
+{e:"I have ...", f:"phŏm mii + noun", ex:{th:"ผมมีเงิน", r:"phŏm mii ngoen", e:"I have money"}},
+{e:"I don't have ...", f:"phŏm mâi mii + noun", ex:{th:"ผมไม่มีเวลา", r:"phŏm mâi mii weelaa", e:"I don't have time"}},
+{e:"Already", f:"verb + láeo", ex:{th:"กินแล้ว", r:"gin láeo", e:"(I) ate already"}},
+{e:"Not yet", f:"yang mâi + verb", ex:{th:"ยังไม่กิน", r:"yang mâi gin", e:"(I) haven't eaten yet"}},
+{e:"Can", f:"verb + dâi", ex:{th:"พูดได้", r:"phûut dâi", e:"(I) can speak"}},
+{e:"Can't", f:"verb + mâi dâi", ex:{th:"พูดไม่ได้", r:"phûut mâi dâi", e:"(I) can't speak"}},
+{e:"Must / have to", f:"tông + verb", ex:{th:"ผมต้องไป", r:"phŏm tông bpai", e:"I must go"}},
+{e:"Be at ...", f:"yùu + place", ex:{th:"ผมอยู่บ้าน", r:"phŏm yùu bâan", e:"I'm at home"}},
+{e:"Go to ...", f:"bpai + place", ex:{th:"ผมไปตลาด", r:"phŏm bpai talàat", e:"I go to the market"}},
+{e:"With ...", f:"verb + gàp + person", ex:{th:"ไปกับคุณ", r:"bpai gàp khun", e:"go with you"}},
+{e:"Because ...", f:"... phráw wâa ...", ex:{th:"ผมไม่ไปเพราะว่าไม่มีเงิน", r:"phŏm mâi bpai phráw wâa mâi mii ngoen", e:"I'm not going because I have no money"}},
+];
+
+/* Build unified card list */
+const ALL = [
+  ...WORDS.map(w => ({cat:w.c, th:w.th, rom:w.r, en:w.e, speakText:w.th, isPattern:false})),
+  ...PATTERNS.map(p => ({cat:"pat", th:p.ex.th, rom:p.f, en:p.e, ex:p.ex, speakText:p.ex.th, isPattern:true})),
+];
+
+/* ================= STATE ================= */
+let dir = "en2th";          // en2th | th2en
+let activeCat = "all";
+let deck = [];
+let idx = 0;
+let flipped = false;
+let soundOn = true;
+let shuffled = false;
+
+/* ================= SPEECH ================= */
+let thaiVoice = null;
+function findThaiVoice(){
+  const vs = window.speechSynthesis ? speechSynthesis.getVoices() : [];
+  thaiVoice = vs.find(v => (v.lang||"").toLowerCase().startsWith("th")) || null;
+  const note = document.getElementById("voiceNote");
+  if (window.speechSynthesis && vs.length && !thaiVoice){
+    note.style.display = "block";
+    note.textContent = "No Thai voice found on this device — pronunciation may sound off. On iPhone: Settings → Accessibility → Spoken Content → Voices → Thai. On Android: install Google Text-to-speech Thai voice.";
+  } else {
+    note.style.display = "none";
+  }
+}
+if (window.speechSynthesis){
+  findThaiVoice();
+  speechSynthesis.onvoiceschanged = findThaiVoice;
+}
+function speakThai(text){
+  if (!window.speechSynthesis) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "th-TH";
+  if (thaiVoice) u.voice = thaiVoice;
+  u.rate = 0.85;
+  speechSynthesis.speak(u);
+}
+
+/* ================= DECK ================= */
+function buildDeck(){
+  deck = activeCat === "all" ? [...ALL] : ALL.filter(c => c.cat === activeCat);
+  if (shuffled){
+    for (let i = deck.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [deck[i], deck[j]] = [deck[j], deck[i]];
+    }
+  }
+  idx = 0;
+  renderCard(false);
+}
+
+/* ================= RENDER ================= */
+const catName = id => (CATS.find(c => c.id === id) || {name:""}).name;
+
+function sideHTML(card, side){
+  // side: "en" or "th"
+  if (card.isPattern){
+    if (side === "en"){
+      return `<div class="cat-tag">${catName(card.cat)}</div>
+        <div class="big">${card.en}</div>
+        <div class="sub">How do you build this in Thai?</div>
+        <div class="hint">tap to flip</div>`;
+    }
+    return `<div class="cat-tag">${catName(card.cat)}</div>
+      <div class="pattern-formula">${card.rom}</div>
+      <div class="example">
+        <div class="th">${card.ex.th}</div>
+        <div class="r">${card.ex.r}</div>
+        <div class="e">${card.ex.e}</div>
+      </div>
+      <div class="hint">tap to flip</div>`;
+  }
+  if (side === "en"){
+    return `<div class="cat-tag">${catName(card.cat)}</div>
+      <div class="big">${card.en}</div>
+      <div class="hint">tap to flip</div>`;
+  }
+  return `<div class="cat-tag">${catName(card.cat)}</div>
+    <div class="big thaiScript">${card.th}</div>
+    <div class="rom">${card.rom}</div>
+    <div class="hint">tap to flip</div>`;
+}
+
+function renderCard(keepFlip){
+  if (!deck.length) return;
+  const card = deck[idx];
+  const frontSide = dir === "en2th" ? "en" : "th";
+  const backSide  = dir === "en2th" ? "th" : "en";
+  document.getElementById("faceFront").innerHTML = sideHTML(card, frontSide);
+  document.getElementById("faceBack").innerHTML  = sideHTML(card, backSide);
+  if (!keepFlip){
+    flipped = false;
+    const f = document.getElementById("flip");
+    f.style.transition = "none";
+    f.classList.remove("flipped");
+    void f.offsetWidth;
+    f.style.transition = "";
+  }
+  document.getElementById("progress").textContent = (idx + 1) + " / " + deck.length;
+  // In TH→EN mode the Thai side is showing right away → pronounce it
+  if (soundOn && dir === "th2en" && !flipped) speakThai(card.speakText);
+}
+
+function flipCard(){
+  flipped = !flipped;
+  document.getElementById("flip").classList.toggle("flipped", flipped);
+  const card = deck[idx];
+  const thaiVisible = (dir === "en2th" && flipped) || (dir === "th2en" && !flipped);
+  if (soundOn && thaiVisible) speakThai(card.speakText);
+}
+
+function move(step){
+  idx = (idx + step + deck.length) % deck.length;
+  renderCard(false);
+}
+
+/* ================= LIST VIEW ================= */
+function renderList(){
+  const host = document.getElementById("listView");
+  let html = "";
+  for (const cat of CATS){
+    const items = ALL.filter(c => c.cat === cat.id);
+    if (!items.length) continue;
+    html += `<div class="group-h">${cat.name} · ${items.length}</div>`;
+    for (const it of items){
+      const line1 = it.isPattern
+        ? `<span class="th">${it.en}</span>`
+        : `<span class="th">${it.th}</span> ${it.rom}`;
+      const line2 = it.isPattern
+        ? `${it.rom} — e.g. ${it.ex.th} (${it.ex.r}) = ${it.ex.e}`
+        : it.en;
+      html += `<div class="lrow">
+        <div class="txt"><div class="t1">${line1}</div><div class="t2">${line2}</div></div>
+        <button onclick="speakThai('${it.speakText.replace(/'/g,"\\'")}')">🔈</button>
+      </div>`;
+    }
+  }
+  host.innerHTML = html;
+}
+
+/* ================= UI WIRING ================= */
+function renderChips(){
+  const host = document.getElementById("chips");
+  const mk = (id, name) =>
+    `<button data-cat="${id}" class="${activeCat === id ? "on" : ""}">${name}</button>`;
+  host.innerHTML = mk("all", "All (" + ALL.length + ")") + CATS.map(c => mk(c.id, c.name)).join("");
+  host.querySelectorAll("button").forEach(b => b.onclick = () => {
+    activeCat = b.dataset.cat;
+    renderChips();
+    buildDeck();
+  });
+}
+
+document.getElementById("flip").addEventListener("click", flipCard);
+document.getElementById("prevBtn").onclick = () => move(-1);
+document.getElementById("nextBtn").onclick = () => move(1);
+document.getElementById("speakBtn").onclick = () => speakThai(deck[idx].speakText);
+document.getElementById("shuffleBtn").onclick = () => { shuffled = true; buildDeck(); };
+
+document.getElementById("dirEN").onclick = () => setDir("en2th");
+document.getElementById("dirTH").onclick = () => setDir("th2en");
+function setDir(d){
+  dir = d;
+  document.getElementById("dirEN").classList.toggle("on", d === "en2th");
+  document.getElementById("dirTH").classList.toggle("on", d === "th2en");
+  renderCard(false);
+}
+
+document.getElementById("soundBtn").onclick = function(){
+  soundOn = !soundOn;
+  this.textContent = soundOn ? "🔊" : "🔇";
+  this.classList.toggle("off", !soundOn);
+  if (!soundOn && window.speechSynthesis) speechSynthesis.cancel();
+};
+
+document.getElementById("tabCards").onclick = () => setTab("cards");
+document.getElementById("tabList").onclick = () => setTab("list");
+function setTab(t){
+  document.getElementById("tabCards").classList.toggle("on", t === "cards");
+  document.getElementById("tabList").classList.toggle("on", t === "list");
+  document.getElementById("cardWrap").style.display = t === "cards" ? "flex" : "none";
+  document.getElementById("chips").style.display = t === "cards" ? "flex" : "none";
+  document.getElementById("listView").style.display = t === "list" ? "block" : "none";
+}
+
+/* init */
+renderChips();
+buildDeck();
+renderList();
+</script>
+</body>
+</html>
