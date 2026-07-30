@@ -67,6 +67,9 @@
   .hint{position:absolute; bottom:12px; font-size:.7rem; color:#6d6152;}
   .big{font-size:2rem; font-weight:700; line-height:1.25;}
   .big.thaiScript{font-size:2.5rem; color:var(--gold-soft);}
+  .big.sentEn{font-size:1.45rem; line-height:1.45;}
+  .big.sentTh{font-size:1.75rem; color:var(--gold-soft); line-height:1.55;}
+  .rom.sentRom{font-size:1.02rem; line-height:1.5;}
   .rom{font-size:1.25rem; color:var(--gold); font-weight:600;}
   .sub{font-size:.95rem; color:var(--muted); line-height:1.45;}
   .pattern-formula{font-size:1.3rem; font-weight:700; line-height:1.4; color:var(--gold-soft);}
@@ -114,7 +117,8 @@
   <div class="row2">
     <div class="tabs">
       <button id="tabCards" class="on">Cards</button>
-      <button id="tabList">All words</button>
+      <button id="tabSent">Sentences</button>
+      <button id="tabList">All</button>
     </div>
     <button id="soundBtn" class="icon-btn" title="Auto-pronounce on/off">🔊</button>
   </div>
@@ -314,6 +318,165 @@ const PATTERNS = [
 {e:"Because ...", f:"... phráw wâa ...", ex:{th:"ผมไม่ไปเพราะว่าไม่มีเงิน", r:"phŏm mâi bpai phráw wâa mâi mii ngoen", e:"I'm not going because I have no money"}},
 ];
 
+/* --- 150 practice sentences, built ONLY from the vocabulary above. lv: 1 easy, 2 medium, 3 hard --- */
+const SENTENCES = [
+/* ===== LEVEL 1 — two to four words, one pattern ===== */
+{lv:1, th:"ผมกินอาหาร", r:"phŏm gin aahăan", e:"I eat food."},
+{lv:1, th:"ฉันไปตลาด", r:"chán bpai talàat", e:"I go to the market."},
+{lv:1, th:"คุณเข้าใจไหม", r:"khun khâo jai mái?", e:"Do you understand?"},
+{lv:1, th:"ผมไม่เข้าใจ", r:"phŏm mâi khâo jai", e:"I don't understand."},
+{lv:1, th:"ผมรักคุณ", r:"phŏm rák khun", e:"I love you."},
+{lv:1, th:"น้ำเย็น", r:"náam yen", e:"The water is cold."},
+{lv:1, th:"อาหารอร่อย", r:"aahăan a-ròi", e:"The food is delicious."},
+{lv:1, th:"บ้านใหญ่", r:"bâan yài", e:"The house is big."},
+{lv:1, th:"รถใหม่", r:"rót mài", e:"The car is new."},
+{lv:1, th:"รถเก่า", r:"rót gào", e:"The car is old."},
+{lv:1, th:"ผมมีเงิน", r:"phŏm mii ngoen", e:"I have money."},
+{lv:1, th:"ผมไม่มีเวลา", r:"phŏm mâi mii weelaa", e:"I don't have time."},
+{lv:1, th:"คุณไปไหม", r:"khun bpai mái?", e:"Are you going?"},
+{lv:1, th:"ผมอยากกิน", r:"phŏm yàak gin", e:"I want to eat."},
+{lv:1, th:"ฉันอยากไป", r:"chán yàak bpai", e:"I want to go."},
+{lv:1, th:"ผมเอาน้ำ", r:"phŏm ao náam", e:"I'll have water."},
+{lv:1, th:"ผมไม่เอา", r:"phŏm mâi ao", e:"I don't want it."},
+{lv:1, th:"คุณมีรถไหม", r:"khun mii rót mái?", e:"Do you have a car?"},
+{lv:1, th:"ผมทำงาน", r:"phŏm tham ngaan", e:"I'm working."},
+{lv:1, th:"วันนี้ผมเรียน", r:"wan níi phŏm rian", e:"Today I study."},
+{lv:1, th:"อากาศดี", r:"aagàat dii", e:"The weather is good."},
+{lv:1, th:"อากาศไม่ดี", r:"aagàat mâi dii", e:"The weather is bad."},
+{lv:1, th:"คุณสวย", r:"khun sŭai", e:"You are beautiful."},
+{lv:1, th:"ผมเห็นคุณ", r:"phŏm hĕn khun", e:"I see you."},
+{lv:1, th:"ผมรู้แล้ว", r:"phŏm rúu láeo", e:"I already know."},
+{lv:1, th:"ผมไม่รู้", r:"phŏm mâi rúu", e:"I don't know."},
+{lv:1, th:"ดูสิ", r:"duu sì", e:"Look!"},
+{lv:1, th:"มาเร็วๆ", r:"maa rew rew", e:"Come quickly!"},
+{lv:1, th:"ผมขับรถ", r:"phŏm khàp rót", e:"I drive."},
+{lv:1, th:"ผมวิ่งเร็ว", r:"phŏm wîng rew", e:"I run fast."},
+{lv:1, th:"อาหารเผ็ด", r:"aahăan phèt", e:"The food is spicy."},
+{lv:1, th:"น้ำหวาน", r:"náam wăan", e:"The drink is sweet."},
+{lv:1, th:"บ้านสะอาด", r:"bâan sà-àat", e:"The house is clean."},
+{lv:1, th:"ร้านอยู่ใกล้", r:"ráan yùu glâi", e:"The shop is nearby."},
+{lv:1, th:"โรงเรียนอยู่ไกล", r:"rong-rian yùu glai", e:"The school is far away."},
+{lv:1, th:"ผมช่วยคุณ", r:"phŏm chûai khun", e:"I'll help you."},
+{lv:1, th:"ช่วยผมนะ", r:"chûai phŏm ná", e:"Help me, okay?"},
+{lv:1, th:"ผมสั่งอาหาร", r:"phŏm sàng aahăan", e:"I order food."},
+{lv:1, th:"ผมจ่ายเงิน", r:"phŏm jàai ngoen", e:"I'll pay."},
+{lv:1, th:"นี่อะไร", r:"nîi arai?", e:"What is this?"},
+{lv:1, th:"ใครมา", r:"khrai maa?", e:"Who is coming?"},
+{lv:1, th:"ผมกินแล้ว", r:"phŏm gin láeo", e:"I've already eaten."},
+{lv:1, th:"ผมยังไม่กิน", r:"phŏm yang mâi gin", e:"I haven't eaten yet."},
+{lv:1, th:"ผมทำได้", r:"phŏm tham dâi", e:"I can do it."},
+{lv:1, th:"ผมพูดไม่ได้", r:"phŏm phûut mâi dâi", e:"I can't say it."},
+{lv:1, th:"ไม่เป็นไร", r:"mâi bpen rai", e:"No worries."},
+{lv:1, th:"จริงไหม", r:"jing mái?", e:"Really? Is that true?"},
+{lv:1, th:"ผมว่าง", r:"phŏm wâang", e:"I'm free."},
+{lv:1, th:"ผมไม่ว่าง", r:"phŏm mâi wâang", e:"I'm busy (not free)."},
+{lv:1, th:"คุณแข็งแรง", r:"khun khăeng raeng", e:"You are strong."},
+/* ===== LEVEL 2 — longer, questions, time, place, very/a little ===== */
+{lv:2, th:"วันนี้ผมไปทำงาน", r:"wan níi phŏm bpai tham ngaan", e:"Today I'm going to work."},
+{lv:2, th:"พรุ่งนี้ฉันไปตลาด", r:"phrûng níi chán bpai talàat", e:"Tomorrow I'll go to the market."},
+{lv:2, th:"เมื่อวานผมกินอาหารเผ็ด", r:"mêua waan phŏm gin aahăan phèt", e:"Yesterday I ate spicy food."},
+{lv:2, th:"คุณไปที่ไหน", r:"khun bpai thîi năi?", e:"Where are you going?"},
+{lv:2, th:"คุณมาเมื่อไหร่", r:"khun maa mêua rai?", e:"When did you come?"},
+{lv:2, th:"ทำไมคุณเสียใจ", r:"thammai khun sĭa jai?", e:"Why are you sad?"},
+{lv:2, th:"คุณคิดยังไง", r:"khun khít yang ngai?", e:"What do you think?"},
+{lv:2, th:"นี่เท่าไหร่", r:"nîi tâo rai?", e:"How much is this?"},
+{lv:2, th:"ผมอยากกินอาหารอร่อย", r:"phŏm yàak gin aahăan a-ròi", e:"I want to eat delicious food."},
+{lv:2, th:"ผมอยากไปโรงแรมใหม่", r:"phŏm yàak bpai rong-raem mài", e:"I want to go to the new hotel."},
+{lv:2, th:"คุณอยากดูไหม", r:"khun yàak duu mái?", e:"Do you want to watch?"},
+{lv:2, th:"ผมต้องไปทำงาน", r:"phŏm tông bpai tham ngaan", e:"I have to go to work."},
+{lv:2, th:"วันนี้ผมต้องเรียน", r:"wan níi phŏm tông rian", e:"Today I have to study."},
+{lv:2, th:"คุณพูดช้าๆ ได้ไหม", r:"khun phûut cháa cháa dâi mái?", e:"Can you speak slowly?"},
+{lv:2, th:"ผมพูดได้นิดหน่อย", r:"phŏm phûut dâi nít nòi", e:"I can speak a little."},
+{lv:2, th:"ผมเข้าใจนิดหน่อย", r:"phŏm khâo jai nít nòi", e:"I understand a little."},
+{lv:2, th:"ผมทำงานที่บ้าน", r:"phŏm tham ngaan thîi bâan", e:"I work at home."},
+{lv:2, th:"ผมอยู่ที่โรงแรม", r:"phŏm yùu thîi rong-raem", e:"I'm at the hotel."},
+{lv:2, th:"คุณอยู่ที่ไหน", r:"khun yùu thîi năi?", e:"Where are you?"},
+{lv:2, th:"น้ำอยู่ในรถ", r:"náam yùu nai rót", e:"The water is in the car."},
+{lv:2, th:"ใครอยู่ในบ้าน", r:"khrai yùu nai bâan?", e:"Who is in the house?"},
+{lv:2, th:"ร้านอยู่ใกล้บ้านผม", r:"ráan yùu glâi bâan phŏm", e:"The shop is near my house."},
+{lv:2, th:"โรงเรียนอยู่ไกลมาก", r:"rong-rian yùu glai mâak", e:"The school is very far."},
+{lv:2, th:"อาหารอร่อยมาก", r:"aahăan a-ròi mâak", e:"The food is very delicious."},
+{lv:2, th:"วันนี้อากาศดีมาก", r:"wan níi aagàat dii mâak", e:"The weather is very good today."},
+{lv:2, th:"น้ำเย็นนิดหน่อย", r:"náam yen nít nòi", e:"The water is a little cold."},
+{lv:2, th:"ผมสั่งอาหารแล้ว", r:"phŏm sàng aahăan láeo", e:"I've already ordered food."},
+{lv:2, th:"คุณกินแล้วหรือยัง", r:"khun gin láeo rĕu yang?", e:"Have you eaten yet?"},
+{lv:2, th:"ผมยังไม่ไปตลาด", r:"phŏm yang mâi bpai talàat", e:"I haven't gone to the market yet."},
+{lv:2, th:"คุณขับรถได้ไหม", r:"khun khàp rót dâi mái?", e:"Can you drive?"},
+{lv:2, th:"ผมขับรถไม่ได้", r:"phŏm khàp rót mâi dâi", e:"I can't drive."},
+{lv:2, th:"ผมอยากเรียนอีก", r:"phŏm yàak rian ìik", e:"I want to study more."},
+{lv:2, th:"มาอีกนะ", r:"maa ìik ná", e:"Come again, okay?"},
+{lv:2, th:"ผมมีเงินนิดหน่อย", r:"phŏm mii ngoen nít nòi", e:"I have a little money."},
+{lv:2, th:"คุณมีเวลาไหม", r:"khun mii weelaa mái?", e:"Do you have time?"},
+{lv:2, th:"วันนี้ผมไม่มีเงิน", r:"wan níi phŏm mâi mii ngoen", e:"Today I have no money."},
+{lv:2, th:"คุณดีจริงๆ", r:"khun dii jing jing", e:"You're really kind."},
+{lv:2, th:"บ้านคุณสวยมาก", r:"bâan khun sŭai mâak", e:"Your house is very beautiful."},
+{lv:2, th:"ผมไปกับคุณ", r:"phŏm bpai gàp khun", e:"I'll go with you."},
+{lv:2, th:"คุณมากับใคร", r:"khun maa gàp khrai?", e:"Who did you come with?"},
+{lv:2, th:"ผมนั่งในรถ", r:"phŏm nâng nai rót", e:"I'm sitting in the car."},
+{lv:2, th:"ไปตรงๆ", r:"bpai dtrong dtrong", e:"Go straight ahead."},
+{lv:2, th:"ร้านอยู่บนถนนใหญ่", r:"ráan yùu bon thanŏn yài", e:"The shop is on the main road."},
+{lv:2, th:"บางครั้งผมวิ่ง", r:"baang khráng phŏm wîng", e:"Sometimes I run."},
+{lv:2, th:"ผมมาที่นี่เสมอ", r:"phŏm maa thîi nîi sà-mĕr", e:"I always come here."},
+{lv:2, th:"คุณขายอะไร", r:"khun khăai arai?", e:"What do you sell?"},
+{lv:2, th:"ผมให้เงินคุณแล้ว", r:"phŏm hâi ngoen khun láeo", e:"I already gave you the money."},
+{lv:2, th:"พูดอีกได้ไหม", r:"phûut ìik dâi mái?", e:"Can you say that again?"},
+{lv:2, th:"คุณทำงานที่ไหน", r:"khun tham ngaan thîi năi?", e:"Where do you work?"},
+{lv:2, th:"ผมเรียนที่โรงเรียนใกล้บ้าน", r:"phŏm rian thîi rong-rian glâi bâan", e:"I study at a school near home."},
+/* ===== LEVEL 3 — two clauses: and / but / or / because / therefore ===== */
+{lv:3, th:"ผมไม่ไปเพราะว่าผมไม่ว่าง", r:"phŏm mâi bpai phráw wâa phŏm mâi wâang", e:"I'm not going because I'm not free."},
+{lv:3, th:"ผมเรียนเพราะว่าผมอยากรู้", r:"phŏm rian phráw wâa phŏm yàak rúu", e:"I study because I want to know."},
+{lv:3, th:"วันนี้ผมทำงานแต่พรุ่งนี้ผมว่าง", r:"wan níi phŏm tham ngaan dtàe phrûng níi phŏm wâang", e:"Today I work, but tomorrow I'm free."},
+{lv:3, th:"เมื่อวานอากาศไม่ดีแต่วันนี้อากาศดีมาก", r:"mêua waan aagàat mâi dii dtàe wan níi aagàat dii mâak", e:"Yesterday the weather was bad, but today it's very good."},
+{lv:3, th:"ผมอยากไปตลาดแต่ไม่มีเวลา", r:"phŏm yàak bpai talàat dtàe mâi mii weelaa", e:"I want to go to the market, but I don't have time."},
+{lv:3, th:"คุณอยากกินอาหารเผ็ดหรืออาหารหวาน", r:"khun yàak gin aahăan phèt rĕu aahăan wăan?", e:"Do you want spicy food or sweet food?"},
+{lv:3, th:"ผมไปร้านและสั่งอาหาร", r:"phŏm bpai ráan láe sàng aahăan", e:"I go to the restaurant and order food."},
+{lv:3, th:"ผมไม่มีเงินจึงไม่ไปตลาด", r:"phŏm mâi mii ngoen jeung mâi bpai talàat", e:"I have no money, so I'm not going to the market."},
+{lv:3, th:"อาหารอร่อยมากผมจึงมาที่นี่เสมอ", r:"aahăan a-ròi mâak phŏm jeung maa thîi nîi sà-mĕr", e:"The food is very delicious, so I always come here."},
+{lv:3, th:"ผมกินไม่ได้เพราะว่าเผ็ดมาก", r:"phŏm gin mâi dâi phráw wâa phèt mâak", e:"I can't eat it because it's too spicy."},
+{lv:3, th:"ช่วยผมนะเพราะว่ายากมาก", r:"chûai phŏm ná phráw wâa yâak mâak", e:"Help me please, because it's very hard."},
+{lv:3, th:"ผมต้องทำงานวันนี้และพรุ่งนี้", r:"phŏm tông tham ngaan wan níi láe phrûng níi", e:"I have to work today and tomorrow."},
+{lv:3, th:"ผมทำงานห้าวันและว่างสองวัน", r:"phŏm tham ngaan hâa wan láe wâang sŏng wan", e:"I work five days and am free two days."},
+{lv:3, th:"ผมเรียนสองปีแล้วแต่ยังพูดได้นิดหน่อย", r:"phŏm rian sŏng bpii láeo dtàe yang phûut dâi nít nòi", e:"I've studied for two years, but I can still only speak a little."},
+{lv:3, th:"คุณอยู่ที่นี่หรืออยู่ที่โรงแรม", r:"khun yùu thîi nîi rĕu yùu thîi rong-raem?", e:"Are you staying here or at the hotel?"},
+{lv:3, th:"ทำไมคุณไม่กิน อาหารไม่อร่อยไหม", r:"thammai khun mâi gin? aahăan mâi a-ròi mái?", e:"Why aren't you eating? Is the food not good?"},
+{lv:3, th:"คุณคิดยังไง พูดสิ", r:"khun khít yang ngai? phûut sì!", e:"What do you think? Say it!"},
+{lv:3, th:"วันนี้ในตลาดมีคนมาก", r:"wan níi nai talàat mii khon mâak", e:"There are a lot of people in the market today."},
+{lv:3, th:"ผมเห็นคุณเมื่อวานแต่คุณไม่เห็นผม", r:"phŏm hĕn khun mêua waan dtàe khun mâi hĕn phŏm", e:"I saw you yesterday, but you didn't see me."},
+{lv:3, th:"ผมขับรถเร็วๆ เพราะว่าไม่มีเวลา", r:"phŏm khàp rót rew rew phráw wâa mâi mii weelaa", e:"I drive fast because I don't have time."},
+{lv:3, th:"บ้านผมอยู่ไกลแต่โรงเรียนอยู่ใกล้", r:"bâan phŏm yùu glai dtàe rong-rian yùu glâi", e:"My house is far, but the school is near."},
+{lv:3, th:"ผมอยากมีบ้านใหญ่และรถใหม่", r:"phŏm yàak mii bâan yài láe rót mài", e:"I want to have a big house and a new car."},
+{lv:3, th:"คุณเอาอาหารเผ็ดหรือไม่เผ็ด", r:"khun ao aahăan phèt rĕu mâi phèt?", e:"Do you want it spicy or not spicy?"},
+{lv:3, th:"เมื่อวานผมเสียใจมากแต่วันนี้ดีแล้ว", r:"mêua waan phŏm sĭa jai mâak dtàe wan níi dii láeo", e:"Yesterday I was very sad, but today I'm fine."},
+{lv:3, th:"ผมเข้าใจแล้วเพราะว่าคุณพูดช้าๆ", r:"phŏm khâo jai láeo phráw wâa khun phûut cháa cháa", e:"Now I understand, because you spoke slowly."},
+{lv:3, th:"ผมขับรถได้แต่ขับช้ามาก", r:"phŏm khàp rót dâi dtàe khàp cháa mâak", e:"I can drive, but very slowly."},
+{lv:3, th:"ใครกินเผ็ดได้ ผมกินไม่ได้", r:"khrai gin phèt dâi? phŏm gin mâi dâi", e:"Who can eat spicy? I can't."},
+{lv:3, th:"ต้องกินอาหารดีๆ และวิ่งเสมอ", r:"tông gin aahăan dii dii láe wîng sà-mĕr", e:"You must eat good food and run regularly."},
+{lv:3, th:"ผมไม่รู้เพราะว่าผมยังไม่ดู", r:"phŏm mâi rúu phráw wâa phŏm yang mâi duu", e:"I don't know because I haven't watched it yet."},
+{lv:3, th:"คุณมาเมื่อไหร่และมากับใคร", r:"khun maa mêua rai láe maa gàp khrai?", e:"When did you come, and who did you come with?"},
+{lv:3, th:"ฉันอยากขับรถแต่ยังขับไม่ได้", r:"chán yàak khàp rót dtàe yang khàp mâi dâi", e:"I want to drive, but I can't yet."},
+{lv:3, th:"รถใหม่เร็วแต่รถเก่าช้า", r:"rót mài rew dtàe rót gào cháa", e:"The new car is fast, but the old car is slow."},
+{lv:3, th:"บ้านใหญ่สวยแต่บ้านเล็กถูก", r:"bâan yài sŭai dtàe bâan lék thùuk", e:"The big house is beautiful, but the small house is cheap."},
+{lv:3, th:"น้ำที่ร้านถูกมาก", r:"náam thîi ráan thùuk mâak", e:"The water at the shop is very cheap."},
+{lv:3, th:"ผมจ่ายเงินแล้วแต่ยังไม่ได้อาหาร", r:"phŏm jàai ngoen láeo dtàe yang mâi dâi aahăan", e:"I've paid, but I haven't gotten the food yet."},
+{lv:3, th:"คุณช่วยผมและผมช่วยคุณ", r:"khun chûai phŏm láe phŏm chûai khun", e:"You help me, and I help you."},
+{lv:3, th:"ผมฟังแต่ไม่เข้าใจ", r:"phŏm fang dtàe mâi khâo jai", e:"I listen, but I don't understand."},
+{lv:3, th:"ผมดูและฟังแต่ยังไม่เข้าใจ", r:"phŏm duu láe fang dtàe yang mâi khâo jai", e:"I watch and listen, but I still don't understand."},
+{lv:3, th:"เมื่อวานผมนั่งในบ้านเพราะว่าอากาศไม่ดี", r:"mêua waan phŏm nâng nai bâan phráw wâa aagàat mâi dii", e:"Yesterday I stayed (sat) in the house because the weather was bad."},
+{lv:3, th:"บางครั้งผมวิ่งบนถนนใกล้บ้าน", r:"baang khráng phŏm wîng bon thanŏn glâi bâan", e:"Sometimes I run on the road near my house."},
+{lv:3, th:"คนขายอาหารในตลาดดีมาก", r:"khon khăai aahăan nai talàat dii mâak", e:"The food seller in the market is very nice."},
+{lv:3, th:"ผมอยู่โรงแรมสามวัน", r:"phŏm yùu rong-raem săam wan", e:"I'm staying at the hotel for three days."},
+{lv:3, th:"ผมอยู่ที่นี่หนึ่งปีแล้ว", r:"phŏm yùu thîi nîi nèung bpii láeo", e:"I've been here for one year already."},
+{lv:3, th:"คุณรู้ไหมร้านอยู่ที่ไหน", r:"khun rúu mái ráan yùu thîi năi?", e:"Do you know where the shop is?"},
+{lv:3, th:"ผมไม่รู้ตลาดอยู่ที่ไหน", r:"phŏm mâi rúu talàat yùu thîi năi", e:"I don't know where the market is."},
+{lv:3, th:"คุณพูดเร็วมากผมจึงไม่เข้าใจ", r:"khun phûut rew mâak phŏm jeung mâi khâo jai", e:"You speak very fast, so I don't understand."},
+{lv:3, th:"วันนี้อากาศเย็นนิดหน่อยแต่ดีมาก", r:"wan níi aagàat yen nít nòi dtàe dii mâak", e:"Today the weather is a little cool, but very nice."},
+{lv:3, th:"ผมรักที่นี่เพราะว่าคนดีและอาหารอร่อย", r:"phŏm rák thîi nîi phráw wâa khon dii láe aahăan a-ròi", e:"I love it here because the people are kind and the food is delicious."},
+{lv:3, th:"คุณอยากไปเมื่อไหร่ วันนี้หรือพรุ่งนี้", r:"khun yàak bpai mêua rai? wan níi rĕu phrûng níi?", e:"When do you want to go — today or tomorrow?"},
+{lv:3, th:"ไม่เป็นไรนะ บางครั้งยากบางครั้งง่าย", r:"mâi bpen rai ná. baang khráng yâak, baang khráng ngâai", e:"It's okay — sometimes it's hard, sometimes it's easy."},
+];
+const SENT_CARDS = SENTENCES.map(s => ({cat:"s"+s.lv, th:s.th, rom:s.r, en:s.e, speakText:s.th, isSent:true}));
+const LV_NAMES = {s1:"Level 1 · Easy", s2:"Level 2 · Medium", s3:"Level 3 · Hard"};
+
 /* Build unified card list */
 const ALL = [
   ...WORDS.map(w => ({cat:w.c, th:w.th, rom:w.r, en:w.e, speakText:w.th, isPattern:false})),
@@ -322,7 +485,9 @@ const ALL = [
 
 /* ================= STATE ================= */
 let dir = "en2th";          // en2th | th2en
-let activeCat = "all";
+let mode = "vocab";         // vocab | sent
+let activeCat = "all";      // vocab category filter
+let activeLv = "all";       // sentence level filter
 let deck = [];
 let idx = 0;
 let flipped = false;
@@ -358,7 +523,11 @@ function speakThai(text){
 
 /* ================= DECK ================= */
 function buildDeck(){
-  deck = activeCat === "all" ? [...ALL] : ALL.filter(c => c.cat === activeCat);
+  if (mode === "sent"){
+    deck = activeLv === "all" ? [...SENT_CARDS] : SENT_CARDS.filter(c => c.cat === activeLv);
+  } else {
+    deck = activeCat === "all" ? [...ALL] : ALL.filter(c => c.cat === activeCat);
+  }
   if (shuffled){
     for (let i = deck.length - 1; i > 0; i--){
       const j = Math.floor(Math.random() * (i + 1));
@@ -370,10 +539,21 @@ function buildDeck(){
 }
 
 /* ================= RENDER ================= */
-const catName = id => (CATS.find(c => c.id === id) || {name:""}).name;
+const catName = id => LV_NAMES[id] || (CATS.find(c => c.id === id) || {name:""}).name;
 
 function sideHTML(card, side){
   // side: "en" or "th"
+  if (card.isSent){
+    if (side === "en"){
+      return `<div class="cat-tag">${catName(card.cat)}</div>
+        <div class="big sentEn">${card.en}</div>
+        <div class="hint">tap to flip</div>`;
+    }
+    return `<div class="cat-tag">${catName(card.cat)}</div>
+      <div class="big sentTh">${card.th}</div>
+      <div class="rom sentRom">${card.rom}</div>
+      <div class="hint">tap to flip</div>`;
+  }
   if (card.isPattern){
     if (side === "en"){
       return `<div class="cat-tag">${catName(card.cat)}</div>
@@ -455,12 +635,40 @@ function renderList(){
       </div>`;
     }
   }
+  // sentences, in their own clearly separated section
+  html += `<div class="group-h" style="margin-top:34px; font-size:.8rem;">— Sentences —</div>`;
+  for (const lv of ["s1","s2","s3"]){
+    const items = SENT_CARDS.filter(c => c.cat === lv);
+    html += `<div class="group-h">${LV_NAMES[lv]} · ${items.length}</div>`;
+    for (const it of items){
+      html += `<div class="lrow">
+        <div class="txt"><div class="t1"><span class="th">${it.th}</span></div>
+        <div class="t2">${it.rom} — ${it.en}</div></div>
+        <button onclick="speakThai('${it.speakText.replace(/'/g,"\\'")}')">🔈</button>
+      </div>`;
+    }
+  }
   host.innerHTML = html;
 }
 
 /* ================= UI WIRING ================= */
 function renderChips(){
   const host = document.getElementById("chips");
+  if (mode === "sent"){
+    const mk = (id, name) =>
+      `<button data-cat="${id}" class="${activeLv === id ? "on" : ""}">${name}</button>`;
+    const cnt = id => SENT_CARDS.filter(c => c.cat === id).length;
+    host.innerHTML = mk("all", "All (" + SENT_CARDS.length + ")")
+      + mk("s1", "Level 1 · Easy (" + cnt("s1") + ")")
+      + mk("s2", "Level 2 · Medium (" + cnt("s2") + ")")
+      + mk("s3", "Level 3 · Hard (" + cnt("s3") + ")");
+    host.querySelectorAll("button").forEach(b => b.onclick = () => {
+      activeLv = b.dataset.cat;
+      renderChips();
+      buildDeck();
+    });
+    return;
+  }
   const mk = (id, name) =>
     `<button data-cat="${id}" class="${activeCat === id ? "on" : ""}">${name}</button>`;
   host.innerHTML = mk("all", "All (" + ALL.length + ")") + CATS.map(c => mk(c.id, c.name)).join("");
@@ -494,13 +702,24 @@ document.getElementById("soundBtn").onclick = function(){
 };
 
 document.getElementById("tabCards").onclick = () => setTab("cards");
+document.getElementById("tabSent").onclick = () => setTab("sent");
 document.getElementById("tabList").onclick = () => setTab("list");
 function setTab(t){
   document.getElementById("tabCards").classList.toggle("on", t === "cards");
+  document.getElementById("tabSent").classList.toggle("on", t === "sent");
   document.getElementById("tabList").classList.toggle("on", t === "list");
-  document.getElementById("cardWrap").style.display = t === "cards" ? "flex" : "none";
-  document.getElementById("chips").style.display = t === "cards" ? "flex" : "none";
+  const showCards = t === "cards" || t === "sent";
+  document.getElementById("cardWrap").style.display = showCards ? "flex" : "none";
+  document.getElementById("chips").style.display = showCards ? "flex" : "none";
   document.getElementById("listView").style.display = t === "list" ? "block" : "none";
+  if (showCards){
+    const newMode = t === "sent" ? "sent" : "vocab";
+    if (newMode !== mode){
+      mode = newMode;
+      renderChips();
+      buildDeck();
+    }
+  }
 }
 
 /* init */
