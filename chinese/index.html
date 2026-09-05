@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Chinese Flashcards</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Chinese Cards">
+<meta name="theme-color" content="#12100e">
+<link rel="apple-touch-icon" href="icon.png">
+<style>
+  :root{
+    --bg:#12100e; --card:#1e1a16; --card2:#26211b; --ink:#f5efe6; --muted:#a89a86;
+    --gold:#d4a24e; --gold-soft:#e8c98a; --accent:#c96f4a; --green:#7fa96b;
+    --chip:#2b251e; --chip-on:#d4a24e; --radius:20px;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0; padding:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans Thai",sans-serif;
+    height:100%; overscroll-behavior:none;}
+  #app{max-width:520px; margin:0 auto; display:flex; flex-direction:column; min-height:100dvh;
+    padding:calc(env(safe-area-inset-top, 0px) + 14px) 16px calc(env(safe-area-inset-bottom, 0px) + 28px);}
+  /* scrim so scrolled content fades out behind the iOS status bar instead of colliding with the clock */
+  body::before{content:""; position:fixed; top:0; left:0; right:0; z-index:50;
+    height:calc(env(safe-area-inset-top, 0px) + 4px);
+    background:rgba(18,16,14,.88); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);}
+
+  header{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px;}
+  h1{font-size:1.15rem; margin:0; letter-spacing:.02em; font-weight:700;}
+  h1 span{color:var(--gold);}
+  .seg{display:flex; background:var(--chip); border-radius:999px; padding:3px;}
+  .seg button{border:0; background:transparent; color:var(--muted); font-size:.78rem; font-weight:600;
+    padding:7px 12px; border-radius:999px; cursor:pointer; white-space:nowrap;}
+  .seg button.on{background:var(--gold); color:#241c10;}
+
+  .row2{display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; gap:8px;}
+  .tabs{display:flex; gap:6px;}
+  .tabs button{border:0; background:var(--chip); color:var(--muted); font-size:.8rem; font-weight:600;
+    padding:8px 14px; border-radius:12px; cursor:pointer;}
+  .tabs button.on{background:var(--card2); color:var(--ink); box-shadow:inset 0 0 0 1px #3a3227;}
+  .icon-btn{border:0; background:var(--chip); color:var(--ink); width:38px; height:38px; border-radius:12px;
+    font-size:1.05rem; cursor:pointer; display:flex; align-items:center; justify-content:center;}
+  .icon-btn.off{color:#5c5245; text-decoration:line-through;}
+
+  .chips{display:flex; gap:7px; overflow-x:auto; padding:2px 2px 10px; scrollbar-width:none;}
+  .chips::-webkit-scrollbar{display:none;}
+  .chips button{flex:0 0 auto; border:0; background:var(--chip); color:var(--muted); font-size:.78rem;
+    font-weight:600; padding:8px 13px; border-radius:999px; cursor:pointer;}
+  .chips button.on{background:var(--chip-on); color:#241c10;}
+
+  /* ---- card ---- */
+  #cardWrap{flex:1; display:flex; flex-direction:column; justify-content:center; min-height:340px;}
+  .scene{perspective:1200px; width:100%;}
+  .flip{position:relative; width:100%; min-height:320px; transform-style:preserve-3d;
+    transition:transform .45s cubic-bezier(.2,.7,.3,1); cursor:pointer;}
+  .flip.flipped{transform:rotateY(180deg);}
+  .face{position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden;
+    background:linear-gradient(160deg,var(--card2),var(--card));
+    border:1px solid #362e24; border-radius:var(--radius); padding:26px 22px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:12px;
+    box-shadow:0 12px 30px rgba(0,0,0,.35);}
+  .face.back{transform:rotateY(180deg);}
+  .cat-tag{position:absolute; top:14px; left:16px; font-size:.68rem; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--muted); font-weight:700;}
+  .hint{position:absolute; bottom:12px; font-size:.7rem; color:#6d6152;}
+  .big{font-size:2rem; font-weight:700; line-height:1.25;}
+  .big.thaiScript{font-size:2.5rem; color:var(--gold-soft);}
+  .big.sentEn{font-size:1.45rem; line-height:1.45;}
+  .big.sentTh{font-size:1.75rem; color:var(--gold-soft); line-height:1.55;}
+  .rom.sentRom{font-size:1.02rem; line-height:1.5;}
+  .rom{font-size:1.25rem; color:var(--gold); font-weight:600;}
+  .sub{font-size:.95rem; color:var(--muted); line-height:1.45;}
+  .pattern-formula{font-size:1.3rem; font-weight:700; line-height:1.4; color:var(--gold-soft);}
+  .example{margin-top:6px; padding-top:12px; border-top:1px dashed #443a2c; width:100%;}
+  .example .th{font-size:1.5rem; color:var(--ink);}
+  .example .r{font-size:.95rem; color:var(--gold); margin-top:2px;}
+  .example .e{font-size:.85rem; color:var(--muted); margin-top:2px; font-style:italic;}
+
+  .controls{display:flex; align-items:center; justify-content:center; gap:14px; margin-top:16px;}
+  .controls .nav{width:56px; height:56px; border-radius:50%; border:0; background:var(--card2); color:var(--ink);
+    font-size:1.3rem; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,.3);}
+  .controls .speak{width:68px; height:68px; border-radius:50%; border:0; background:var(--gold); color:#241c10;
+    font-size:1.6rem; cursor:pointer; box-shadow:0 6px 16px rgba(212,162,78,.35);}
+  .meta{display:flex; align-items:center; justify-content:space-between; margin-top:14px;}
+  #progress{font-size:.82rem; color:var(--muted); font-variant-numeric:tabular-nums;}
+  .mini{border:0; background:var(--chip); color:var(--muted); font-size:.78rem; font-weight:600;
+    padding:8px 13px; border-radius:10px; cursor:pointer;}
+
+  /* ---- list ---- */
+  #listView{display:none;}
+  .group-h{font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; color:var(--gold);
+    font-weight:800; margin:20px 2px 8px;}
+  .lrow{display:flex; align-items:center; gap:12px; background:var(--card); border:1px solid #2e2820;
+    border-radius:14px; padding:11px 13px; margin-bottom:7px;}
+  .lrow .txt{flex:1; min-width:0;}
+  .lrow .t1{font-size:1.05rem; font-weight:600;}
+  .lrow .t1 .th{color:var(--gold-soft); font-size:1.15rem; margin-right:8px;}
+  .lrow .t2{font-size:.82rem; color:var(--muted); margin-top:2px;}
+  .lrow button{border:0; background:var(--chip); color:var(--gold); width:36px; height:36px; border-radius:50%;
+    font-size:1rem; cursor:pointer; flex:0 0 auto;}
+  #voiceNote{display:none; font-size:.78rem; color:#c9a15c; background:#2b2214; border:1px solid #4a3a1e;
+    padding:10px 12px; border-radius:12px; margin-bottom:10px; line-height:1.4;}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <h1>🇨🇳 Chinese <span>Flashcards</span></h1>
+    <div class="seg">
+      <button id="dirEN" class="on">EN → ZH</button>
+      <button id="dirTH">ZH → EN</button>
+    </div>
+  </header>
+
+  <div class="row2">
+    <div class="tabs">
+      <button id="tabCards" class="on">Cards</button>
+      <button id="tabSent">Sentences</button>
+      <button id="tabList">All</button>
+    </div>
+    <button id="soundBtn" class="icon-btn" title="Auto-pronounce on/off">🔊</button>
+  </div>
+
+  <div id="voiceNote"></div>
+  <div class="chips" id="chips"></div>
+
+  <div id="cardWrap">
+    <div class="scene">
+      <div class="flip" id="flip">
+        <div class="face front" id="faceFront"></div>
+        <div class="face back" id="faceBack"></div>
+      </div>
+    </div>
+    <div class="controls">
+      <button class="nav" id="prevBtn">‹</button>
+      <button class="speak" id="speakBtn" title="Pronounce in Thai">🔈</button>
+      <button class="nav" id="nextBtn">›</button>
+    </div>
+    <div class="meta">
+      <span id="progress"></span>
+      <button class="mini" id="shuffleBtn">🔀 Shuffle</button>
+    </div>
+  </div>
+
+  <div id="listView"></div>
+</div>
+
+<script>
+/* ================= DATA ================= */
+const CATS = [
+  {id:"neg",   name:"Negations (bù / méi)"},
+  {id:"time",  name:"Time & adverbs"},
+  {id:"conn",  name:"Connectors"},
+  {id:"quest", name:"Question words"},
+  {id:"prep",  name:"Prepositions"},
+  {id:"part",  name:"Particles"},
+  {id:"num",   name:"Numbers"},
+  {id:"verb",  name:"Verbs"},
+  {id:"adj",   name:"Adjectives"},
+  {id:"noun",  name:"Nouns"},
+  {id:"core",  name:"Pronouns & core"},
+  {id:"pat",   name:"Sentence patterns"},
+];
+
+const WORDS = [
+/* --- Negations --- */
+{c:"neg", th:"不是", r:"bú shì", e:"No / That's not right"},
+{c:"neg", th:"不知道", r:"bù zhīdào", e:"I don't know"},
+{c:"neg", th:"没关系", r:"méi guānxi", e:"No worries / Never mind"},
+{c:"neg", th:"没有", r:"méi yǒu", e:"I don't have / There isn't"},
+{c:"neg", th:"不要", r:"bú yào", e:"I don't want it"},
+{c:"neg", th:"听不懂", r:"tīng bu dǒng", e:"I don't understand (what I hear)"},
+{c:"neg", th:"不会说", r:"bú huì shuō", e:"I can't speak (it)"},
+{c:"neg", th:"不吃", r:"bù chī", e:"I don't eat"},
+/* --- Time & adverbs --- */
+{c:"time", th:"今天", r:"jīntiān", e:"today"},
+{c:"time", th:"明天", r:"míngtiān", e:"tomorrow"},
+{c:"time", th:"昨天", r:"zuótiān", e:"yesterday"},
+{c:"time", th:"快点", r:"kuài diǎn", e:"quickly / hurry up"},
+{c:"time", th:"总是", r:"zǒngshì", e:"always"},
+{c:"time", th:"有时候", r:"yǒushíhou", e:"sometimes"},
+{c:"time", th:"再", r:"zài", e:"again / more"},
+{c:"time", th:"真的", r:"zhēnde", e:"really"},
+/* --- Connectors --- */
+{c:"conn", th:"和", r:"hé", e:"and"},
+{c:"conn", th:"或者", r:"huòzhě", e:"or (statements)"},
+{c:"conn", th:"但是", r:"dànshì", e:"but"},
+{c:"conn", th:"因为", r:"yīnwèi", e:"because"},
+{c:"conn", th:"所以", r:"suǒyǐ", e:"so / therefore"},
+/* --- Question words --- */
+{c:"quest", th:"什么", r:"shénme", e:"what"},
+{c:"quest", th:"谁", r:"shéi", e:"who"},
+{c:"quest", th:"哪里", r:"nǎlǐ", e:"where"},
+{c:"quest", th:"什么时候", r:"shénme shíhou", e:"when"},
+{c:"quest", th:"为什么", r:"wèishénme", e:"why"},
+{c:"quest", th:"怎么", r:"zěnme", e:"how"},
+{c:"quest", th:"多少", r:"duōshao", e:"how much / how many"},
+/* --- Prepositions --- */
+{c:"prep", th:"上", r:"shàng", e:"on / up"},
+{c:"prep", th:"下", r:"xià", e:"under / down"},
+{c:"prep", th:"里", r:"lǐ", e:"inside"},
+{c:"prep", th:"外面", r:"wàimiàn", e:"outside"},
+/* --- Particles --- */
+{c:"part", th:"吧", r:"ba", e:"softener / suggestion (…okay?)"},
+{c:"part", th:"呢", r:"ne", e:"and…? / what about…?"},
+/* --- Numbers --- */
+{c:"num", th:"一", r:"yī", e:"1"},
+{c:"num", th:"二", r:"èr", e:"2 (counting)"},
+{c:"num", th:"两", r:"liǎng", e:"2 (before things: two days…)"},
+{c:"num", th:"三", r:"sān", e:"3"},
+{c:"num", th:"四", r:"sì", e:"4"},
+{c:"num", th:"五", r:"wǔ", e:"5"},
+/* --- Verbs --- */
+{c:"verb", th:"吃", r:"chī", e:"eat"},
+{c:"verb", th:"去", r:"qù", e:"go"},
+{c:"verb", th:"来", r:"lái", e:"come"},
+{c:"verb", th:"做", r:"zuò", e:"do / make"},
+{c:"verb", th:"说", r:"shuō", e:"speak / say"},
+{c:"verb", th:"听", r:"tīng", e:"listen"},
+{c:"verb", th:"看", r:"kàn", e:"look / watch / read"},
+{c:"verb", th:"见", r:"jiàn", e:"see / meet"},
+{c:"verb", th:"知道", r:"zhīdào", e:"know (a fact)"},
+{c:"verb", th:"懂", r:"dǒng", e:"understand"},
+{c:"verb", th:"学习", r:"xuéxí", e:"study / learn"},
+{c:"verb", th:"买", r:"mǎi", e:"buy"},
+{c:"verb", th:"卖", r:"mài", e:"sell"},
+{c:"verb", th:"付钱", r:"fù qián", e:"pay"},
+{c:"verb", th:"要", r:"yào", e:"want / take"},
+{c:"verb", th:"给", r:"gěi", e:"give"},
+{c:"verb", th:"有", r:"yǒu", e:"have"},
+{c:"verb", th:"爱", r:"ài", e:"love"},
+{c:"verb", th:"想", r:"xiǎng", e:"think / want to"},
+{c:"verb", th:"工作", r:"gōngzuò", e:"work"},
+{c:"verb", th:"跑", r:"pǎo", e:"run"},
+{c:"verb", th:"帮", r:"bāng", e:"help"},
+{c:"verb", th:"得", r:"děi", e:"must / have to"},
+{c:"verb", th:"坐", r:"zuò", e:"sit / take (a car, bus)"},
+{c:"verb", th:"开车", r:"kāi chē", e:"drive"},
+{c:"verb", th:"会", r:"huì", e:"can (know how to)"},
+{c:"verb", th:"能", r:"néng", e:"can / be able to"},
+{c:"verb", th:"点", r:"diǎn", e:"order (food)"},
+/* --- Adjectives --- */
+{c:"adj", th:"好", r:"hǎo", e:"good"},
+{c:"adj", th:"不好", r:"bù hǎo", e:"bad / not good"},
+{c:"adj", th:"大", r:"dà", e:"big"},
+{c:"adj", th:"小", r:"xiǎo", e:"small"},
+{c:"adj", th:"冷", r:"lěng", e:"cold"},
+{c:"adj", th:"热", r:"rè", e:"hot"},
+{c:"adj", th:"快", r:"kuài", e:"fast"},
+{c:"adj", th:"慢", r:"màn", e:"slow"},
+{c:"adj", th:"便宜", r:"piányi", e:"cheap"},
+{c:"adj", th:"贵", r:"guì", e:"expensive"},
+{c:"adj", th:"漂亮", r:"piàoliang", e:"beautiful"},
+{c:"adj", th:"新", r:"xīn", e:"new"},
+{c:"adj", th:"旧", r:"jiù", e:"old (things)"},
+{c:"adj", th:"容易", r:"róngyì", e:"easy"},
+{c:"adj", th:"难", r:"nán", e:"difficult"},
+{c:"adj", th:"好吃", r:"hǎochī", e:"delicious"},
+{c:"adj", th:"辣", r:"là", e:"spicy"},
+{c:"adj", th:"甜", r:"tián", e:"sweet"},
+{c:"adj", th:"干净", r:"gānjìng", e:"clean"},
+{c:"adj", th:"高", r:"gāo", e:"tall / high"},
+{c:"adj", th:"矮", r:"ǎi", e:"short / low"},
+{c:"adj", th:"远", r:"yuǎn", e:"far"},
+{c:"adj", th:"近", r:"jìn", e:"near"},
+{c:"adj", th:"开心", r:"kāixīn", e:"happy"},
+{c:"adj", th:"难过", r:"nánguò", e:"sad"},
+{c:"adj", th:"忙", r:"máng", e:"busy"},
+{c:"adj", th:"有空", r:"yǒu kòng", e:"free (have time)"},
+/* --- Nouns --- */
+{c:"noun", th:"人", r:"rén", e:"person"},
+{c:"noun", th:"水", r:"shuǐ", e:"water"},
+{c:"noun", th:"饭", r:"fàn", e:"food / meal / rice"},
+{c:"noun", th:"钱", r:"qián", e:"money"},
+{c:"noun", th:"家", r:"jiā", e:"home / family"},
+{c:"noun", th:"房子", r:"fángzi", e:"house"},
+{c:"noun", th:"车", r:"chē", e:"car"},
+{c:"noun", th:"路", r:"lù", e:"road / street"},
+{c:"noun", th:"商店", r:"shāngdiàn", e:"shop / store"},
+{c:"noun", th:"市场", r:"shìchǎng", e:"market"},
+{c:"noun", th:"时间", r:"shíjiān", e:"time"},
+{c:"noun", th:"学校", r:"xuéxiào", e:"school"},
+{c:"noun", th:"酒店", r:"jiǔdiàn", e:"hotel"},
+{c:"noun", th:"天", r:"tiān", e:"day / sky"},
+{c:"noun", th:"天气", r:"tiānqì", e:"weather"},
+{c:"noun", th:"年", r:"nián", e:"year"},
+/* --- Pronouns & core words --- */
+{c:"core", th:"我", r:"wǒ", e:"I / me"},
+{c:"core", th:"你", r:"nǐ", e:"you"},
+{c:"core", th:"他", r:"tā", e:"he / him"},
+{c:"core", th:"她", r:"tā", e:"she / her"},
+{c:"core", th:"这", r:"zhè", e:"this"},
+{c:"core", th:"那", r:"nà", e:"that"},
+{c:"core", th:"吗", r:"ma", e:"question particle"},
+{c:"core", th:"了", r:"le", e:"done / already (completed)"},
+{c:"core", th:"还", r:"hái", e:"still"},
+{c:"core", th:"还没", r:"hái méi", e:"not yet"},
+{c:"core", th:"跟", r:"gēn", e:"with"},
+{c:"core", th:"在", r:"zài", e:"at / in / be at"},
+{c:"core", th:"是", r:"shì", e:"to be"},
+{c:"core", th:"很", r:"hěn", e:"very"},
+{c:"core", th:"一点", r:"yìdiǎn", e:"a little"},
+{c:"core", th:"的", r:"de", e:"'s (possessive: 我的 = my)"},
+{c:"core", th:"个", r:"gè", e:"measure word (这个 = this one)"},
+];
+
+/* --- Sentence patterns: e = English name, f = formula, ex = example --- */
+const PATTERNS = [
+{e:"I + verb", f:"我 wǒ + verb", ex:{th:"我吃饭", r:"wǒ chī fàn", e:"I eat"}},
+{e:"You + verb? (question)", f:"你 nǐ + verb + 吗 ma?", ex:{th:"你去吗", r:"nǐ qù ma?", e:"Are you going?"}},
+{e:"I don't + verb", f:"我不 wǒ bù + verb", ex:{th:"我不吃", r:"wǒ bù chī", e:"I don't eat"}},
+{e:"I want to + verb", f:"我想 wǒ xiǎng + verb", ex:{th:"我想去", r:"wǒ xiǎng qù", e:"I want to go"}},
+{e:"I want + noun", f:"我要 wǒ yào + noun", ex:{th:"我要水", r:"wǒ yào shuǐ", e:"I want water"}},
+{e:"I have ...", f:"我有 wǒ yǒu + noun", ex:{th:"我有钱", r:"wǒ yǒu qián", e:"I have money"}},
+{e:"I don't have ...", f:"我没有 wǒ méi yǒu + noun", ex:{th:"我没有时间", r:"wǒ méi yǒu shíjiān", e:"I don't have time"}},
+{e:"Already / done", f:"verb + 了 le", ex:{th:"我吃了", r:"wǒ chī le", e:"I've eaten"}},
+{e:"Not yet", f:"还没 hái méi + verb", ex:{th:"我还没吃", r:"wǒ hái méi chī", e:"I haven't eaten yet"}},
+{e:"Can (know how)", f:"会 huì + verb", ex:{th:"我会说", r:"wǒ huì shuō", e:"I can speak (it)"}},
+{e:"Can't", f:"不会 bú huì / 不能 bù néng + verb", ex:{th:"我不会开车", r:"wǒ bú huì kāi chē", e:"I can't drive"}},
+{e:"Must / have to", f:"得 děi + verb", ex:{th:"我得去", r:"wǒ děi qù", e:"I must go"}},
+{e:"Be at ...", f:"在 zài + place", ex:{th:"我在家", r:"wǒ zài jiā", e:"I'm at home"}},
+{e:"Go to ...", f:"去 qù + place", ex:{th:"我去市场", r:"wǒ qù shìchǎng", e:"I go to the market"}},
+{e:"With ...", f:"跟 gēn + person + verb", ex:{th:"我跟你去", r:"wǒ gēn nǐ qù", e:"I'll go with you"}},
+{e:"Because ... so ...", f:"因为 yīnwèi ... 所以 suǒyǐ ...", ex:{th:"因为我没有钱，所以我不去", r:"yīnwèi wǒ méi yǒu qián, suǒyǐ wǒ bú qù", e:"Because I have no money, I'm not going"}},
+];
+
+/* --- 150 practice sentences, built ONLY from the vocabulary above. lv: 1 easy, 2 medium, 3 hard --- */
+const SENTENCES = [
+/* ===== LEVEL 1 — two to four words, one pattern ===== */
+{lv:1, th:"我吃饭", r:"wǒ chī fàn", e:"I eat."},
+{lv:1, th:"我去市场", r:"wǒ qù shìchǎng", e:"I go to the market."},
+{lv:1, th:"你懂吗", r:"nǐ dǒng ma?", e:"Do you understand?"},
+{lv:1, th:"我听不懂", r:"wǒ tīng bu dǒng", e:"I don't understand."},
+{lv:1, th:"我爱你", r:"wǒ ài nǐ", e:"I love you."},
+{lv:1, th:"水很冷", r:"shuǐ hěn lěng", e:"The water is cold."},
+{lv:1, th:"饭很好吃", r:"fàn hěn hǎochī", e:"The food is delicious."},
+{lv:1, th:"房子很大", r:"fángzi hěn dà", e:"The house is big."},
+{lv:1, th:"车很新", r:"chē hěn xīn", e:"The car is new."},
+{lv:1, th:"车很旧", r:"chē hěn jiù", e:"The car is old."},
+{lv:1, th:"我有钱", r:"wǒ yǒu qián", e:"I have money."},
+{lv:1, th:"我没有时间", r:"wǒ méi yǒu shíjiān", e:"I don't have time."},
+{lv:1, th:"你去吗", r:"nǐ qù ma?", e:"Are you going?"},
+{lv:1, th:"我想吃", r:"wǒ xiǎng chī", e:"I want to eat."},
+{lv:1, th:"我想去", r:"wǒ xiǎng qù", e:"I want to go."},
+{lv:1, th:"我要水", r:"wǒ yào shuǐ", e:"I want water."},
+{lv:1, th:"我不要", r:"wǒ bú yào", e:"I don't want it."},
+{lv:1, th:"你有车吗", r:"nǐ yǒu chē ma?", e:"Do you have a car?"},
+{lv:1, th:"我在工作", r:"wǒ zài gōngzuò", e:"I'm working."},
+{lv:1, th:"今天我学习", r:"jīntiān wǒ xuéxí", e:"Today I study."},
+{lv:1, th:"天气很好", r:"tiānqì hěn hǎo", e:"The weather is good."},
+{lv:1, th:"天气不好", r:"tiānqì bù hǎo", e:"The weather is bad."},
+{lv:1, th:"她很漂亮", r:"tā hěn piàoliang", e:"She is beautiful."},
+{lv:1, th:"我看见你了", r:"wǒ kàn jiàn nǐ le", e:"I see you."},
+{lv:1, th:"我知道了", r:"wǒ zhīdào le", e:"I know / Got it."},
+{lv:1, th:"我不知道", r:"wǒ bù zhīdào", e:"I don't know."},
+{lv:1, th:"你看", r:"nǐ kàn!", e:"Look!"},
+{lv:1, th:"快点来", r:"kuài diǎn lái!", e:"Come quickly!"},
+{lv:1, th:"我开车", r:"wǒ kāi chē", e:"I drive."},
+{lv:1, th:"你跑得真快", r:"nǐ pǎo de zhēn kuài!", e:"You run really fast!"},
+{lv:1, th:"饭很辣", r:"fàn hěn là", e:"The food is spicy."},
+{lv:1, th:"他是谁", r:"tā shì shéi?", e:"Who is he?"},
+{lv:1, th:"家里很干净", r:"jiā lǐ hěn gānjìng", e:"The house is clean."},
+{lv:1, th:"商店很近", r:"shāngdiàn hěn jìn", e:"The shop is near."},
+{lv:1, th:"学校很远", r:"xuéxiào hěn yuǎn", e:"The school is far."},
+{lv:1, th:"我帮你", r:"wǒ bāng nǐ", e:"I'll help you."},
+{lv:1, th:"帮我吧", r:"bāng wǒ ba", e:"Help me, okay?"},
+{lv:1, th:"我想点饭", r:"wǒ xiǎng diǎn fàn", e:"I want to order food."},
+{lv:1, th:"我付钱", r:"wǒ fù qián", e:"I'll pay."},
+{lv:1, th:"这是什么", r:"zhè shì shénme?", e:"What is this?"},
+{lv:1, th:"谁来了", r:"shéi lái le?", e:"Who came?"},
+{lv:1, th:"我吃了", r:"wǒ chī le", e:"I've eaten."},
+{lv:1, th:"我还没吃", r:"wǒ hái méi chī", e:"I haven't eaten yet."},
+{lv:1, th:"我会做", r:"wǒ huì zuò", e:"I can do it."},
+{lv:1, th:"我不会说", r:"wǒ bú huì shuō", e:"I can't say it."},
+{lv:1, th:"没关系", r:"méi guānxi", e:"No worries."},
+{lv:1, th:"真的吗", r:"zhēnde ma?", e:"Really?"},
+{lv:1, th:"我有空", r:"wǒ yǒu kòng", e:"I'm free."},
+{lv:1, th:"我很忙", r:"wǒ hěn máng", e:"I'm busy."},
+{lv:1, th:"你很高", r:"nǐ hěn gāo", e:"You are tall."},
+/* ===== LEVEL 2 — longer, questions, time, place, very/a little ===== */
+{lv:2, th:"今天我去工作", r:"jīntiān wǒ qù gōngzuò", e:"Today I'm going to work."},
+{lv:2, th:"明天我去市场", r:"míngtiān wǒ qù shìchǎng", e:"Tomorrow I'll go to the market."},
+{lv:2, th:"昨天我吃了很辣的饭", r:"zuótiān wǒ chī le hěn là de fàn", e:"Yesterday I ate very spicy food."},
+{lv:2, th:"你去哪里", r:"nǐ qù nǎlǐ?", e:"Where are you going?"},
+{lv:2, th:"你什么时候来", r:"nǐ shénme shíhou lái?", e:"When are you coming?"},
+{lv:2, th:"你为什么难过", r:"nǐ wèishénme nánguò?", e:"Why are you sad?"},
+{lv:2, th:"你怎么想", r:"nǐ zěnme xiǎng?", e:"What do you think?"},
+{lv:2, th:"这个多少钱", r:"zhè ge duōshao qián?", e:"How much is this?"},
+{lv:2, th:"我想吃好吃的", r:"wǒ xiǎng chī hǎochī de", e:"I want to eat something delicious."},
+{lv:2, th:"我想去新的酒店", r:"wǒ xiǎng qù xīn de jiǔdiàn", e:"I want to go to the new hotel."},
+{lv:2, th:"你想看吗", r:"nǐ xiǎng kàn ma?", e:"Do you want to watch?"},
+{lv:2, th:"我得去工作", r:"wǒ děi qù gōngzuò", e:"I have to go to work."},
+{lv:2, th:"今天我得学习", r:"jīntiān wǒ děi xuéxí", e:"Today I have to study."},
+{lv:2, th:"你能说慢一点吗", r:"nǐ néng shuō màn yìdiǎn ma?", e:"Can you speak a little slower?"},
+{lv:2, th:"我会说一点", r:"wǒ huì shuō yìdiǎn", e:"I can speak a little."},
+{lv:2, th:"我懂一点", r:"wǒ dǒng yìdiǎn", e:"I understand a little."},
+{lv:2, th:"我在家工作", r:"wǒ zài jiā gōngzuò", e:"I work at home."},
+{lv:2, th:"我在酒店", r:"wǒ zài jiǔdiàn", e:"I'm at the hotel."},
+{lv:2, th:"你在哪里", r:"nǐ zài nǎlǐ?", e:"Where are you?"},
+{lv:2, th:"水在车里", r:"shuǐ zài chē lǐ", e:"The water is in the car."},
+{lv:2, th:"谁在家", r:"shéi zài jiā?", e:"Who is home?"},
+{lv:2, th:"商店在哪里？在那里", r:"shāngdiàn zài nǎlǐ? zài nàlǐ", e:"Where is the shop? Over there."},
+{lv:2, th:"学校很远吗", r:"xuéxiào hěn yuǎn ma?", e:"Is the school far?"},
+{lv:2, th:"饭真好吃", r:"fàn zhēn hǎochī", e:"The food is really delicious."},
+{lv:2, th:"今天天气很好", r:"jīntiān tiānqì hěn hǎo", e:"The weather is very good today."},
+{lv:2, th:"水有一点冷", r:"shuǐ yǒu yìdiǎn lěng", e:"The water is a little cold."},
+{lv:2, th:"我点了，你呢", r:"wǒ diǎn le, nǐ ne?", e:"I've ordered — what about you?"},
+{lv:2, th:"你吃了吗", r:"nǐ chī le ma?", e:"Have you eaten?"},
+{lv:2, th:"我还没去市场", r:"wǒ hái méi qù shìchǎng", e:"I haven't gone to the market yet."},
+{lv:2, th:"你会开车吗", r:"nǐ huì kāi chē ma?", e:"Can you drive?"},
+{lv:2, th:"我不会开车", r:"wǒ bú huì kāi chē", e:"I can't drive."},
+{lv:2, th:"我想再学一点", r:"wǒ xiǎng zài xué yìdiǎn", e:"I want to learn a bit more."},
+{lv:2, th:"再来吧", r:"zài lái ba!", e:"Come again!"},
+{lv:2, th:"我有一点钱", r:"wǒ yǒu yìdiǎn qián", e:"I have a little money."},
+{lv:2, th:"你有时间吗", r:"nǐ yǒu shíjiān ma?", e:"Do you have time?"},
+{lv:2, th:"今天我没有钱", r:"jīntiān wǒ méi yǒu qián", e:"Today I have no money."},
+{lv:2, th:"你真好", r:"nǐ zhēn hǎo", e:"You're really kind."},
+{lv:2, th:"你的家很漂亮", r:"nǐ de jiā hěn piàoliang", e:"Your home is very beautiful."},
+{lv:2, th:"我跟你去", r:"wǒ gēn nǐ qù", e:"I'll go with you."},
+{lv:2, th:"你跟谁来", r:"nǐ gēn shéi lái?", e:"Who are you coming with?"},
+{lv:2, th:"我坐在车里", r:"wǒ zuò zài chē lǐ", e:"I'm sitting in the car."},
+{lv:2, th:"车在路上", r:"chē zài lù shàng", e:"The car is on the road."},
+{lv:2, th:"商店在大路上", r:"shāngdiàn zài dà lù shàng", e:"The shop is on the main road."},
+{lv:2, th:"我有时候跑", r:"wǒ yǒushíhou pǎo", e:"Sometimes I run."},
+{lv:2, th:"我总是来这里", r:"wǒ zǒngshì lái zhèlǐ", e:"I always come here."},
+{lv:2, th:"你卖什么", r:"nǐ mài shénme?", e:"What do you sell?"},
+{lv:2, th:"我给你钱了", r:"wǒ gěi nǐ qián le", e:"I already gave you the money."},
+{lv:2, th:"你能再说吗", r:"nǐ néng zài shuō ma?", e:"Can you say that again?"},
+{lv:2, th:"你在哪里工作", r:"nǐ zài nǎlǐ gōngzuò?", e:"Where do you work?"},
+{lv:2, th:"我在学校学习", r:"wǒ zài xuéxiào xuéxí", e:"I study at school."},
+/* ===== LEVEL 3 — two clauses: and / but / or / because / therefore ===== */
+{lv:3, th:"因为我很忙，所以我不去", r:"yīnwèi wǒ hěn máng, suǒyǐ wǒ bú qù", e:"Because I'm busy, I'm not going."},
+{lv:3, th:"因为我想知道，所以我学习", r:"yīnwèi wǒ xiǎng zhīdào, suǒyǐ wǒ xuéxí", e:"Because I want to know, I study."},
+{lv:3, th:"今天我工作，但是明天我有空", r:"jīntiān wǒ gōngzuò, dànshì míngtiān wǒ yǒu kòng", e:"Today I work, but tomorrow I'm free."},
+{lv:3, th:"昨天天气不好，但是今天天气很好", r:"zuótiān tiānqì bù hǎo, dànshì jīntiān tiānqì hěn hǎo", e:"Yesterday the weather was bad, but today it's very good."},
+{lv:3, th:"我想去市场，但是没有时间", r:"wǒ xiǎng qù shìchǎng, dànshì méi yǒu shíjiān", e:"I want to go to the market, but I don't have time."},
+{lv:3, th:"你想吃辣的还是甜的", r:"nǐ xiǎng chī là de háishi tián de?", e:"Do you want to eat spicy or sweet?"},
+{lv:3, th:"我去商店，买水和饭", r:"wǒ qù shāngdiàn, mǎi shuǐ hé fàn", e:"I go to the shop and buy water and food."},
+{lv:3, th:"我没有钱，所以不去市场", r:"wǒ méi yǒu qián, suǒyǐ bú qù shìchǎng", e:"I have no money, so I'm not going to the market."},
+{lv:3, th:"饭很好吃，所以我总是来这里", r:"fàn hěn hǎochī, suǒyǐ wǒ zǒngshì lái zhèlǐ", e:"The food is very delicious, so I always come here."},
+{lv:3, th:"因为很辣，所以我不能吃", r:"yīnwèi hěn là, suǒyǐ wǒ bù néng chī", e:"Because it's very spicy, I can't eat it."},
+{lv:3, th:"帮我吧，因为很难", r:"bāng wǒ ba, yīnwèi hěn nán", e:"Help me please, because it's very hard."},
+{lv:3, th:"今天和明天我得工作", r:"jīntiān hé míngtiān wǒ děi gōngzuò", e:"I have to work today and tomorrow."},
+{lv:3, th:"我工作五天，有空两天", r:"wǒ gōngzuò wǔ tiān, yǒu kòng liǎng tiān", e:"I work five days and am free two days."},
+{lv:3, th:"我学了两年，但是我还说不好", r:"wǒ xué le liǎng nián, dànshì wǒ hái shuō bu hǎo", e:"I've studied for two years, but I still can't speak well."},
+{lv:3, th:"你在这里还是在酒店", r:"nǐ zài zhèlǐ háishi zài jiǔdiàn?", e:"Are you here or at the hotel?"},
+{lv:3, th:"你为什么不吃？饭不好吃吗", r:"nǐ wèishénme bù chī? fàn bù hǎochī ma?", e:"Why aren't you eating? Is the food not good?"},
+{lv:3, th:"你怎么想？说吧", r:"nǐ zěnme xiǎng? shuō ba!", e:"What do you think? Say it!"},
+{lv:3, th:"今天市场里人很多", r:"jīntiān shìchǎng lǐ rén hěn duō", e:"There are a lot of people in the market today."},
+{lv:3, th:"昨天我看见你了，但是你没看见我", r:"zuótiān wǒ kàn jiàn nǐ le, dànshì nǐ méi kàn jiàn wǒ", e:"I saw you yesterday, but you didn't see me."},
+{lv:3, th:"因为没有时间，所以我开得很快", r:"yīnwèi méi yǒu shíjiān, suǒyǐ wǒ kāi de hěn kuài", e:"Because there's no time, I drive very fast."},
+{lv:3, th:"我家很远，但是学校很近", r:"wǒ jiā hěn yuǎn, dànshì xuéxiào hěn jìn", e:"My home is far, but the school is near."},
+{lv:3, th:"我想要大房子和新车", r:"wǒ xiǎng yào dà fángzi hé xīn chē", e:"I want a big house and a new car."},
+{lv:3, th:"你要辣的还是不辣的", r:"nǐ yào là de háishi bú là de?", e:"Do you want it spicy or not spicy?"},
+{lv:3, th:"昨天我很难过，但是今天很开心", r:"zuótiān wǒ hěn nánguò, dànshì jīntiān hěn kāixīn", e:"Yesterday I was very sad, but today I'm happy."},
+{lv:3, th:"因为你说得慢，所以我懂了", r:"yīnwèi nǐ shuō de màn, suǒyǐ wǒ dǒng le", e:"Because you spoke slowly, I understood."},
+{lv:3, th:"我会开车，但是开得很慢", r:"wǒ huì kāi chē, dànshì kāi de hěn màn", e:"I can drive, but very slowly."},
+{lv:3, th:"谁能吃辣？我不能", r:"shéi néng chī là? wǒ bù néng", e:"Who can eat spicy? I can't."},
+{lv:3, th:"多吃饭，多跑", r:"duō chī fàn, duō pǎo!", e:"Eat more, run more!"},
+{lv:3, th:"我不知道，因为我还没看", r:"wǒ bù zhīdào, yīnwèi wǒ hái méi kàn", e:"I don't know, because I haven't looked yet."},
+{lv:3, th:"你什么时候来的？跟谁来的", r:"nǐ shénme shíhou lái de? gēn shéi lái de?", e:"When did you come? Who did you come with?"},
+{lv:3, th:"我想开车，但是还不会", r:"wǒ xiǎng kāi chē, dànshì hái bú huì", e:"I want to drive, but I can't yet."},
+{lv:3, th:"新车快，旧车慢", r:"xīn chē kuài, jiù chē màn", e:"The new car is fast, the old car is slow."},
+{lv:3, th:"大房子漂亮，但是小房子便宜", r:"dà fángzi piàoliang, dànshì xiǎo fángzi piányi", e:"The big house is beautiful, but the small house is cheap."},
+{lv:3, th:"商店里的水很便宜", r:"shāngdiàn lǐ de shuǐ hěn piányi", e:"The water in the shop is very cheap."},
+{lv:3, th:"我付钱了，但是饭还没来", r:"wǒ fù qián le, dànshì fàn hái méi lái", e:"I've paid, but the food hasn't come yet."},
+{lv:3, th:"你帮我，我帮你", r:"nǐ bāng wǒ, wǒ bāng nǐ", e:"You help me, and I help you."},
+{lv:3, th:"我听了，但是听不懂", r:"wǒ tīng le, dànshì tīng bu dǒng", e:"I listened, but I don't understand."},
+{lv:3, th:"我看了，听了，但是还不懂", r:"wǒ kàn le, tīng le, dànshì hái bù dǒng", e:"I watched and listened, but I still don't understand."},
+{lv:3, th:"昨天天气不好，所以我坐在家里", r:"zuótiān tiānqì bù hǎo, suǒyǐ wǒ zuò zài jiā lǐ", e:"Yesterday the weather was bad, so I stayed (sat) at home."},
+{lv:3, th:"有时候我在路上跑", r:"yǒushíhou wǒ zài lù shàng pǎo", e:"Sometimes I run on the road."},
+{lv:3, th:"市场里卖饭的人很好", r:"shìchǎng lǐ mài fàn de rén hěn hǎo", e:"The food seller in the market is very nice."},
+{lv:3, th:"我在这里一年了", r:"wǒ zài zhèlǐ yì nián le", e:"I've been here for a year."},
+{lv:3, th:"五年了，我还在这里工作", r:"wǔ nián le, wǒ hái zài zhèlǐ gōngzuò", e:"It's been five years, and I still work here."},
+{lv:3, th:"你知道商店在哪里吗", r:"nǐ zhīdào shāngdiàn zài nǎlǐ ma?", e:"Do you know where the shop is?"},
+{lv:3, th:"我不知道市场在哪里", r:"wǒ bù zhīdào shìchǎng zài nǎlǐ", e:"I don't know where the market is."},
+{lv:3, th:"因为你说得很快，所以我听不懂", r:"yīnwèi nǐ shuō de hěn kuài, suǒyǐ wǒ tīng bu dǒng", e:"Because you speak very fast, I don't understand."},
+{lv:3, th:"今天有一点冷，但是天气很好", r:"jīntiān yǒu yìdiǎn lěng, dànshì tiānqì hěn hǎo", e:"Today it's a little cold, but the weather is nice."},
+{lv:3, th:"我爱这里，因为人很好，饭很好吃", r:"wǒ ài zhèlǐ, yīnwèi rén hěn hǎo, fàn hěn hǎochī", e:"I love it here, because the people are kind and the food is delicious."},
+{lv:3, th:"你想什么时候去？今天还是明天", r:"nǐ xiǎng shénme shíhou qù? jīntiān háishi míngtiān?", e:"When do you want to go — today or tomorrow?"},
+{lv:3, th:"没关系，有时候难，有时候容易", r:"méi guānxi, yǒushíhou nán, yǒushíhou róngyì", e:"It's okay — sometimes it's hard, sometimes it's easy."},
+];
+const SENT_CARDS = SENTENCES.map(s => ({cat:"s"+s.lv, th:s.th, rom:s.r, en:s.e, speakText:s.th, isSent:true}));
+const LV_NAMES = {s1:"Level 1 · Easy", s2:"Level 2 · Medium", s3:"Level 3 · Hard"};
+
+/* Build unified card list */
+const ALL = [
+  ...WORDS.map(w => ({cat:w.c, th:w.th, rom:w.r, en:w.e, speakText:w.th, isPattern:false})),
+  ...PATTERNS.map(p => ({cat:"pat", th:p.ex.th, rom:p.f, en:p.e, ex:p.ex, speakText:p.ex.th, isPattern:true})),
+];
+
+/* ================= STATE ================= */
+let dir = "en2th";          // en2th | th2en
+let mode = "vocab";         // vocab | sent
+let activeCat = "all";      // vocab category filter
+let activeLv = "all";       // sentence level filter
+let deck = [];
+let idx = 0;
+let flipped = false;
+let soundOn = true;
+let shuffled = false;
+
+/* ================= SPEECH ================= */
+let thaiVoice = null;
+function findThaiVoice(){
+  const vs = window.speechSynthesis ? speechSynthesis.getVoices() : [];
+  thaiVoice = vs.find(v => (v.lang||"").toLowerCase().startsWith("zh")) || null;
+  const note = document.getElementById("voiceNote");
+  if (window.speechSynthesis && vs.length && !thaiVoice){
+    note.style.display = "block";
+    note.textContent = "No Chinese voice found on this device — pronunciation may sound off. On iPhone: Settings → Accessibility → Spoken Content → Voices → Chinese. On Android: install Google Text-to-speech Chinese voice.";
+  } else {
+    note.style.display = "none";
+  }
+}
+if (window.speechSynthesis){
+  findThaiVoice();
+  speechSynthesis.onvoiceschanged = findThaiVoice;
+}
+function speakThai(text){
+  if (!window.speechSynthesis) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "zh-CN";
+  if (thaiVoice) u.voice = thaiVoice;
+  u.rate = 0.85;
+  speechSynthesis.speak(u);
+}
+
+/* ================= DECK ================= */
+function buildDeck(){
+  if (mode === "sent"){
+    deck = activeLv === "all" ? [...SENT_CARDS] : SENT_CARDS.filter(c => c.cat === activeLv);
+  } else {
+    deck = activeCat === "all" ? [...ALL] : ALL.filter(c => c.cat === activeCat);
+  }
+  if (shuffled){
+    for (let i = deck.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [deck[i], deck[j]] = [deck[j], deck[i]];
+    }
+  }
+  idx = 0;
+  renderCard(false);
+}
+
+/* ================= RENDER ================= */
+const catName = id => LV_NAMES[id] || (CATS.find(c => c.id === id) || {name:""}).name;
+
+function sideHTML(card, side){
+  // side: "en" or "th"
+  if (card.isSent){
+    if (side === "en"){
+      return `<div class="cat-tag">${catName(card.cat)}</div>
+        <div class="big sentEn">${card.en}</div>
+        <div class="hint">tap to flip</div>`;
+    }
+    return `<div class="cat-tag">${catName(card.cat)}</div>
+      <div class="big sentTh">${card.th}</div>
+      <div class="rom sentRom">${card.rom}</div>
+      <div class="hint">tap to flip</div>`;
+  }
+  if (card.isPattern){
+    if (side === "en"){
+      return `<div class="cat-tag">${catName(card.cat)}</div>
+        <div class="big">${card.en}</div>
+        <div class="sub">How do you build this in Thai?</div>
+        <div class="hint">tap to flip</div>`;
+    }
+    return `<div class="cat-tag">${catName(card.cat)}</div>
+      <div class="pattern-formula">${card.rom}</div>
+      <div class="example">
+        <div class="th">${card.ex.th}</div>
+        <div class="r">${card.ex.r}</div>
+        <div class="e">${card.ex.e}</div>
+      </div>
+      <div class="hint">tap to flip</div>`;
+  }
+  if (side === "en"){
+    return `<div class="cat-tag">${catName(card.cat)}</div>
+      <div class="big">${card.en}</div>
+      <div class="hint">tap to flip</div>`;
+  }
+  return `<div class="cat-tag">${catName(card.cat)}</div>
+    <div class="big thaiScript">${card.th}</div>
+    <div class="rom">${card.rom}</div>
+    <div class="hint">tap to flip</div>`;
+}
+
+function renderCard(keepFlip){
+  if (!deck.length) return;
+  const card = deck[idx];
+  const frontSide = dir === "en2th" ? "en" : "th";
+  const backSide  = dir === "en2th" ? "th" : "en";
+  document.getElementById("faceFront").innerHTML = sideHTML(card, frontSide);
+  document.getElementById("faceBack").innerHTML  = sideHTML(card, backSide);
+  if (!keepFlip){
+    flipped = false;
+    const f = document.getElementById("flip");
+    f.style.transition = "none";
+    f.classList.remove("flipped");
+    void f.offsetWidth;
+    f.style.transition = "";
+  }
+  document.getElementById("progress").textContent = (idx + 1) + " / " + deck.length;
+  // In TH→EN mode the Thai side is showing right away → pronounce it
+  if (soundOn && dir === "th2en" && !flipped) speakThai(card.speakText);
+}
+
+function flipCard(){
+  flipped = !flipped;
+  document.getElementById("flip").classList.toggle("flipped", flipped);
+  const card = deck[idx];
+  const thaiVisible = (dir === "en2th" && flipped) || (dir === "th2en" && !flipped);
+  if (soundOn && thaiVisible) speakThai(card.speakText);
+}
+
+function move(step){
+  idx = (idx + step + deck.length) % deck.length;
+  renderCard(false);
+}
+
+/* ================= LIST VIEW ================= */
+function renderList(){
+  const host = document.getElementById("listView");
+  let html = "";
+  for (const cat of CATS){
+    const items = ALL.filter(c => c.cat === cat.id);
+    if (!items.length) continue;
+    html += `<div class="group-h">${cat.name} · ${items.length}</div>`;
+    for (const it of items){
+      const line1 = it.isPattern
+        ? `<span class="th">${it.en}</span>`
+        : `<span class="th">${it.th}</span> ${it.rom}`;
+      const line2 = it.isPattern
+        ? `${it.rom} — e.g. ${it.ex.th} (${it.ex.r}) = ${it.ex.e}`
+        : it.en;
+      html += `<div class="lrow">
+        <div class="txt"><div class="t1">${line1}</div><div class="t2">${line2}</div></div>
+        <button onclick="speakThai('${it.speakText.replace(/'/g,"\\'")}')">🔈</button>
+      </div>`;
+    }
+  }
+  // sentences, in their own clearly separated section
+  html += `<div class="group-h" style="margin-top:34px; font-size:.8rem;">— Sentences —</div>`;
+  for (const lv of ["s1","s2","s3"]){
+    const items = SENT_CARDS.filter(c => c.cat === lv);
+    html += `<div class="group-h">${LV_NAMES[lv]} · ${items.length}</div>`;
+    for (const it of items){
+      html += `<div class="lrow">
+        <div class="txt"><div class="t1"><span class="th">${it.th}</span></div>
+        <div class="t2">${it.rom} — ${it.en}</div></div>
+        <button onclick="speakThai('${it.speakText.replace(/'/g,"\\'")}')">🔈</button>
+      </div>`;
+    }
+  }
+  host.innerHTML = html;
+}
+
+/* ================= UI WIRING ================= */
+function renderChips(){
+  const host = document.getElementById("chips");
+  if (mode === "sent"){
+    const mk = (id, name) =>
+      `<button data-cat="${id}" class="${activeLv === id ? "on" : ""}">${name}</button>`;
+    const cnt = id => SENT_CARDS.filter(c => c.cat === id).length;
+    host.innerHTML = mk("all", "All (" + SENT_CARDS.length + ")")
+      + mk("s1", "Level 1 · Easy (" + cnt("s1") + ")")
+      + mk("s2", "Level 2 · Medium (" + cnt("s2") + ")")
+      + mk("s3", "Level 3 · Hard (" + cnt("s3") + ")");
+    host.querySelectorAll("button").forEach(b => b.onclick = () => {
+      activeLv = b.dataset.cat;
+      renderChips();
+      buildDeck();
+    });
+    return;
+  }
+  const mk = (id, name) =>
+    `<button data-cat="${id}" class="${activeCat === id ? "on" : ""}">${name}</button>`;
+  host.innerHTML = mk("all", "All (" + ALL.length + ")") + CATS.map(c => mk(c.id, c.name)).join("");
+  host.querySelectorAll("button").forEach(b => b.onclick = () => {
+    activeCat = b.dataset.cat;
+    renderChips();
+    buildDeck();
+  });
+}
+
+document.getElementById("flip").addEventListener("click", flipCard);
+document.getElementById("prevBtn").onclick = () => move(-1);
+document.getElementById("nextBtn").onclick = () => move(1);
+document.getElementById("speakBtn").onclick = () => speakThai(deck[idx].speakText);
+document.getElementById("shuffleBtn").onclick = () => { shuffled = true; buildDeck(); };
+
+document.getElementById("dirEN").onclick = () => setDir("en2th");
+document.getElementById("dirTH").onclick = () => setDir("th2en");
+function setDir(d){
+  dir = d;
+  document.getElementById("dirEN").classList.toggle("on", d === "en2th");
+  document.getElementById("dirTH").classList.toggle("on", d === "th2en");
+  renderCard(false);
+}
+
+document.getElementById("soundBtn").onclick = function(){
+  soundOn = !soundOn;
+  this.textContent = soundOn ? "🔊" : "🔇";
+  this.classList.toggle("off", !soundOn);
+  if (!soundOn && window.speechSynthesis) speechSynthesis.cancel();
+};
+
+document.getElementById("tabCards").onclick = () => setTab("cards");
+document.getElementById("tabSent").onclick = () => setTab("sent");
+document.getElementById("tabList").onclick = () => setTab("list");
+function setTab(t){
+  document.getElementById("tabCards").classList.toggle("on", t === "cards");
+  document.getElementById("tabSent").classList.toggle("on", t === "sent");
+  document.getElementById("tabList").classList.toggle("on", t === "list");
+  const showCards = t === "cards" || t === "sent";
+  document.getElementById("cardWrap").style.display = showCards ? "flex" : "none";
+  document.getElementById("chips").style.display = showCards ? "flex" : "none";
+  document.getElementById("listView").style.display = t === "list" ? "block" : "none";
+  if (showCards){
+    const newMode = t === "sent" ? "sent" : "vocab";
+    if (newMode !== mode){
+      mode = newMode;
+      renderChips();
+      buildDeck();
+    }
+  }
+}
+
+/* init */
+renderChips();
+buildDeck();
+renderList();
+</script>
+</body>
+</html>
