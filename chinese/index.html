@@ -115,8 +115,9 @@
   </header>
 
   <div class="seg" id="lessonSeg" style="align-self:flex-start; margin-bottom:10px;">
-    <button id="les1">Lesson 1</button>
-    <button id="les2" class="on">Lesson 1+2</button>
+    <button id="les1">L1</button>
+    <button id="les2">L1+2</button>
+    <button id="les3" class="on">L1+2+3</button>
   </div>
 
   <div class="row2">
@@ -435,6 +436,129 @@ const WORDS2 = [
 {c:"time", th:"每天", r:"měitiān", e:"every day"},
 ];
 CATS.splice(CATS.length, 0, ...CATS2);
+
+/* --- LESSON 3: sheet 3 vocabulary --- */
+const CATS3 = [
+  {id:"gram3", name:"If, should & must"},
+  {id:"verb3", name:"Agree, hope & fear"},
+  {id:"freq",  name:"How often"},
+  {id:"fam",   name:"Family & hobbies"},
+  {id:"biz",   name:"Business & tech"},
+  {id:"adj4",  name:"Big, small & long"},
+  {id:"world", name:"World & life"},
+  {id:"food3", name:"Food & drink"},
+  {id:"ppl3",  name:"People & things"},
+];
+
+const WORDS3 = [
+/* --- If, should & must --- */
+{c:"gram3", th:"呢", r:"ne", e:"and what about…?"},
+{c:"gram3", th:"我呢？", r:"wǒ ne?", e:"What about me?"},
+{c:"gram3", th:"如果", r:"rúguǒ", e:"if"},
+{c:"gram3", th:"如果……就……", r:"rúguǒ… jiù…", e:"if… then…"},
+{c:"gram3", th:"就", r:"jiù", e:"then / precisely"},
+{c:"gram3", th:"跟", r:"gēn", e:"with / and"},
+{c:"gram3", th:"应该", r:"yīnggāi", e:"should / probably"},
+{c:"gram3", th:"必须", r:"bìxū", e:"must / have to"},
+{c:"gram3", th:"有意思", r:"yǒuyìsi", e:"interesting"},
+{c:"gram3", th:"正在", r:"zhèngzài", e:"currently doing"},
+/* --- Agree, hope & fear --- */
+{c:"verb3", th:"同意", r:"tóngyì", e:"agree"},
+{c:"verb3", th:"希望", r:"xīwàng", e:"hope"},
+{c:"verb3", th:"记得", r:"jìde", e:"remember"},
+{c:"verb3", th:"忘了", r:"wàng le", e:"forget"},
+{c:"verb3", th:"怕", r:"pà", e:"afraid"},
+{c:"verb3", th:"带", r:"dài", e:"bring / carry / wear"},
+{c:"verb3", th:"选择", r:"xuǎnzé", e:"choose"},
+/* --- How often --- */
+{c:"freq", th:"经常", r:"jīngcháng", e:"often"},
+{c:"freq", th:"从来不", r:"cónglái bù", e:"never"},
+{c:"freq", th:"最近", r:"zuìjìn", e:"recently"},
+{c:"freq", th:"将来", r:"jiānglái", e:"the future"},
+/* --- Family & hobbies --- */
+{c:"fam", th:"家庭", r:"jiātíng", e:"family / household"},
+{c:"fam", th:"父母", r:"fùmǔ", e:"parents"},
+{c:"fam", th:"爸爸", r:"bàba", e:"father"},
+{c:"fam", th:"妈妈", r:"māma", e:"mother"},
+{c:"fam", th:"爱好", r:"àihào", e:"hobby"},
+{c:"fam", th:"音乐", r:"yīnyuè", e:"music"},
+{c:"fam", th:"钢琴", r:"gāngqín", e:"piano"},
+{c:"fam", th:"旅行", r:"lǚxíng", e:"travel"},
+{c:"fam", th:"女朋友", r:"nǚpéngyou", e:"girlfriend"},
+{c:"fam", th:"男朋友", r:"nánpéngyou", e:"boyfriend"},
+/* --- Business & tech --- */
+{c:"biz", th:"公司", r:"gōngsī", e:"company"},
+{c:"biz", th:"生意", r:"shēngyì", e:"business"},
+{c:"biz", th:"产品", r:"chǎnpǐn", e:"product"},
+{c:"biz", th:"科技", r:"kējì", e:"technology"},
+{c:"biz", th:"人工智能", r:"réngōng zhìnéng", e:"AI"},
+{c:"biz", th:"老板", r:"lǎobǎn", e:"boss / business owner"},
+{c:"biz", th:"客户", r:"kèhù", e:"customer / client"},
+{c:"biz", th:"会议", r:"huìyì", e:"meeting"},
+{c:"biz", th:"项目", r:"xiàngmù", e:"project"},
+{c:"biz", th:"房间", r:"fángjiān", e:"room"},
+{c:"biz", th:"网络", r:"wǎngluò", e:"internet / network"},
+{c:"biz", th:"银行", r:"yínháng", e:"bank"},
+{c:"biz", th:"地址", r:"dìzhǐ", e:"address"},
+/* --- Big, small & long --- */
+{c:"adj4", th:"大", r:"dà", e:"big"},
+{c:"adj4", th:"小", r:"xiǎo", e:"small"},
+{c:"adj4", th:"少", r:"shǎo", e:"few / little"},
+{c:"adj4", th:"贵", r:"guì", e:"expensive"},
+{c:"adj4", th:"便宜", r:"piányi", e:"cheap"},
+{c:"adj4", th:"快", r:"kuài", e:"fast"},
+{c:"adj4", th:"高", r:"gāo", e:"tall / high"},
+{c:"adj4", th:"矮", r:"ǎi", e:"short (in height)"},
+{c:"adj4", th:"长", r:"cháng", e:"long"},
+{c:"adj4", th:"短", r:"duǎn", e:"short (thing / length)"},
+/* --- World & life --- */
+{c:"world", th:"天气", r:"tiānqì", e:"weather"},
+{c:"world", th:"世界", r:"shìjiè", e:"world"},
+{c:"world", th:"文化", r:"wénhuà", e:"culture"},
+{c:"world", th:"生活", r:"shēnghuó", e:"life / daily living"},
+{c:"world", th:"地方", r:"dìfang", e:"place"},
+{c:"world", th:"事情", r:"shìqing", e:"matter / situation"},
+{c:"world", th:"意思", r:"yìsi", e:"idea / meaning"},
+{c:"world", th:"机会", r:"jīhuì", e:"opportunity / chance"},
+/* --- Food & drink --- */
+{c:"food3", th:"啤酒", r:"píjiǔ", e:"beer"},
+{c:"food3", th:"茶", r:"chá", e:"tea"},
+{c:"food3", th:"肉", r:"ròu", e:"meat"},
+{c:"food3", th:"鸡肉", r:"jīròu", e:"chicken meat"},
+{c:"food3", th:"汤", r:"tāng", e:"soup"},
+{c:"food3", th:"早饭", r:"zǎofàn", e:"breakfast"},
+{c:"food3", th:"午饭", r:"wǔfàn", e:"lunch"},
+{c:"food3", th:"晚饭", r:"wǎnfàn", e:"dinner"},
+{c:"food3", th:"面条", r:"miàntiáo", e:"noodles"},
+{c:"food3", th:"饺子", r:"jiǎozi", e:"dumplings"},
+{c:"food3", th:"鸡蛋", r:"jīdàn", e:"egg"},
+{c:"food3", th:"鱼", r:"yú", e:"fish"},
+{c:"food3", th:"牛肉", r:"niúròu", e:"beef"},
+{c:"food3", th:"猪肉", r:"zhūròu", e:"pork"},
+{c:"food3", th:"蔬菜", r:"shūcài", e:"vegetables"},
+{c:"food3", th:"面包", r:"miànbāo", e:"bread"},
+{c:"food3", th:"果汁", r:"guǒzhī", e:"fruit juice"},
+{c:"food3", th:"苹果", r:"píngguǒ", e:"apple"},
+{c:"food3", th:"虾", r:"xiā", e:"shrimp"},
+{c:"food3", th:"辣椒", r:"làjiāo", e:"chilli pepper"},
+{c:"food3", th:"甜点", r:"tiándiǎn", e:"sweet dessert"},
+{c:"food3", th:"豆腐", r:"dòufu", e:"tofu"},
+{c:"food3", th:"炒饭", r:"chǎofàn", e:"fried rice"},
+{c:"food3", th:"酱油", r:"jiàngyóu", e:"soy sauce"},
+{c:"food3", th:"盐", r:"yán", e:"salt"},
+{c:"food3", th:"糖", r:"táng", e:"candy / sugar"},
+{c:"food3", th:"可乐", r:"kělè", e:"cola"},
+{c:"food3", th:"矿泉水", r:"kuàngquánshuǐ", e:"mineral water"},
+{c:"food3", th:"海鲜", r:"hǎixiān", e:"seafood"},
+{c:"food3", th:"冰淇淋", r:"bīngqílín", e:"ice cream"},
+/* --- People & things --- */
+{c:"ppl3", th:"医生", r:"yīshēng", e:"doctor"},
+{c:"ppl3", th:"老师", r:"lǎoshī", e:"teacher"},
+{c:"ppl3", th:"书", r:"shū", e:"book"},
+{c:"ppl3", th:"鞋", r:"xié", e:"shoes"},
+{c:"ppl3", th:"眼镜", r:"yǎnjìng", e:"glasses"},
+];
+CATS.splice(CATS.length, 0, ...CATS3);
 
 /* --- 200 practice sentences, built ONLY from the sheet's vocabulary. lv: 1 easy, 2 medium, 3 hard --- */
 const SENTENCES = [
@@ -853,16 +977,225 @@ const SENTENCES2 = [
 ];
 const SENT_CARDS2 = SENTENCES2.map(s => ({cat:"s"+s.lv, th:s.th, rom:s.r, en:s.e, speakText:s.th, isSent:true, l:2}));
 
+/* --- LESSON 3 sentences: sheets 1+2+3 vocabulary only --- */
+const SENTENCES3 = [
+/* ===== LEVEL 1 — 60 ===== */
+{lv:1, th:"我有女朋友", r:"wǒ yǒu nǚpéngyou", e:"I have a girlfriend."},
+{lv:1, th:"你有男朋友吗", r:"nǐ yǒu nánpéngyou ma?", e:"Do you have a boyfriend?"},
+{lv:1, th:"这是我的公司", r:"zhè shì wǒ de gōngsī", e:"This is my company."},
+{lv:1, th:"我是老板", r:"wǒ shì lǎobǎn", e:"I'm the boss."},
+{lv:1, th:"我的公司很小", r:"wǒ de gōngsī hěn xiǎo", e:"My company is small."},
+{lv:1, th:"你的公司大吗", r:"nǐ de gōngsī dà ma?", e:"Is your company big?"},
+{lv:1, th:"我喝茶", r:"wǒ hē chá", e:"I drink tea."},
+{lv:1, th:"我喝啤酒", r:"wǒ hē píjiǔ", e:"I drink beer."},
+{lv:1, th:"你要可乐吗", r:"nǐ yào kělè ma?", e:"Do you want a cola?"},
+{lv:1, th:"我要矿泉水", r:"wǒ yào kuàngquánshuǐ", e:"I'd like mineral water."},
+{lv:1, th:"我吃面条", r:"wǒ chī miàntiáo", e:"I eat noodles."},
+{lv:1, th:"我喜欢饺子", r:"wǒ xǐhuān jiǎozi", e:"I love dumplings."},
+{lv:1, th:"饺子很好吃", r:"jiǎozi hěn hǎochī", e:"Dumplings are delicious."},
+{lv:1, th:"我不吃肉", r:"wǒ bù chī ròu", e:"I don't eat meat."},
+{lv:1, th:"我吃鸡肉", r:"wǒ chī jīròu", e:"I eat chicken."},
+{lv:1, th:"鱼很好吃", r:"yú hěn hǎochī", e:"The fish is great."},
+{lv:1, th:"我要炒饭", r:"wǒ yào chǎofàn", e:"I'd like fried rice."},
+{lv:1, th:"汤很热", r:"tāng hěn rè", e:"The soup is hot."},
+{lv:1, th:"我吃早饭了", r:"wǒ chī zǎofàn le", e:"I've had breakfast."},
+{lv:1, th:"你吃午饭了吗", r:"nǐ chī wǔfàn le ma?", e:"Have you had lunch?"},
+{lv:1, th:"我们去吃晚饭", r:"wǒmen qù chī wǎnfàn", e:"Let's go have dinner."},
+{lv:1, th:"苹果很贵", r:"píngguǒ hěn guì", e:"Apples are expensive."},
+{lv:1, th:"这个很便宜", r:"zhè ge hěn piányi", e:"This one is cheap."},
+{lv:1, th:"那个很贵", r:"nà ge hěn guì", e:"That one is expensive."},
+{lv:1, th:"我喜欢这个书", r:"wǒ xǐhuān zhè ge shū", e:"I like this book."},
+{lv:1, th:"我看书", r:"wǒ kàn shū", e:"I'm reading."},
+{lv:1, th:"老师很好", r:"lǎoshī hěn hǎo", e:"The teacher is nice."},
+{lv:1, th:"他是医生", r:"tā shì yīshēng", e:"He's a doctor."},
+{lv:1, th:"我需要医生", r:"wǒ xūyào yīshēng", e:"I need a doctor."},
+{lv:1, th:"我的鞋很小", r:"wǒ de xié hěn xiǎo", e:"My shoes are too small."},
+{lv:1, th:"你的眼镜好看", r:"nǐ de yǎnjìng hǎokàn", e:"Your glasses look good."},
+{lv:1, th:"我怕", r:"wǒ pà", e:"I'm afraid."},
+{lv:1, th:"不要怕", r:"búyào pà", e:"Don't be afraid."},
+{lv:1, th:"我同意", r:"wǒ tóngyì", e:"I agree."},
+{lv:1, th:"我不同意", r:"wǒ bù tóngyì", e:"I disagree."},
+{lv:1, th:"我希望你来", r:"wǒ xīwàng nǐ lái", e:"I hope you come."},
+{lv:1, th:"我记得你", r:"wǒ jìde nǐ", e:"I remember you."},
+{lv:1, th:"我忘了", r:"wǒ wàng le", e:"I forgot."},
+{lv:1, th:"我忘了他的名字", r:"wǒ wàng le tā de míngzi", e:"I forgot his name."},
+{lv:1, th:"很有意思", r:"hěn yǒuyìsi", e:"Very interesting."},
+{lv:1, th:"没有意思", r:"méiyǒu yìsi", e:"Boring."},
+{lv:1, th:"你呢", r:"nǐ ne?", e:"And you?"},
+{lv:1, th:"我呢", r:"wǒ ne?", e:"What about me?"},
+{lv:1, th:"我经常来", r:"wǒ jīngcháng lái", e:"I come here often."},
+{lv:1, th:"我从来不喝啤酒", r:"wǒ cónglái bù hē píjiǔ", e:"I never drink beer."},
+{lv:1, th:"最近工作很多", r:"zuìjìn gōngzuò hěn duō", e:"Lately there's a lot of work."},
+{lv:1, th:"我正在吃饭", r:"wǒ zhèngzài chī fàn", e:"I'm eating right now."},
+{lv:1, th:"我正在工作", r:"wǒ zhèngzài gōngzuò", e:"I'm working right now."},
+{lv:1, th:"你正在吃什么", r:"nǐ zhèngzài chī shénme?", e:"What are you eating right now?"},
+{lv:1, th:"这是我爸爸", r:"zhè shì wǒ bàba", e:"This is my dad."},
+{lv:1, th:"这是我妈妈", r:"zhè shì wǒ māma", e:"This is my mom."},
+{lv:1, th:"我的父母很好", r:"wǒ de fùmǔ hěn hǎo", e:"My parents are great."},
+{lv:1, th:"我的家庭很大", r:"wǒ de jiātíng hěn dà", e:"My family is big."},
+{lv:1, th:"音乐很好听", r:"yīnyuè hěn hǎotīng", e:"The music sounds great."},
+{lv:1, th:"我喜欢音乐", r:"wǒ xǐhuān yīnyuè", e:"I like music."},
+{lv:1, th:"我的爱好是旅行", r:"wǒ de àihào shì lǚxíng", e:"My hobby is traveling."},
+{lv:1, th:"我喜欢旅行", r:"wǒ xǐhuān lǚxíng", e:"I love traveling."},
+{lv:1, th:"我们去旅行吗", r:"wǒmen qù lǚxíng ma?", e:"Shall we go traveling?"},
+{lv:1, th:"生活很好", r:"shēnghuó hěn hǎo", e:"Life is good."},
+{lv:1, th:"网络很慢", r:"wǎngluò hěn màn", e:"The internet is slow."},
+/* ===== LEVEL 2 — 70 ===== */
+{lv:2, th:"你应该睡觉", r:"nǐ yīnggāi shuìjiào", e:"You should sleep."},
+{lv:2, th:"我应该学中文", r:"wǒ yīnggāi xué Zhōngwén", e:"I should study Chinese."},
+{lv:2, th:"你不应该喝很多啤酒", r:"nǐ bù yīnggāi hē hěn duō píjiǔ", e:"You shouldn't drink a lot of beer."},
+{lv:2, th:"我必须去工作", r:"wǒ bìxū qù gōngzuò", e:"I must go to work."},
+{lv:2, th:"我们必须现在走", r:"wǒmen bìxū xiànzài zǒu", e:"We have to leave now."},
+{lv:2, th:"你必须带护照", r:"nǐ bìxū dài hùzhào", e:"You must bring your passport."},
+{lv:2, th:"请带地图", r:"qǐng dài dìtú", e:"Please bring a map."},
+{lv:2, th:"我带了钱", r:"wǒ dài le qián", e:"I brought money."},
+{lv:2, th:"你选择哪个", r:"nǐ xuǎnzé nǎ ge?", e:"Which one do you choose?"},
+{lv:2, th:"请选择一个", r:"qǐng xuǎnzé yí ge", e:"Please pick one."},
+{lv:2, th:"你选择，我都可以", r:"nǐ xuǎnzé, wǒ dōu kěyǐ", e:"You choose — anything works for me."},
+{lv:2, th:"如果你去，我也去", r:"rúguǒ nǐ qù, wǒ yě qù", e:"If you go, I'll go too."},
+{lv:2, th:"如果很贵，我不买", r:"rúguǒ hěn guì, wǒ bù mǎi", e:"If it's expensive, I won't buy it."},
+{lv:2, th:"如果明天天气好，我们去看海", r:"rúguǒ míngtiān tiānqì hǎo, wǒmen qù kàn hǎi", e:"If the weather's good tomorrow, we'll go see the sea."},
+{lv:2, th:"你想喝茶还是咖啡", r:"nǐ xiǎng hē chá háishì kāfēi?", e:"Tea or coffee?"},
+{lv:2, th:"你要啤酒还是可乐", r:"nǐ yào píjiǔ háishì kělè?", e:"Beer or cola?"},
+{lv:2, th:"我要面条和饺子", r:"wǒ yào miàntiáo hé jiǎozi", e:"I'll have noodles and dumplings."},
+{lv:2, th:"我要牛肉，不要猪肉", r:"wǒ yào niúròu, búyào zhūròu", e:"Beef, not pork."},
+{lv:2, th:"你吃海鲜吗", r:"nǐ chī hǎixiān ma?", e:"Do you eat seafood?"},
+{lv:2, th:"我不吃辣椒", r:"wǒ bù chī làjiāo", e:"I don't eat chilli."},
+{lv:2, th:"请不要辣椒", r:"qǐng búyào làjiāo", e:"No chilli, please."},
+{lv:2, th:"这个菜有虾吗", r:"zhè ge cài yǒu xiā ma?", e:"Does this dish have shrimp?"},
+{lv:2, th:"有鸡蛋和蔬菜", r:"yǒu jīdàn hé shūcài", e:"It has egg and vegetables."},
+{lv:2, th:"我要一个甜点", r:"wǒ yào yí ge tiándiǎn", e:"I'd like a dessert."},
+{lv:2, th:"冰淇淋很好吃", r:"bīngqílín hěn hǎochī", e:"The ice cream is great."},
+{lv:2, th:"我要果汁，不要可乐", r:"wǒ yào guǒzhī, búyào kělè", e:"Juice, not cola."},
+{lv:2, th:"请给我酱油", r:"qǐng gěi wǒ jiàngyóu", e:"Soy sauce, please."},
+{lv:2, th:"请给我盐", r:"qǐng gěi wǒ yán", e:"Salt, please."},
+{lv:2, th:"我不吃糖", r:"wǒ bù chī táng", e:"I don't eat candy."},
+{lv:2, th:"豆腐很便宜，也很好吃", r:"dòufu hěn piányi, yě hěn hǎochī", e:"Tofu is cheap and tasty."},
+{lv:2, th:"哪里有面包", r:"nǎlǐ yǒu miànbāo?", e:"Where can I find bread?"},
+{lv:2, th:"早饭我喝果汁，吃面包", r:"zǎofàn wǒ hē guǒzhī, chī miànbāo", e:"For breakfast I have juice and bread."},
+{lv:2, th:"午饭我们吃炒饭", r:"wǔfàn wǒmen chī chǎofàn", e:"For lunch we're having fried rice."},
+{lv:2, th:"晚饭想吃什么", r:"wǎnfàn xiǎng chī shénme?", e:"What do you want for dinner?"},
+{lv:2, th:"这个地方很好", r:"zhè ge dìfang hěn hǎo", e:"This place is great."},
+{lv:2, th:"我喜欢这个地方", r:"wǒ xǐhuān zhè ge dìfang", e:"I like this place."},
+{lv:2, th:"你知道好地方吗", r:"nǐ zhīdao hǎo dìfang ma?", e:"Do you know a good place?"},
+{lv:2, th:"这个地方的海鲜最好", r:"zhè ge dìfang de hǎixiān zuì hǎo", e:"This place has the best seafood."},
+{lv:2, th:"世界很大", r:"shìjiè hěn dà", e:"The world is big."},
+{lv:2, th:"我想看世界", r:"wǒ xiǎng kàn shìjiè", e:"I want to see the world."},
+{lv:2, th:"中国文化很有意思", r:"Zhōngguó wénhuà hěn yǒuyìsi", e:"Chinese culture is really interesting."},
+{lv:2, th:"我喜欢这里的生活", r:"wǒ xǐhuān zhèlǐ de shēnghuó", e:"I like life here."},
+{lv:2, th:"我有很多事情", r:"wǒ yǒu hěn duō shìqing", e:"I have a lot going on."},
+{lv:2, th:"这是什么事情", r:"zhè shì shénme shìqing?", e:"What's the matter?"},
+{lv:2, th:"没有事情，没关系", r:"méiyǒu shìqing, méiguānxi", e:"Nothing's wrong — it's fine."},
+{lv:2, th:"什么意思", r:"shénme yìsi?", e:"What does it mean?"},
+{lv:2, th:"我不明白这个意思", r:"wǒ bù míngbai zhè ge yìsi", e:"I don't get the meaning."},
+{lv:2, th:"这是好机会", r:"zhè shì hǎo jīhuì", e:"This is a good opportunity."},
+{lv:2, th:"机会很多", r:"jīhuì hěn duō", e:"There are plenty of opportunities."},
+{lv:2, th:"我的房间很小", r:"wǒ de fángjiān hěn xiǎo", e:"My room is small."},
+{lv:2, th:"你的房间号码是多少", r:"nǐ de fángjiān hàomǎ shì duōshao?", e:"What's your room number?"},
+{lv:2, th:"房间里没有网络", r:"fángjiān lǐ méiyǒu wǎngluò", e:"There's no internet in the room."},
+{lv:2, th:"酒店的网络不工作", r:"jiǔdiàn de wǎngluò bù gōngzuò", e:"The hotel wifi doesn't work."},
+{lv:2, th:"银行在哪里", r:"yínháng zài nǎlǐ?", e:"Where is the bank?"},
+{lv:2, th:"银行什么时间开", r:"yínháng shénme shíjiān kāi?", e:"When does the bank open?"},
+{lv:2, th:"这是我的地址", r:"zhè shì wǒ de dìzhǐ", e:"This is my address."},
+{lv:2, th:"请写你的地址", r:"qǐng xiě nǐ de dìzhǐ", e:"Please write your address."},
+{lv:2, th:"我的老板很好", r:"wǒ de lǎobǎn hěn hǎo", e:"My boss is great."},
+{lv:2, th:"老板说不可以", r:"lǎobǎn shuō bù kěyǐ", e:"The boss says no."},
+{lv:2, th:"我们的客户很多", r:"wǒmen de kèhù hěn duō", e:"We have a lot of clients."},
+{lv:2, th:"客户是老板", r:"kèhù shì lǎobǎn", e:"The customer is the boss."},
+{lv:2, th:"我有一个会议", r:"wǒ yǒu yí ge huìyì", e:"I have a meeting."},
+{lv:2, th:"会议什么时间开始", r:"huìyì shénme shíjiān kāishǐ?", e:"When does the meeting start?"},
+{lv:2, th:"会议很长", r:"huìyì hěn cháng", e:"The meeting is long."},
+{lv:2, th:"这个项目很难", r:"zhè ge xiàngmù hěn nán", e:"This project is difficult."},
+{lv:2, th:"我们的项目开始了", r:"wǒmen de xiàngmù kāishǐ le", e:"Our project has started."},
+{lv:2, th:"我的公司在奥地利", r:"wǒ de gōngsī zài Àodìlì", e:"My company is in Austria."},
+{lv:2, th:"你的生意好吗", r:"nǐ de shēngyì hǎo ma?", e:"How's business?"},
+{lv:2, th:"生意很好，谢谢", r:"shēngyì hěn hǎo, xièxie", e:"Business is good, thanks."},
+{lv:2, th:"他很高，他的女朋友很矮", r:"tā hěn gāo, tā de nǚpéngyou hěn ǎi", e:"He's tall; his girlfriend is short."},
+/* ===== LEVEL 3 — 70 ===== */
+{lv:3, th:"如果你有时间，我们一起吃晚饭", r:"rúguǒ nǐ yǒu shíjiān, wǒmen yìqǐ chī wǎnfàn", e:"If you have time, let's have dinner together."},
+{lv:3, th:"如果便宜，我就买", r:"rúguǒ piányi, wǒ jiù mǎi", e:"If it's cheap, then I'll buy it."},
+{lv:3, th:"如果你不去，我也不去", r:"rúguǒ nǐ bú qù, wǒ yě bú qù", e:"If you don't go, I won't either."},
+{lv:3, th:"如果明天很热，我们就去海边", r:"rúguǒ míngtiān hěn rè, wǒmen jiù qù hǎibiān", e:"If it's hot tomorrow, we'll go to the seaside."},
+{lv:3, th:"我跟你一起去", r:"wǒ gēn nǐ yìqǐ qù", e:"I'll go together with you."},
+{lv:3, th:"你想跟谁去旅行", r:"nǐ xiǎng gēn shéi qù lǚxíng?", e:"Who do you want to travel with?"},
+{lv:3, th:"我跟我的女朋友一起住", r:"wǒ gēn wǒ de nǚpéngyou yìqǐ zhù", e:"I live with my girlfriend."},
+{lv:3, th:"他跟他的父母住在北京", r:"tā gēn tā de fùmǔ zhù zài Běijīng", e:"He lives with his parents in Beijing."},
+{lv:3, th:"我应该经常回家", r:"wǒ yīnggāi jīngcháng huí jiā", e:"I should go home more often."},
+{lv:3, th:"我经常想我的家庭", r:"wǒ jīngcháng xiǎng wǒ de jiātíng", e:"I often think of my family."},
+{lv:3, th:"我爸爸是企业家，我妈妈是老师", r:"wǒ bàba shì qǐyèjiā, wǒ māma shì lǎoshī", e:"My dad's an entrepreneur; my mom's a teacher."},
+{lv:3, th:"我的父母从来不喝啤酒", r:"wǒ de fùmǔ cónglái bù hē píjiǔ", e:"My parents never drink beer."},
+{lv:3, th:"你的爱好是什么？我的爱好是音乐和旅行", r:"nǐ de àihào shì shénme? wǒ de àihào shì yīnyuè hé lǚxíng", e:"What are your hobbies? Mine are music and travel."},
+{lv:3, th:"我喜欢听钢琴", r:"wǒ xǐhuān tīng gāngqín", e:"I like listening to piano."},
+{lv:3, th:"他的钢琴很贵，但是很好听", r:"tā de gāngqín hěn guì, dànshì hěn hǎotīng", e:"Her piano is expensive, but it sounds beautiful."},
+{lv:3, th:"我希望将来去很多地方旅行", r:"wǒ xīwàng jiānglái qù hěn duō dìfang lǚxíng", e:"I hope to travel to many places in the future."},
+{lv:3, th:"将来我想有大公司", r:"jiānglái wǒ xiǎng yǒu dà gōngsī", e:"In the future I want a big company."},
+{lv:3, th:"我最近很少睡觉，因为工作很多", r:"wǒ zuìjìn hěn shǎo shuìjiào, yīnwèi gōngzuò hěn duō", e:"Lately I barely sleep because of work."},
+{lv:3, th:"最近生意更好了", r:"zuìjìn shēngyì gèng hǎo le", e:"Business has gotten better lately."},
+{lv:3, th:"我正在会议里，请等十分钟", r:"wǒ zhèngzài huìyì lǐ, qǐng děng shí fēnzhōng", e:"I'm in a meeting — please wait ten minutes."},
+{lv:3, th:"老板正在跟客户说话", r:"lǎobǎn zhèngzài gēn kèhù shuōhuà", e:"The boss is talking with a client."},
+{lv:3, th:"我们的产品是人工智能", r:"wǒmen de chǎnpǐn shì réngōng zhìnéng", e:"Our product is AI."},
+{lv:3, th:"人工智能很牛逼，但是也很贵", r:"réngōng zhìnéng hěn niúbī, dànshì yě hěn guì", e:"AI is awesome, but it's also expensive."},
+{lv:3, th:"我的公司的产品用人工智能", r:"wǒ de gōngsī de chǎnpǐn yòng réngōng zhìnéng", e:"My company's product uses AI."},
+{lv:3, th:"现在的科技很牛逼", r:"xiànzài de kējì hěn niúbī", e:"Today's technology is badass."},
+{lv:3, th:"如果产品好，客户就来", r:"rúguǒ chǎnpǐn hǎo, kèhù jiù lái", e:"If the product is good, customers come."},
+{lv:3, th:"老板必须记得客户的名字", r:"lǎobǎn bìxū jìde kèhù de míngzi", e:"A boss must remember his clients' names."},
+{lv:3, th:"我忘了会议的时间，无语……", r:"wǒ wàng le huìyì de shíjiān, wúyǔ……", e:"I forgot the meeting time… speechless."},
+{lv:3, th:"你记得房间号码吗？我忘了", r:"nǐ jìde fángjiān hàomǎ ma? wǒ wàng le", e:"Remember the room number? I forgot."},
+{lv:3, th:"如果你忘了地址，问警察", r:"rúguǒ nǐ wàng le dìzhǐ, wèn jǐngchá", e:"If you forget the address, ask the police."},
+{lv:3, th:"我怕忘了，所以我写了", r:"wǒ pà wàng le, suǒyǐ wǒ xiě le", e:"I was afraid I'd forget, so I wrote it down."},
+{lv:3, th:"不要怕说中文，说错没关系", r:"búyào pà shuō Zhōngwén, shuō cuò méiguānxi", e:"Don't be afraid to speak Chinese — mistakes are fine."},
+{lv:3, th:"我同意你，这个项目有很好的机会", r:"wǒ tóngyì nǐ, zhè ge xiàngmù yǒu hěn hǎo de jīhuì", e:"I agree with you — this project has a great opportunity."},
+{lv:3, th:"老板不同意，但是我觉得他错了", r:"lǎobǎn bù tóngyì, dànshì wǒ juéde tā cuò le", e:"The boss disagrees, but I think he's wrong."},
+{lv:3, th:"你同意吗？如果不同意，请说", r:"nǐ tóngyì ma? rúguǒ bù tóngyì, qǐng shuō", e:"Do you agree? If not, say so."},
+{lv:3, th:"世界很大，我想看很多地方", r:"shìjiè hěn dà, wǒ xiǎng kàn hěn duō dìfang", e:"The world is big — I want to see many places."},
+{lv:3, th:"每个地方的文化都有意思", r:"měi ge dìfang de wénhuà dōu yǒuyìsi", e:"Every place's culture is interesting."},
+{lv:3, th:"我觉得中国的生活很有意思", r:"wǒ juéde Zhōngguó de shēnghuó hěn yǒuyìsi", e:"I find life in China really interesting."},
+{lv:3, th:"生活难，但是机会很多", r:"shēnghuó nán, dànshì jīhuì hěn duō", e:"Life is hard, but there are many opportunities."},
+{lv:3, th:"这是什么意思？请慢一点说", r:"zhè shì shénme yìsi? qǐng màn yìdiǎn shuō", e:"What does that mean? Please say it slower."},
+{lv:3, th:"你的意思是我们必须等吗", r:"nǐ de yìsi shì wǒmen bìxū děng ma?", e:"You mean we have to wait?"},
+{lv:3, th:"早饭我吃鸡蛋和面包，喝果汁", r:"zǎofàn wǒ chī jīdàn hé miànbāo, hē guǒzhī", e:"For breakfast I have eggs, bread and juice."},
+{lv:3, th:"午饭我们吃了面条，晚饭想吃饺子", r:"wǔfàn wǒmen chī le miàntiáo, wǎnfàn xiǎng chī jiǎozi", e:"Lunch was noodles; for dinner we want dumplings."},
+{lv:3, th:"我从来不吃猪肉，但是吃牛肉和鱼", r:"wǒ cónglái bù chī zhūròu, dànshì chī niúròu hé yú", e:"I never eat pork, but I eat beef and fish."},
+{lv:3, th:"这个汤有虾和豆腐", r:"zhè ge tāng yǒu xiā hé dòufu", e:"This soup has shrimp and tofu."},
+{lv:3, th:"如果不辣，我就吃", r:"rúguǒ bú là, wǒ jiù chī", e:"If it's not spicy, I'll eat it."},
+{lv:3, th:"中国菜和奥地利菜都好吃，但是中国菜更好", r:"Zhōngguó cài hé Àodìlì cài dōu hǎochī, dànshì Zhōngguó cài gèng hǎo", e:"Chinese and Austrian food are both good — but Chinese is better."},
+{lv:3, th:"海鲜很贵，但是这里的最便宜", r:"hǎixiān hěn guì, dànshì zhèlǐ de zuì piányi", e:"Seafood is pricey, but here it's the cheapest."},
+{lv:3, th:"苹果一个五块，很便宜", r:"píngguǒ yí ge wǔ kuài, hěn piányi", e:"Apples are five yuan each — cheap."},
+{lv:3, th:"可乐和果汁，哪个更好？我觉得矿泉水最好", r:"kělè hé guǒzhī, nǎ ge gèng hǎo? wǒ juéde kuàngquánshuǐ zuì hǎo", e:"Cola or juice — which is better? I think mineral water is best."},
+{lv:3, th:"冰淇淋和甜点，我都要", r:"bīngqílín hé tiándiǎn, wǒ dōu yào", e:"Ice cream and dessert — I'll take both."},
+{lv:3, th:"吃了很多糖，我觉得不舒服", r:"chī le hěn duō táng, wǒ juéde bù shūfu", e:"I ate too much candy and feel off."},
+{lv:3, th:"我的医生说：不要喝很多啤酒", r:"wǒ de yīshēng shuō: búyào hē hěn duō píjiǔ", e:"My doctor says: don't drink much beer."},
+{lv:3, th:"如果不舒服，你应该去看医生", r:"rúguǒ bù shūfu, nǐ yīnggāi qù kàn yīshēng", e:"If you feel unwell, you should see a doctor."},
+{lv:3, th:"老师教我们，医生帮我们", r:"lǎoshī jiāo wǒmen, yīshēng bāng wǒmen", e:"Teachers teach us; doctors help us."},
+{lv:3, th:"我的老师说我的中文更好了", r:"wǒ de lǎoshī shuō wǒ de Zhōngwén gèng hǎo le", e:"My teacher says my Chinese has improved."},
+{lv:3, th:"这个书很有意思，你应该看", r:"zhè ge shū hěn yǒuyìsi, nǐ yīnggāi kàn", e:"This book is interesting — you should read it."},
+{lv:3, th:"我每天晚上看书，然后睡觉", r:"wǒ měitiān wǎnshang kàn shū, ránhòu shuìjiào", e:"Every night I read, then sleep."},
+{lv:3, th:"我买了鞋和衣服", r:"wǒ mǎi le xié hé yīfu", e:"I bought shoes and clothes."},
+{lv:3, th:"没有眼镜，我不能看书", r:"méiyǒu yǎnjìng, wǒ bù néng kàn shū", e:"Without glasses I can't read."},
+{lv:3, th:"这个路很长", r:"zhè ge lù hěn cháng", e:"This road is long."},
+{lv:3, th:"我的头发很长，你的很短", r:"wǒ de tóufǎ hěn cháng, nǐ de hěn duǎn", e:"My hair is long; yours is short."},
+{lv:3, th:"网络很快，很牛逼", r:"wǎngluò hěn kuài, hěn niúbī", e:"The internet is fast — awesome."},
+{lv:3, th:"酒店的网络慢，咖啡店的快", r:"jiǔdiàn de wǎngluò màn, kāfēidiàn de kuài", e:"The hotel wifi is slow; the café's is fast."},
+{lv:3, th:"我必须去银行，然后去公司", r:"wǒ bìxū qù yínháng, ránhòu qù gōngsī", e:"I have to go to the bank, then to the office."},
+{lv:3, th:"银行旁边有咖啡店，我们在那里等", r:"yínháng pángbiān yǒu kāfēidiàn, wǒmen zài nàlǐ děng", e:"There's a café next to the bank — we'll wait there."},
+{lv:3, th:"请带你的护照去银行", r:"qǐng dài nǐ de hùzhào qù yínháng", e:"Bring your passport to the bank."},
+{lv:3, th:"如果你来奥地利，我带你去看山", r:"rúguǒ nǐ lái Àodìlì, wǒ dài nǐ qù kàn shān", e:"If you come to Austria, I'll take you to see the mountains."},
+{lv:3, th:"希望将来我们一起工作", r:"xīwàng jiānglái wǒmen yìqǐ gōngzuò", e:"I hope we work together in the future."},
+{lv:3, th:"今天天气很好，我们应该去外面", r:"jīntiān tiānqì hěn hǎo, wǒmen yīnggāi qù wàimiàn", e:"The weather is great today — we should go outside."},
+];
+const SENT_CARDS3 = SENTENCES3.map(s => ({cat:"s"+s.lv, th:s.th, rom:s.r, en:s.e, speakText:s.th, isSent:true, l:3}));
+
 /* Build unified card list */
 const ALL = [
   ...WORDS.map(w => ({cat:w.c, th:w.th, rom:w.r, en:w.e, speakText:w.th.replace(/ \/ /g, "，"), isPattern:false, l:1})),
   ...WORDS2.map(w => ({cat:w.c, th:w.th, rom:w.r, en:w.e, speakText:w.th.replace(/ \/ /g, "，"), isPattern:false, l:2})),
+  ...WORDS3.map(w => ({cat:w.c, th:w.th, rom:w.r, en:w.e, speakText:w.th.replace(/ \/ /g, "，"), isPattern:false, l:3})),
 ];
 
 /* ================= STATE ================= */
-let lesson = 2;             // 1 = sheet 1 only, 2 = both sheets
-const wordPool = () => lesson === 1 ? ALL.filter(c => c.l === 1) : ALL;
-const sentPool = () => lesson === 1 ? SENT_CARDS : [...SENT_CARDS, ...SENT_CARDS2];
+let lesson = 3;             // 1 / 2 / 3 = cumulative sheets
+const wordPool = () => ALL.filter(c => c.l <= lesson);
+const sentPool = () => [...SENT_CARDS, ...SENT_CARDS2, ...SENT_CARDS3].filter(c => c.l <= lesson);
 let dir = "en2th";          // en2th | th2en
 let mode = "vocab";         // vocab | sent
 let activeCat = "all";      // vocab category filter
@@ -908,7 +1241,7 @@ function buildDeck(){
   } else {
     const pool = wordPool();
     deck = activeCat === "all" ? [...pool]
-         : activeCat === "new" ? pool.filter(c => c.l === 2)
+         : activeCat === "new" ? pool.filter(c => c.l === lesson)
          : pool.filter(c => c.cat === activeCat);
   }
   if (shuffled){
@@ -1009,7 +1342,7 @@ function renderList(){
     for (const it of items){
       const line1 = it.isPattern
         ? `<span class="th">${it.en}</span>`
-        : `<span class="th">${it.th}</span> ${it.rom}${lesson === 2 && it.l === 2 ? " ★" : ""}`;
+        : `<span class="th">${it.th}</span> ${it.rom}${lesson >= 2 && it.l === lesson ? " ★" : ""}`;
       const line2 = it.isPattern
         ? `${it.rom} — e.g. ${it.ex.th} (${it.ex.r}) = ${it.ex.e}`
         : it.en;
@@ -1059,7 +1392,7 @@ function renderChips(){
   const mk = (id, name) =>
     `<button data-cat="${id}" class="${activeCat === id ? "on" : ""}">${name}</button>`;
   let chipsHtml = mk("all", "All (" + pool.length + ")");
-  if (lesson === 2) chipsHtml += mk("new", "★ New words (" + pool.filter(c => c.l === 2).length + ")");
+  if (lesson >= 2) chipsHtml += mk("new", "★ New words (" + pool.filter(c => c.l === lesson).length + ")");
   chipsHtml += CATS.filter(c => pool.some(w => w.cat === c.id)).map(c => mk(c.id, c.name)).join("");
   host.innerHTML = chipsHtml;
   host.querySelectorAll("button").forEach(b => b.onclick = () => {
@@ -1114,11 +1447,13 @@ function setTab(t){
 
 document.getElementById("les1").onclick = () => setLesson(1);
 document.getElementById("les2").onclick = () => setLesson(2);
+document.getElementById("les3").onclick = () => setLesson(3);
 function setLesson(n){
   if (n === lesson) return;
   lesson = n;
   document.getElementById("les1").classList.toggle("on", n === 1);
   document.getElementById("les2").classList.toggle("on", n === 2);
+  document.getElementById("les3").classList.toggle("on", n === 3);
   activeCat = "all"; activeLv = "all";
   renderChips();
   buildDeck();
