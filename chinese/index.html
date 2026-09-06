@@ -114,6 +114,11 @@
     </div>
   </header>
 
+  <div class="seg" id="lessonSeg" style="align-self:flex-start; margin-bottom:10px;">
+    <button id="les1">Lesson 1</button>
+    <button id="les2" class="on">Lesson 1+2</button>
+  </div>
+
   <div class="row2">
     <div class="tabs">
       <button id="tabCards" class="on">Cards</button>
@@ -326,6 +331,111 @@ const WORDS = [
 /* No separate pattern cards — this deck is exactly the sheet's words */
 const PATTERNS = [];
 
+/* --- LESSON 2: sheet 2 vocabulary --- */
+const CATS2 = [
+  {id:"conn2",  name:"Connectors"},
+  {id:"gram",   name:"Grammar bits"},
+  {id:"amount", name:"Amounts & money"},
+  {id:"pos",    name:"Position & sides"},
+  {id:"verb2",  name:"More verbs"},
+  {id:"expr",   name:"Yes, no & slang"},
+  {id:"stuff",  name:"Travel things"},
+];
+
+const WORDS2 = [
+/* --- Connectors --- */
+{c:"conn2", th:"和", r:"hé", e:"and"},
+{c:"conn2", th:"但是", r:"dànshì", e:"but"},
+{c:"conn2", th:"因为", r:"yīnwèi", e:"because"},
+{c:"conn2", th:"所以", r:"suǒyǐ", e:"therefore / so"},
+{c:"conn2", th:"然后", r:"ránhòu", e:"then / afterwards"},
+{c:"conn2", th:"还是", r:"háishì", e:"or (in a question)"},
+/* --- Grammar bits --- */
+{c:"gram", th:"了", r:"le", e:"marks completion or a changed situation"},
+{c:"gram", th:"从", r:"cóng", e:"from"},
+{c:"gram", th:"到", r:"dào", e:"to / arrive at"},
+{c:"gram", th:"过", r:"guò", e:"cross / pass / over"},
+{c:"gram", th:"不要", r:"búyào", e:"don't / must not"},
+{c:"gram", th:"个", r:"gè", e:"general counting word"},
+{c:"gram", th:"种", r:"zhǒng", e:"kind / type"},
+{c:"gram", th:"很", r:"hěn", e:"very"},
+{c:"gram", th:"已经", r:"yǐjīng", e:"already"},
+{c:"gram", th:"也", r:"yě", e:"also"},
+{c:"gram", th:"都", r:"dōu", e:"all / both"},
+{c:"gram", th:"只", r:"zhǐ", e:"only"},
+{c:"gram", th:"每", r:"měi", e:"every"},
+{c:"gram", th:"给", r:"gěi", e:"give / to"},
+{c:"gram", th:"用", r:"yòng", e:"use"},
+/* --- Amounts & money --- */
+{c:"amount", th:"块", r:"kuài", e:"yuan (money)"},
+{c:"amount", th:"多", r:"duō", e:"many / much"},
+{c:"amount", th:"很多", r:"hěn duō", e:"many / a lot"},
+{c:"amount", th:"一点", r:"yìdiǎn", e:"a little"},
+{c:"amount", th:"慢", r:"màn", e:"slow"},
+{c:"amount", th:"慢一点", r:"màn yìdiǎn", e:"a little slower"},
+{c:"amount", th:"分钟", r:"fēnzhōng", e:"minute"},
+{c:"amount", th:"号码", r:"hàomǎ", e:"number (telephone)"},
+{c:"amount", th:"一遍", r:"yí biàn", e:"one time / once"},
+{c:"amount", th:"一起", r:"yìqǐ", e:"together"},
+/* --- Position & sides --- */
+{c:"pos", th:"里", r:"lǐ", e:"inside"},
+{c:"pos", th:"上", r:"shàng", e:"on / above"},
+{c:"pos", th:"外面", r:"wàimiàn", e:"outside"},
+{c:"pos", th:"旁边", r:"pángbiān", e:"beside"},
+{c:"pos", th:"边", r:"biān", e:"side"},
+{c:"pos", th:"左边", r:"zuǒbiān", e:"left side"},
+{c:"pos", th:"右边", r:"yòubiān", e:"right side"},
+{c:"pos", th:"方", r:"fāng", e:"direction"},
+/* --- More verbs --- */
+{c:"verb2", th:"喝", r:"hē", e:"drink"},
+{c:"verb2", th:"看", r:"kàn", e:"look / watch"},
+{c:"verb2", th:"听", r:"tīng", e:"listen / hear"},
+{c:"verb2", th:"写", r:"xiě", e:"write"},
+{c:"verb2", th:"觉得", r:"juéde", e:"think / feel"},
+{c:"verb2", th:"认识", r:"rènshi", e:"meet / know somebody"},
+{c:"verb2", th:"问", r:"wèn", e:"ask"},
+{c:"verb2", th:"回答", r:"huídá", e:"answer"},
+{c:"verb2", th:"住", r:"zhù", e:"live / stay"},
+{c:"verb2", th:"睡觉", r:"shuìjiào", e:"sleep"},
+{c:"verb2", th:"学", r:"xué", e:"learn / study"},
+{c:"verb2", th:"教", r:"jiāo", e:"teach"},
+{c:"verb2", th:"回", r:"huí", e:"return"},
+{c:"verb2", th:"走", r:"zǒu", e:"walk / go"},
+{c:"verb2", th:"直走", r:"zhí zǒu", e:"go straight"},
+{c:"verb2", th:"开车", r:"kāi chē", e:"drive a car"},
+{c:"verb2", th:"飞过", r:"fēi guò", e:"fly over"},
+{c:"verb2", th:"吃饭", r:"chī fàn", e:"eat a meal"},
+{c:"verb2", th:"知道", r:"zhīdao", e:"know"},
+/* --- Yes, no & slang --- */
+{c:"expr", th:"对", r:"duì", e:"correct / yes"},
+{c:"expr", th:"对吗", r:"duì ma?", e:"correct?"},
+{c:"expr", th:"错", r:"cuò", e:"wrong / mistake"},
+{c:"expr", th:"舒服", r:"shūfu", e:"comfortable / well"},
+{c:"expr", th:"牛逼", r:"niúbī", e:"awesome / badass (slang)"},
+{c:"expr", th:"无语", r:"wúyǔ", e:"seriously? / speechless (slang)"},
+{c:"expr", th:"绝了", r:"jué le", e:"insane / amazing (slang)"},
+{c:"expr", th:"更好", r:"gèng hǎo", e:"better"},
+{c:"expr", th:"最好", r:"zuì hǎo", e:"best"},
+{c:"expr", th:"当然", r:"dāngrán", e:"of course!"},
+/* --- Travel things --- */
+{c:"stuff", th:"衣服", r:"yīfu", e:"clothes"},
+{c:"stuff", th:"名字", r:"míngzi", e:"name"},
+{c:"stuff", th:"菜", r:"cài", e:"dish / cooked food"},
+{c:"stuff", th:"票", r:"piào", e:"ticket"},
+{c:"stuff", th:"门", r:"mén", e:"door"},
+{c:"stuff", th:"地图", r:"dìtú", e:"map"},
+{c:"stuff", th:"护照", r:"hùzhào", e:"passport"},
+{c:"stuff", th:"钥匙", r:"yàoshi", e:"key"},
+/* --- into existing categories --- */
+{c:"town", th:"城市", r:"chéngshì", e:"city"},
+{c:"polite", th:"中文", r:"Zhōngwén", e:"Chinese language"},
+{c:"time", th:"昨天", r:"zuótiān", e:"yesterday"},
+{c:"time", th:"早上", r:"zǎoshang", e:"morning"},
+{c:"time", th:"晚上", r:"wǎnshang", e:"evening / night"},
+{c:"time", th:"每天", r:"měitiān", e:"every day"},
+];
+CATS.splice(CATS.length, 0, ...CATS2);
+
 /* --- 200 practice sentences, built ONLY from the sheet's vocabulary. lv: 1 easy, 2 medium, 3 hard --- */
 const SENTENCES = [
 /* ===== LEVEL 1 — 60 short ones ===== */
@@ -532,16 +642,227 @@ const SENTENCES = [
 {lv:3, th:"铁路在河的东", r:"tiělù zài hé de dōng", e:"The railway is east of the river."},
 {lv:3, th:"飞机能飞，人不能飞", r:"fēijī néng fēi, rén bù néng fēi", e:"Planes can fly; people can't."},
 ];
-const SENT_CARDS = SENTENCES.map(s => ({cat:"s"+s.lv, th:s.th, rom:s.r, en:s.e, speakText:s.th, isSent:true}));
+const SENT_CARDS = SENTENCES.map(s => ({cat:"s"+s.lv, th:s.th, rom:s.r, en:s.e, speakText:s.th, isSent:true, l:1}));
 const LV_NAMES = {s1:"Level 1 · Easy", s2:"Level 2 · Medium", s3:"Level 3 · Hard"};
+
+/* --- LESSON 2 sentences: use sheet 1 + sheet 2 vocabulary only --- */
+const SENTENCES2 = [
+/* ===== LEVEL 1 — 60 ===== */
+{lv:1, th:"我很开心", r:"wǒ hěn kāixīn", e:"I'm very happy."},
+{lv:1, th:"你很好看", r:"nǐ hěn hǎokàn", e:"You look great."},
+{lv:1, th:"这个很好吃", r:"zhè ge hěn hǎochī", e:"This is delicious."},
+{lv:1, th:"那个多少钱", r:"nà ge duōshao qián?", e:"How much is that one?"},
+{lv:1, th:"这个三十块", r:"zhè ge sānshí kuài", e:"This one is 30 yuan."},
+{lv:1, th:"我吃了", r:"wǒ chī le", e:"I've eaten."},
+{lv:1, th:"我吃饭了", r:"wǒ chī fàn le", e:"I've had my meal."},
+{lv:1, th:"你吃了吗", r:"nǐ chī le ma?", e:"Have you eaten?"},
+{lv:1, th:"我喝热水", r:"wǒ hē rèshuǐ", e:"I drink hot water."},
+{lv:1, th:"你喝什么", r:"nǐ hē shénme?", e:"What are you drinking?"},
+{lv:1, th:"我看电视", r:"wǒ kàn diànshì", e:"I watch TV."},
+{lv:1, th:"我在听", r:"wǒ zài tīng", e:"I'm listening."},
+{lv:1, th:"请写", r:"qǐng xiě", e:"Please write it."},
+{lv:1, th:"你写什么", r:"nǐ xiě shénme?", e:"What are you writing?"},
+{lv:1, th:"我觉得很好", r:"wǒ juéde hěn hǎo", e:"I think it's very good."},
+{lv:1, th:"你觉得好吗", r:"nǐ juéde hǎo ma?", e:"Do you think it's good?"},
+{lv:1, th:"认识你很开心", r:"rènshi nǐ hěn kāixīn", e:"Nice to meet you."},
+{lv:1, th:"你的名字是什么", r:"nǐ de míngzi shì shénme?", e:"What's your name?"},
+{lv:1, th:"这是我的名字", r:"zhè shì wǒ de míngzi", e:"This is my name."},
+{lv:1, th:"请问", r:"qǐng wèn", e:"Excuse me… (lit. please may I ask)"},
+{lv:1, th:"我问，你回答", r:"wǒ wèn, nǐ huídá", e:"I ask, you answer."},
+{lv:1, th:"我住在酒店", r:"wǒ zhù zài jiǔdiàn", e:"I'm staying at the hotel."},
+{lv:1, th:"你住在哪里", r:"nǐ zhù zài nǎlǐ?", e:"Where do you live?"},
+{lv:1, th:"我要睡觉", r:"wǒ yào shuìjiào", e:"I want to sleep."},
+{lv:1, th:"你睡了吗", r:"nǐ shuì le ma?", e:"Are you asleep yet?"},
+{lv:1, th:"我学中文", r:"wǒ xué Zhōngwén", e:"I'm learning Chinese."},
+{lv:1, th:"你教我，好吗", r:"nǐ jiāo wǒ, hǎo ma?", e:"Teach me, okay?"},
+{lv:1, th:"我已经吃了", r:"wǒ yǐjīng chī le", e:"I've already eaten."},
+{lv:1, th:"我也去", r:"wǒ yě qù", e:"I'll go too."},
+{lv:1, th:"我们都去", r:"wǒmen dōu qù", e:"We're all going."},
+{lv:1, th:"只有一个", r:"zhǐ yǒu yí ge", e:"There's only one."},
+{lv:1, th:"我每天工作", r:"wǒ měitiān gōngzuò", e:"I work every day."},
+{lv:1, th:"早上好", r:"zǎoshang hǎo", e:"Good morning!"},
+{lv:1, th:"晚上好", r:"wǎnshang hǎo", e:"Good evening!"},
+{lv:1, th:"晚上我看电视", r:"wǎnshang wǒ kàn diànshì", e:"In the evening I watch TV."},
+{lv:1, th:"昨天我去了北京", r:"zuótiān wǒ qù le Běijīng", e:"Yesterday I went to Beijing."},
+{lv:1, th:"对，你是对的", r:"duì, nǐ shì duì de", e:"Yes — you're right."},
+{lv:1, th:"不对，错了", r:"bú duì, cuò le", e:"No — that's wrong."},
+{lv:1, th:"对吗", r:"duì ma?", e:"Right?"},
+{lv:1, th:"我很舒服", r:"wǒ hěn shūfu", e:"I feel great."},
+{lv:1, th:"我不舒服", r:"wǒ bù shūfu", e:"I don't feel well."},
+{lv:1, th:"牛逼", r:"niúbī!", e:"Awesome! (slang)"},
+{lv:1, th:"绝了", r:"jué le!", e:"Insane / amazing! (slang)"},
+{lv:1, th:"无语", r:"wúyǔ……", e:"Speechless… (slang)"},
+{lv:1, th:"当然", r:"dāngrán!", e:"Of course!"},
+{lv:1, th:"当然可以", r:"dāngrán kěyǐ", e:"Of course you can."},
+{lv:1, th:"这个更好", r:"zhè ge gèng hǎo", e:"This one is better."},
+{lv:1, th:"那个最好", r:"nà ge zuì hǎo", e:"That one is the best."},
+{lv:1, th:"门开了", r:"mén kāi le", e:"The door is open."},
+{lv:1, th:"请关门", r:"qǐng guān mén", e:"Please close the door."},
+{lv:1, th:"我的钥匙在哪里", r:"wǒ de yàoshi zài nǎlǐ?", e:"Where is my key?"},
+{lv:1, th:"这是我的护照", r:"zhè shì wǒ de hùzhào", e:"This is my passport."},
+{lv:1, th:"我需要地图", r:"wǒ xūyào dìtú", e:"I need a map."},
+{lv:1, th:"我有票", r:"wǒ yǒu piào", e:"I have a ticket."},
+{lv:1, th:"我买了票", r:"wǒ mǎi le piào", e:"I bought a ticket."},
+{lv:1, th:"一起去吗", r:"yìqǐ qù ma?", e:"Shall we go together?"},
+{lv:1, th:"我们一起吃饭", r:"wǒmen yìqǐ chī fàn", e:"We eat together."},
+{lv:1, th:"请说一遍", r:"qǐng shuō yí biàn", e:"Please say it once (again)."},
+{lv:1, th:"请慢一点说", r:"qǐng màn yìdiǎn shuō", e:"Please speak a little slower."},
+{lv:1, th:"我们走", r:"wǒmen zǒu", e:"Let's go."},
+/* ===== LEVEL 2 — 70 ===== */
+{lv:2, th:"我从奥地利来", r:"wǒ cóng Àodìlì lái", e:"I come from Austria."},
+{lv:2, th:"你从哪里来", r:"nǐ cóng nǎlǐ lái?", e:"Where are you from?"},
+{lv:2, th:"我们从酒店走到火车站", r:"wǒmen cóng jiǔdiàn zǒu dào huǒchēzhàn", e:"We walk from the hotel to the train station."},
+{lv:2, th:"到了", r:"dào le", e:"We've arrived."},
+{lv:2, th:"我们什么时间到", r:"wǒmen shénme shíjiān dào?", e:"When do we arrive?"},
+{lv:2, th:"直走，然后在左边", r:"zhí zǒu, ránhòu zài zuǒbiān", e:"Go straight, then it's on the left."},
+{lv:2, th:"饭店在右边", r:"fàndiàn zài yòubiān", e:"The restaurant is on the right."},
+{lv:2, th:"厕所在左边", r:"cèsuǒ zài zuǒbiān", e:"The toilet is on the left."},
+{lv:2, th:"酒店在饭店的旁边", r:"jiǔdiàn zài fàndiàn de pángbiān", e:"The hotel is beside the restaurant."},
+{lv:2, th:"药店在医院旁边", r:"yàodiàn zài yīyuàn pángbiān", e:"The pharmacy is next to the hospital."},
+{lv:2, th:"车在外面", r:"chē zài wàimiàn", e:"The car is outside."},
+{lv:2, th:"他在外面等你", r:"tā zài wàimiàn děng nǐ", e:"He's waiting for you outside."},
+{lv:2, th:"我在里面", r:"wǒ zài lǐmiàn", e:"I'm inside."},
+{lv:2, th:"手机在车里", r:"shǒujī zài chē lǐ", e:"The phone is in the car."},
+{lv:2, th:"钥匙在门上", r:"yàoshi zài mén shàng", e:"The key is in the door."},
+{lv:2, th:"地图在手机里", r:"dìtú zài shǒujī lǐ", e:"The map is on my phone."},
+{lv:2, th:"我用手机买票", r:"wǒ yòng shǒujī mǎi piào", e:"I buy tickets with my phone."},
+{lv:2, th:"我能用你的手机吗", r:"wǒ néng yòng nǐ de shǒujī ma?", e:"Can I use your phone?"},
+{lv:2, th:"请给我菜单", r:"qǐng gěi wǒ càidān", e:"Please give me the menu."},
+{lv:2, th:"请给我热水", r:"qǐng gěi wǒ rèshuǐ", e:"Please give me hot water."},
+{lv:2, th:"给你", r:"gěi nǐ", e:"Here you go."},
+{lv:2, th:"我给你我的号码", r:"wǒ gěi nǐ wǒ de hàomǎ", e:"I'll give you my number."},
+{lv:2, th:"你的电话号码是多少", r:"nǐ de diànhuà hàomǎ shì duōshao?", e:"What's your phone number?"},
+{lv:2, th:"我的号码是一二三四五", r:"wǒ de hàomǎ shì yī èr sān sì wǔ", e:"My number is 1-2-3-4-5."},
+{lv:2, th:"出租车五分钟到", r:"chūzūchē wǔ fēnzhōng dào", e:"The taxi arrives in five minutes."},
+{lv:2, th:"请等十分钟", r:"qǐng děng shí fēnzhōng", e:"Please wait ten minutes."},
+{lv:2, th:"火车十分钟到", r:"huǒchē shí fēnzhōng dào", e:"The train arrives in ten minutes."},
+{lv:2, th:"我要这种", r:"wǒ yào zhè zhǒng", e:"I want this kind."},
+{lv:2, th:"你要哪种", r:"nǐ yào nǎ zhǒng?", e:"Which kind do you want?"},
+{lv:2, th:"这种水果很好吃", r:"zhè zhǒng shuǐguǒ hěn hǎochī", e:"This kind of fruit is delicious."},
+{lv:2, th:"这个五十块", r:"zhè ge wǔshí kuài", e:"This is 50 yuan."},
+{lv:2, th:"一千块？很多钱", r:"yìqiān kuài? hěn duō qián!", e:"1000 yuan? That's a lot of money!"},
+{lv:2, th:"这里有很多人", r:"zhèlǐ yǒu hěn duō rén", e:"There are many people here."},
+{lv:2, th:"北京有很多外国人", r:"Běijīng yǒu hěn duō wàiguórén", e:"Beijing has many foreigners."},
+{lv:2, th:"我有很多朋友", r:"wǒ yǒu hěn duō péngyǒu", e:"I have many friends."},
+{lv:2, th:"菜很好吃", r:"cài hěn hǎochī", e:"The food is delicious."},
+{lv:2, th:"你想吃什么菜", r:"nǐ xiǎng chī shénme cài?", e:"What dish do you want?"},
+{lv:2, th:"这个菜很热", r:"zhè ge cài hěn rè", e:"This dish is very hot."},
+{lv:2, th:"我们点菜，好吗", r:"wǒmen diǎn cài, hǎo ma?", e:"Shall we order?"},
+{lv:2, th:"我的衣服在洗衣机里", r:"wǒ de yīfu zài xǐyījī lǐ", e:"My clothes are in the washing machine."},
+{lv:2, th:"我要洗衣服", r:"wǒ yào xǐ yīfu", e:"I need to wash clothes."},
+{lv:2, th:"这个衣服好看", r:"zhè ge yīfu hǎokàn", e:"This clothing looks good."},
+{lv:2, th:"你的衣服很好看", r:"nǐ de yīfu hěn hǎokàn", e:"Your clothes look great."},
+{lv:2, th:"这个城市很好", r:"zhè ge chéngshì hěn hǎo", e:"This city is nice."},
+{lv:2, th:"你喜欢这个城市吗", r:"nǐ xǐhuān zhè ge chéngshì ma?", e:"Do you like this city?"},
+{lv:2, th:"北京是很好的城市", r:"Běijīng shì hěn hǎo de chéngshì", e:"Beijing is a great city."},
+{lv:2, th:"你是从哪个城市来的", r:"nǐ shì cóng nǎ ge chéngshì lái de?", e:"Which city are you from?"},
+{lv:2, th:"我昨天到了", r:"wǒ zuótiān dào le", e:"I arrived yesterday."},
+{lv:2, th:"昨天晚上我没有睡觉", r:"zuótiān wǎnshang wǒ méiyǒu shuìjiào", e:"Last night I didn't sleep."},
+{lv:2, th:"早上我喝咖啡", r:"zǎoshang wǒ hē kāfēi", e:"In the morning I drink coffee."},
+{lv:2, th:"晚上你想吃什么", r:"wǎnshang nǐ xiǎng chī shénme?", e:"What do you want to eat tonight?"},
+{lv:2, th:"我每天学中文", r:"wǒ měitiān xué Zhōngwén", e:"I study Chinese every day."},
+{lv:2, th:"我每天走路去工作", r:"wǒ měitiān zǒu lù qù gōngzuò", e:"I walk to work every day."},
+{lv:2, th:"你每天什么时间睡觉", r:"nǐ měitiān shénme shíjiān shuìjiào?", e:"What time do you go to sleep every day?"},
+{lv:2, th:"我知道了", r:"wǒ zhīdao le", e:"Got it."},
+{lv:2, th:"我不知道他的名字", r:"wǒ bù zhīdao tā de míngzi", e:"I don't know his name."},
+{lv:2, th:"你认识他吗", r:"nǐ rènshi tā ma?", e:"Do you know him?"},
+{lv:2, th:"我认识很多中国人", r:"wǒ rènshi hěn duō zhōngguórén", e:"I know a lot of Chinese people."},
+{lv:2, th:"我觉得中文很难", r:"wǒ juéde Zhōngwén hěn nán", e:"I think Chinese is really hard."},
+{lv:2, th:"我觉得这个更好", r:"wǒ juéde zhè ge gèng hǎo", e:"I think this one is better."},
+{lv:2, th:"你觉得哪个最好", r:"nǐ juéde nǎ ge zuì hǎo?", e:"Which one do you think is best?"},
+{lv:2, th:"请问，火车站在哪里", r:"qǐng wèn, huǒchēzhàn zài nǎlǐ?", e:"Excuse me, where is the train station?"},
+{lv:2, th:"请问，这是什么菜", r:"qǐng wèn, zhè shì shénme cài?", e:"Excuse me, what dish is this?"},
+{lv:2, th:"他问了，我回答了", r:"tā wèn le, wǒ huídá le", e:"He asked, and I answered."},
+{lv:2, th:"请慢走", r:"qǐng màn zǒu", e:"Take care! (lit. walk slowly)"},
+{lv:2, th:"我们走过去", r:"wǒmen zǒu guò qù", e:"We'll walk over there."},
+{lv:2, th:"飞机飞过山", r:"fēijī fēi guò shān", e:"The plane flies over the mountains."},
+{lv:2, th:"我们过了河", r:"wǒmen guò le hé", e:"We crossed the river."},
+{lv:2, th:"从这里到飞机场，三十分钟", r:"cóng zhèlǐ dào fēijīchǎng, sānshí fēnzhōng", e:"From here to the airport — 30 minutes."},
+{lv:2, th:"我们走到海边", r:"wǒmen zǒu dào hǎibiān", e:"We walk to the seaside."},
+/* ===== LEVEL 3 — 70 ===== */
+{lv:3, th:"因为今天工作结束了，所以我们去吃火锅", r:"yīnwèi jīntiān gōngzuò jiéshù le, suǒyǐ wǒmen qù chī huǒguō", e:"Work is done today, so we're going for hotpot."},
+{lv:3, th:"我想去，但是没有时间", r:"wǒ xiǎng qù, dànshì méiyǒu shíjiān", e:"I want to go, but I don't have time."},
+{lv:3, th:"我喜欢这个城市，但是人很多", r:"wǒ xǐhuān zhè ge chéngshì, dànshì rén hěn duō", e:"I like this city, but it's very crowded."},
+{lv:3, th:"你要这个还是那个", r:"nǐ yào zhè ge háishì nà ge?", e:"Do you want this one or that one?"},
+{lv:3, th:"你喝热水还是咖啡", r:"nǐ hē rèshuǐ háishì kāfēi?", e:"Hot water or coffee?"},
+{lv:3, th:"我们今天去还是明天去", r:"wǒmen jīntiān qù háishì míngtiān qù?", e:"Do we go today or tomorrow?"},
+{lv:3, th:"我们吃饭，然后去看海", r:"wǒmen chī fàn, ránhòu qù kàn hǎi", e:"We eat, then go see the sea."},
+{lv:3, th:"我早上工作，然后学中文", r:"wǒ zǎoshang gōngzuò, ránhòu xué Zhōngwén", e:"I work in the morning, then study Chinese."},
+{lv:3, th:"我们直走，然后过河", r:"wǒmen zhí zǒu, ránhòu guò hé", e:"We go straight, then cross the river."},
+{lv:3, th:"因为出租车不来，所以我们走", r:"yīnwèi chūzūchē bù lái, suǒyǐ wǒmen zǒu", e:"The taxi isn't coming, so we walk."},
+{lv:3, th:"因为我不明白，所以我问你", r:"yīnwèi wǒ bù míngbai, suǒyǐ wǒ wèn nǐ", e:"I don't understand, so I'm asking you."},
+{lv:3, th:"因为很好吃，所以我吃了很多", r:"yīnwèi hěn hǎochī, suǒyǐ wǒ chī le hěn duō", e:"It was so tasty that I ate a lot."},
+{lv:3, th:"我每天学一点中文", r:"wǒ měitiān xué yìdiǎn Zhōngwén", e:"I learn a little Chinese every day."},
+{lv:3, th:"我已经买了票，你买了吗", r:"wǒ yǐjīng mǎi le piào, nǐ mǎi le ma?", e:"I already bought a ticket — did you?"},
+{lv:3, th:"我们已经到了酒店", r:"wǒmen yǐjīng dào le jiǔdiàn", e:"We've already arrived at the hotel."},
+{lv:3, th:"他已经回家了", r:"tā yǐjīng huí jiā le", e:"He's already gone home."},
+{lv:3, th:"我明天回奥地利", r:"wǒ míngtiān huí Àodìlì", e:"I return to Austria tomorrow."},
+{lv:3, th:"你什么时间回来", r:"nǐ shénme shíjiān huí lái?", e:"When are you coming back?"},
+{lv:3, th:"我们晚上回酒店", r:"wǒmen wǎnshang huí jiǔdiàn", e:"We go back to the hotel in the evening."},
+{lv:3, th:"请给我你的护照", r:"qǐng gěi wǒ nǐ de hùzhào", e:"Your passport, please."},
+{lv:3, th:"我的护照在酒店里，钥匙也在", r:"wǒ de hùzhào zài jiǔdiàn lǐ, yàoshi yě zài", e:"My passport is at the hotel — the key too."},
+{lv:3, th:"我的钥匙不在，我不能进门", r:"wǒ de yàoshi bú zài, wǒ bù néng jìn mén", e:"My key is gone — I can't get in."},
+{lv:3, th:"门关了，我没有钥匙", r:"mén guān le, wǒ méiyǒu yàoshi", e:"The door is locked and I have no key."},
+{lv:3, th:"你有地图吗？我想看地图", r:"nǐ yǒu dìtú ma? wǒ xiǎng kàn dìtú", e:"Do you have a map? I'd like to look at it."},
+{lv:3, th:"我用手机看地图", r:"wǒ yòng shǒujī kàn dìtú", e:"I use my phone to check the map."},
+{lv:3, th:"请写你的名字和号码", r:"qǐng xiě nǐ de míngzi hé hàomǎ", e:"Please write your name and number."},
+{lv:3, th:"我写了我的名字，对吗", r:"wǒ xiě le wǒ de míngzi, duì ma?", e:"I wrote my name — is that right?"},
+{lv:3, th:"这是错的，请写一遍", r:"zhè shì cuò de, qǐng xiě yí biàn", e:"This is wrong — please write it once more."},
+{lv:3, th:"你觉得这个菜好吃吗？我觉得牛逼", r:"nǐ juéde zhè ge cài hǎochī ma? wǒ juéde niúbī!", e:"Think this dish is good? I think it's awesome!"},
+{lv:3, th:"一千块一个？无语……", r:"yìqiān kuài yí ge? wúyǔ……", e:"1000 yuan for one? Speechless…"},
+{lv:3, th:"这个火锅绝了", r:"zhè ge huǒguō jué le!", e:"This hotpot is insanely good!"},
+{lv:3, th:"我们昨天认识了一个企业家", r:"wǒmen zuótiān rènshi le yí ge qǐyèjiā", e:"Yesterday we met an entrepreneur."},
+{lv:3, th:"他教我中文，我教他英文", r:"tā jiāo wǒ Zhōngwén, wǒ jiāo tā Yīngwén", e:"He teaches me Chinese; I teach him English."},
+{lv:3, th:"谁教你中文", r:"shéi jiāo nǐ Zhōngwén?", e:"Who teaches you Chinese?"},
+{lv:3, th:"我想学开车，你能教我吗", r:"wǒ xiǎng xué kāi chē, nǐ néng jiāo wǒ ma?", e:"I want to learn to drive — can you teach me?"},
+{lv:3, th:"我学了三天中文", r:"wǒ xué le sān tiān Zhōngwén", e:"I've studied Chinese for three days."},
+{lv:3, th:"你住在哪个酒店", r:"nǐ zhù zài nǎ ge jiǔdiàn?", e:"Which hotel are you staying at?"},
+{lv:3, th:"我住在火车站旁边的酒店", r:"wǒ zhù zài huǒchēzhàn pángbiān de jiǔdiàn", e:"I'm staying at the hotel next to the train station."},
+{lv:3, th:"他们住在城市的外面", r:"tāmen zhù zài chéngshì de wàimiàn", e:"They live outside the city."},
+{lv:3, th:"我们的酒店很舒服", r:"wǒmen de jiǔdiàn hěn shūfu", e:"Our hotel is very comfortable."},
+{lv:3, th:"这个酒店不舒服，我们去更好的", r:"zhè ge jiǔdiàn bù shūfu, wǒmen qù gèng hǎo de", e:"This hotel isn't comfortable — let's find a better one."},
+{lv:3, th:"哪个酒店最好", r:"nǎ ge jiǔdiàn zuì hǎo?", e:"Which hotel is the best?"},
+{lv:3, th:"最好的饭店在河的旁边", r:"zuì hǎo de fàndiàn zài hé de pángbiān", e:"The best restaurant is by the river."},
+{lv:3, th:"昨天晚上我没有睡好", r:"zuótiān wǎnshang wǒ méiyǒu shuì hǎo", e:"I didn't sleep well last night."},
+{lv:3, th:"我想睡觉，但是外面人很多", r:"wǒ xiǎng shuìjiào, dànshì wàimiàn rén hěn duō", e:"I want to sleep, but it's crowded (noisy) outside."},
+{lv:3, th:"你早上什么时间开始工作", r:"nǐ zǎoshang shénme shíjiān kāishǐ gōngzuò?", e:"What time do you start work in the morning?"},
+{lv:3, th:"我从早上到晚上都在工作", r:"wǒ cóng zǎoshang dào wǎnshang dōu zài gōngzuò", e:"I work from morning till night."},
+{lv:3, th:"他每天都很开心", r:"tā měitiān dōu hěn kāixīn", e:"He's happy every single day."},
+{lv:3, th:"我们都喜欢火锅", r:"wǒmen dōu xǐhuān huǒguō", e:"We all love hotpot."},
+{lv:3, th:"他们都是外国人，但是都说中文", r:"tāmen dōu shì wàiguórén, dànshì dōu shuō Zhōngwén", e:"They're all foreigners, but they all speak Chinese."},
+{lv:3, th:"我只有一百块", r:"wǒ zhǐ yǒu yìbǎi kuài", e:"I only have 100 yuan."},
+{lv:3, th:"我们只等五分钟", r:"wǒmen zhǐ děng wǔ fēnzhōng", e:"We'll only wait five minutes."},
+{lv:3, th:"只有一个厕所，人很多", r:"zhǐ yǒu yí ge cèsuǒ, rén hěn duō", e:"There's only one toilet and a big line."},
+{lv:3, th:"这里的水果更好吃", r:"zhèlǐ de shuǐguǒ gèng hǎochī", e:"The fruit here is even tastier."},
+{lv:3, th:"你的中文更好了", r:"nǐ de Zhōngwén gèng hǎo le!", e:"Your Chinese has gotten better!"},
+{lv:3, th:"我的中文不好，但是每天更好一点", r:"wǒ de Zhōngwén bù hǎo, dànshì měitiān gèng hǎo yìdiǎn", e:"My Chinese isn't good, but it gets a little better every day."},
+{lv:3, th:"说中文很难，但是我觉得很牛逼", r:"shuō Zhōngwén hěn nán, dànshì wǒ juéde hěn niúbī", e:"Speaking Chinese is hard, but I think it's badass."},
+{lv:3, th:"请问，我能用这个门进去吗", r:"qǐng wèn, wǒ néng yòng zhè ge mén jìn qù ma?", e:"Excuse me, can I go in through this door?"},
+{lv:3, th:"不要用那个门，用这个", r:"búyào yòng nà ge mén, yòng zhè ge", e:"Don't use that door — use this one."},
+{lv:3, th:"不要喝海水", r:"búyào hē hǎishuǐ", e:"Don't drink seawater."},
+{lv:3, th:"不要伤心，我们明天一起去", r:"búyào shāngxīn, wǒmen míngtiān yìqǐ qù", e:"Don't be sad — we'll go together tomorrow."},
+{lv:3, th:"我们一起学中文，好吗", r:"wǒmen yìqǐ xué Zhōngwén, hǎo ma?", e:"Let's learn Chinese together, okay?"},
+{lv:3, th:"昨天我们一起吃了饭，然后走到海边", r:"zuótiān wǒmen yìqǐ chī le fàn, ránhòu zǒu dào hǎibiān", e:"Yesterday we ate together, then walked to the seaside."},
+{lv:3, th:"从这里直走，过了河，饭店在左边", r:"cóng zhèlǐ zhí zǒu, guò le hé, fàndiàn zài zuǒbiān", e:"Go straight from here, cross the river, and the restaurant is on the left."},
+{lv:3, th:"请开车慢一点", r:"qǐng kāi chē màn yìdiǎn", e:"Please drive a bit slower."},
+{lv:3, th:"出租车到了，我们走", r:"chūzūchē dào le, wǒmen zǒu", e:"The taxi's here — let's go."},
+{lv:3, th:"你的飞机票在哪里？我的在手机里", r:"nǐ de fēijī piào zài nǎlǐ? wǒ de zài shǒujī lǐ", e:"Where's your plane ticket? Mine's on my phone."},
+{lv:3, th:"票多少钱？一个五十块", r:"piào duōshao qián? yí ge wǔshí kuài", e:"How much are tickets? Fifty yuan each."},
+{lv:3, th:"我们走错了路", r:"wǒmen zǒu cuò le lù", e:"We took the wrong road."},
+{lv:3, th:"没关系，我们问警察，警察知道路", r:"méiguānxi, wǒmen wèn jǐngchá, jǐngchá zhīdao lù", e:"No worries — we'll ask the police; they know the way."},
+];
+const SENT_CARDS2 = SENTENCES2.map(s => ({cat:"s"+s.lv, th:s.th, rom:s.r, en:s.e, speakText:s.th, isSent:true, l:2}));
 
 /* Build unified card list */
 const ALL = [
-  ...WORDS.map(w => ({cat:w.c, th:w.th, rom:w.r, en:w.e, speakText:w.th.replace(/ \/ /g, "，"), isPattern:false})),
-  ...PATTERNS.map(p => ({cat:"pat", th:p.ex.th, rom:p.f, en:p.e, ex:p.ex, speakText:p.ex.th, isPattern:true})),
+  ...WORDS.map(w => ({cat:w.c, th:w.th, rom:w.r, en:w.e, speakText:w.th.replace(/ \/ /g, "，"), isPattern:false, l:1})),
+  ...WORDS2.map(w => ({cat:w.c, th:w.th, rom:w.r, en:w.e, speakText:w.th.replace(/ \/ /g, "，"), isPattern:false, l:2})),
 ];
 
 /* ================= STATE ================= */
+let lesson = 2;             // 1 = sheet 1 only, 2 = both sheets
+const wordPool = () => lesson === 1 ? ALL.filter(c => c.l === 1) : ALL;
+const sentPool = () => lesson === 1 ? SENT_CARDS : [...SENT_CARDS, ...SENT_CARDS2];
 let dir = "en2th";          // en2th | th2en
 let mode = "vocab";         // vocab | sent
 let activeCat = "all";      // vocab category filter
@@ -582,9 +903,13 @@ function speakThai(text){
 /* ================= DECK ================= */
 function buildDeck(){
   if (mode === "sent"){
-    deck = activeLv === "all" ? [...SENT_CARDS] : SENT_CARDS.filter(c => c.cat === activeLv);
+    const pool = sentPool();
+    deck = activeLv === "all" ? [...pool] : pool.filter(c => c.cat === activeLv);
   } else {
-    deck = activeCat === "all" ? [...ALL] : ALL.filter(c => c.cat === activeCat);
+    const pool = wordPool();
+    deck = activeCat === "all" ? [...pool]
+         : activeCat === "new" ? pool.filter(c => c.l === 2)
+         : pool.filter(c => c.cat === activeCat);
   }
   if (shuffled){
     for (let i = deck.length - 1; i > 0; i--){
@@ -675,15 +1000,16 @@ function move(step){
 /* ================= LIST VIEW ================= */
 function renderList(){
   const host = document.getElementById("listView");
+  const pool = wordPool();
   let html = "";
   for (const cat of CATS){
-    const items = ALL.filter(c => c.cat === cat.id);
+    const items = pool.filter(c => c.cat === cat.id);
     if (!items.length) continue;
     html += `<div class="group-h">${cat.name} · ${items.length}</div>`;
     for (const it of items){
       const line1 = it.isPattern
         ? `<span class="th">${it.en}</span>`
-        : `<span class="th">${it.th}</span> ${it.rom}`;
+        : `<span class="th">${it.th}</span> ${it.rom}${lesson === 2 && it.l === 2 ? " ★" : ""}`;
       const line2 = it.isPattern
         ? `${it.rom} — e.g. ${it.ex.th} (${it.ex.r}) = ${it.ex.e}`
         : it.en;
@@ -695,8 +1021,9 @@ function renderList(){
   }
   // sentences, in their own clearly separated section
   html += `<div class="group-h" style="margin-top:34px; font-size:.8rem;">— Sentences —</div>`;
+  const sp = sentPool();
   for (const lv of ["s1","s2","s3"]){
-    const items = SENT_CARDS.filter(c => c.cat === lv);
+    const items = sp.filter(c => c.cat === lv);
     html += `<div class="group-h">${LV_NAMES[lv]} · ${items.length}</div>`;
     for (const it of items){
       html += `<div class="lrow">
@@ -713,10 +1040,11 @@ function renderList(){
 function renderChips(){
   const host = document.getElementById("chips");
   if (mode === "sent"){
+    const pool = sentPool();
     const mk = (id, name) =>
       `<button data-cat="${id}" class="${activeLv === id ? "on" : ""}">${name}</button>`;
-    const cnt = id => SENT_CARDS.filter(c => c.cat === id).length;
-    host.innerHTML = mk("all", "All (" + SENT_CARDS.length + ")")
+    const cnt = id => pool.filter(c => c.cat === id).length;
+    host.innerHTML = mk("all", "All (" + pool.length + ")")
       + mk("s1", "Level 1 · Easy (" + cnt("s1") + ")")
       + mk("s2", "Level 2 · Medium (" + cnt("s2") + ")")
       + mk("s3", "Level 3 · Hard (" + cnt("s3") + ")");
@@ -727,9 +1055,13 @@ function renderChips(){
     });
     return;
   }
+  const pool = wordPool();
   const mk = (id, name) =>
     `<button data-cat="${id}" class="${activeCat === id ? "on" : ""}">${name}</button>`;
-  host.innerHTML = mk("all", "All (" + ALL.length + ")") + CATS.map(c => mk(c.id, c.name)).join("");
+  let chipsHtml = mk("all", "All (" + pool.length + ")");
+  if (lesson === 2) chipsHtml += mk("new", "★ New words (" + pool.filter(c => c.l === 2).length + ")");
+  chipsHtml += CATS.filter(c => pool.some(w => w.cat === c.id)).map(c => mk(c.id, c.name)).join("");
+  host.innerHTML = chipsHtml;
   host.querySelectorAll("button").forEach(b => b.onclick = () => {
     activeCat = b.dataset.cat;
     renderChips();
@@ -778,6 +1110,19 @@ function setTab(t){
       buildDeck();
     }
   }
+}
+
+document.getElementById("les1").onclick = () => setLesson(1);
+document.getElementById("les2").onclick = () => setLesson(2);
+function setLesson(n){
+  if (n === lesson) return;
+  lesson = n;
+  document.getElementById("les1").classList.toggle("on", n === 1);
+  document.getElementById("les2").classList.toggle("on", n === 2);
+  activeCat = "all"; activeLv = "all";
+  renderChips();
+  buildDeck();
+  renderList();
 }
 
 /* init */
