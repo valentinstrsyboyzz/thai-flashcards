@@ -767,7 +767,7 @@ const SENTENCES = [
 {lv:3, th:"飞机能飞，人不能飞", r:"fēijī néng fēi, rén bù néng fēi", e:"Planes can fly; people can't."},
 ];
 const SENT_CARDS = SENTENCES.map(s => ({cat:"s"+s.lv, th:s.th, rom:s.r, en:s.e, speakText:s.th, isSent:true, l:1}));
-const LV_NAMES = {s1:"Level 1 · Easy", s2:"Level 2 · Medium", s3:"Level 3 · Hard"};
+const LV_NAMES = {ev:"Everyday", s1:"Level 1 · Easy", s2:"Level 2 · Medium", s3:"Level 3 · Hard"};
 
 /* --- LESSON 2 sentences: use sheet 1 + sheet 2 vocabulary only --- */
 const SENTENCES2 = [
@@ -1185,6 +1185,111 @@ const SENTENCES3 = [
 ];
 const SENT_CARDS3 = SENTENCES3.map(s => ({cat:"s"+s.lv, th:s.th, rom:s.r, en:s.e, speakText:s.th, isSent:true, l:3}));
 
+/* --- 100 everyday phrases (user-provided list) --- */
+const EVERYDAY = [
+{th:"你好", r:"Nǐ hǎo", e:"Hello."},
+{th:"你好吗", r:"Nǐ hǎo ma?", e:"How are you?"},
+{th:"我很好", r:"Wǒ hěn hǎo", e:"I'm good."},
+{th:"你呢", r:"Nǐ ne?", e:"And you?"},
+{th:"早上好", r:"Zǎoshang hǎo", e:"Good morning."},
+{th:"晚上好", r:"Wǎnshang hǎo", e:"Good evening."},
+{th:"晚安", r:"Wǎn'ān", e:"Good night."},
+{th:"再见", r:"Zàijiàn", e:"Goodbye."},
+{th:"明天见", r:"Míngtiān jiàn", e:"See you tomorrow."},
+{th:"等一下", r:"Děng yíxià", e:"Wait a moment."},
+{th:"谢谢", r:"Xièxie", e:"Thank you."},
+{th:"谢谢你", r:"Xièxie nǐ", e:"Thank you."},
+{th:"不客气", r:"Bú kèqi", e:"You're welcome."},
+{th:"对不起", r:"Duìbuqǐ", e:"Sorry."},
+{th:"没关系", r:"Méi guānxi", e:"No problem."},
+{th:"不好意思", r:"Bù hǎoyìsi", e:"Excuse me / sorry."},
+{th:"请", r:"Qǐng", e:"Please."},
+{th:"可以", r:"Kěyǐ", e:"Okay / can."},
+{th:"不可以", r:"Bù kěyǐ", e:"Cannot / not allowed."},
+{th:"没问题", r:"Méi wèntí", e:"No problem."},
+{th:"是", r:"Shì", e:"Yes / it is."},
+{th:"不是", r:"Bú shì", e:"No / it isn't."},
+{th:"对", r:"Duì", e:"Correct."},
+{th:"不对", r:"Bú duì", e:"That's not correct."},
+{th:"好", r:"Hǎo", e:"Okay / good."},
+{th:"好的", r:"Hǎo de", e:"Okay, sure."},
+{th:"当然", r:"Dāngrán", e:"Of course."},
+{th:"可能", r:"Kěnéng", e:"Maybe / possibly."},
+{th:"我不知道", r:"Wǒ bù zhīdào", e:"I don't know."},
+{th:"我明白了", r:"Wǒ míngbai le", e:"I understand now."},
+{th:"我不明白", r:"Wǒ bù míngbai", e:"I don't understand."},
+{th:"你说什么", r:"Nǐ shuō shénme?", e:"What did you say?"},
+{th:"请再说一遍", r:"Qǐng zài shuō yí biàn", e:"Please say it again."},
+{th:"请说慢一点", r:"Qǐng shuō màn yìdiǎn", e:"Please speak more slowly."},
+{th:"你会说英文吗", r:"Nǐ huì shuō Yīngwén ma?", e:"Can you speak English?"},
+{th:"我会说一点中文", r:"Wǒ huì shuō yìdiǎn Zhōngwén", e:"I speak a little Chinese."},
+{th:"我的中文不太好", r:"Wǒ de Zhōngwén bù tài hǎo", e:"My Chinese isn't very good."},
+{th:"这个是什么", r:"Zhège shì shénme?", e:"What is this?"},
+{th:"那个是什么", r:"Nàge shì shénme?", e:"What is that?"},
+{th:"这个怎么说", r:"Zhège zěnme shuō?", e:"How do you say this?"},
+{th:"你叫什么名字", r:"Nǐ jiào shénme míngzi?", e:"What's your name?"},
+{th:"我叫……", r:"Wǒ jiào …", e:"My name is …"},
+{th:"很高兴认识你", r:"Hěn gāoxìng rènshi nǐ", e:"Nice to meet you."},
+{th:"你从哪里来", r:"Nǐ cóng nǎlǐ lái?", e:"Where are you from?"},
+{th:"我从奥地利来", r:"Wǒ cóng Àodìlì lái", e:"I'm from Austria."},
+{th:"你住在哪里", r:"Nǐ zhù zài nǎlǐ?", e:"Where do you live?"},
+{th:"我住在……", r:"Wǒ zhù zài …", e:"I live in …"},
+{th:"你几岁", r:"Nǐ jǐ suì?", e:"How old are you?"},
+{th:"我二十五岁", r:"Wǒ èrshíwǔ suì", e:"I'm 25 years old."},
+{th:"你做什么工作", r:"Nǐ zuò shénme gōngzuò?", e:"What do you do for work?"},
+{th:"你去哪里", r:"Nǐ qù nǎlǐ?", e:"Where are you going?"},
+{th:"我去……", r:"Wǒ qù …", e:"I'm going to …"},
+{th:"我想去……", r:"Wǒ xiǎng qù …", e:"I want to go to …"},
+{th:"……在哪里", r:"… zài nǎlǐ?", e:"Where is …?"},
+{th:"厕所在哪里", r:"Cèsuǒ zài nǎlǐ?", e:"Where is the bathroom?"},
+{th:"地铁站在哪里", r:"Dìtiě zhàn zài nǎlǐ?", e:"Where is the metro station?"},
+{th:"这里怎么去", r:"Zhèlǐ zěnme qù?", e:"How do I get there?"},
+{th:"远吗", r:"Yuǎn ma?", e:"Is it far?"},
+{th:"很近吗", r:"Hěn jìn ma?", e:"Is it close?"},
+{th:"我迷路了", r:"Wǒ mílù le", e:"I'm lost."},
+{th:"多少钱", r:"Duōshao qián?", e:"How much?"},
+{th:"这个多少钱", r:"Zhège duōshao qián?", e:"How much is this?"},
+{th:"太贵了", r:"Tài guì le", e:"Too expensive."},
+{th:"便宜一点可以吗", r:"Piányi yìdiǎn kěyǐ ma?", e:"Can it be a little cheaper?"},
+{th:"我要这个", r:"Wǒ yào zhège", e:"I want this one."},
+{th:"我不要这个", r:"Wǒ bú yào zhège", e:"I don't want this one."},
+{th:"有没有……", r:"Yǒu méiyǒu …?", e:"Do you have …?"},
+{th:"有", r:"Yǒu", e:"Yes, we have it."},
+{th:"没有", r:"Méiyǒu", e:"No / don't have it."},
+{th:"我看看", r:"Wǒ kànkan", e:"I'll have a look."},
+{th:"我饿了", r:"Wǒ è le", e:"I'm hungry."},
+{th:"我渴了", r:"Wǒ kě le", e:"I'm thirsty."},
+{th:"我想吃饭", r:"Wǒ xiǎng chīfàn", e:"I want to eat."},
+{th:"我想喝水", r:"Wǒ xiǎng hē shuǐ", e:"I want to drink water."},
+{th:"我要这个", r:"Wǒ yào zhège", e:"I'll have this."},
+{th:"这个好吃吗", r:"Zhège hǎochī ma?", e:"Is this tasty?"},
+{th:"很好吃", r:"Hěn hǎochī", e:"Very delicious."},
+{th:"不太好吃", r:"Bù tài hǎochī", e:"Not very tasty."},
+{th:"不要辣", r:"Bú yào là", e:"Not spicy."},
+{th:"少辣", r:"Shǎo là", e:"A little spicy."},
+{th:"不要放太多", r:"Bú yào fàng tài duō", e:"Don't put too much."},
+{th:"我不吃肉", r:"Wǒ bù chī ròu", e:"I don't eat meat."},
+{th:"我不吃猪肉", r:"Wǒ bù chī zhūròu", e:"I don't eat pork."},
+{th:"请给我一瓶水", r:"Qǐng gěi wǒ yì píng shuǐ", e:"Please give me a bottle of water."},
+{th:"买单", r:"Mǎidān", e:"The bill, please."},
+{th:"可以刷卡吗", r:"Kěyǐ shuākǎ ma?", e:"Can I pay by card?"},
+{th:"可以用现金吗", r:"Kěyǐ yòng xiànjīn ma?", e:"Can I use cash?"},
+{th:"我来买单", r:"Wǒ lái mǎidān", e:"I'll pay."},
+{th:"我们一起吃吧", r:"Wǒmen yìqǐ chī ba", e:"Let's eat together."},
+{th:"我吃饱了", r:"Wǒ chībǎo le", e:"I'm full."},
+{th:"你喜欢吗", r:"Nǐ xǐhuan ma?", e:"Do you like it?"},
+{th:"我喜欢", r:"Wǒ xǐhuan", e:"I like it."},
+{th:"我不喜欢", r:"Wǒ bù xǐhuan", e:"I don't like it."},
+{th:"我很喜欢", r:"Wǒ hěn xǐhuan", e:"I really like it."},
+{th:"你想去吗", r:"Nǐ xiǎng qù ma?", e:"Do you want to go?"},
+{th:"我想去", r:"Wǒ xiǎng qù", e:"I want to go."},
+{th:"我不想去", r:"Wǒ bù xiǎng qù", e:"I don't want to go."},
+{th:"我们走吧", r:"Wǒmen zǒu ba", e:"Let's go."},
+{th:"没事", r:"Méi shì", e:"It's fine / no worries."},
+{th:"可以啊", r:"Kěyǐ a", e:"Sure / yeah, why not."},
+];
+const SENT_EV = EVERYDAY.map(s => ({cat:"ev", th:s.th, rom:s.r, en:s.e, speakText:s.th.replace(/…/g,""), isSent:true, l:0}));
+
 /* Build unified card list */
 const ALL = [
   ...WORDS.map(w => ({cat:w.c, th:w.th, rom:w.r, en:w.e, speakText:w.th.replace(/ \/ /g, "，"), isPattern:false, l:1})),
@@ -1195,7 +1300,7 @@ const ALL = [
 /* ================= STATE ================= */
 let lesson = 3;             // 1 / 2 / 3 = cumulative sheets
 const wordPool = () => ALL.filter(c => c.l <= lesson);
-const sentPool = () => [...SENT_CARDS, ...SENT_CARDS2, ...SENT_CARDS3].filter(c => c.l <= lesson);
+const sentPool = () => [...SENT_EV, ...SENT_CARDS, ...SENT_CARDS2, ...SENT_CARDS3].filter(c => c.l <= lesson);
 let dir = "en2th";          // en2th | th2en
 let mode = "vocab";         // vocab | sent
 let activeCat = "all";      // vocab category filter
@@ -1355,7 +1460,7 @@ function renderList(){
   // sentences, in their own clearly separated section
   html += `<div class="group-h" style="margin-top:34px; font-size:.8rem;">— Sentences —</div>`;
   const sp = sentPool();
-  for (const lv of ["s1","s2","s3"]){
+  for (const lv of ["ev","s1","s2","s3"]){
     const items = sp.filter(c => c.cat === lv);
     html += `<div class="group-h">${LV_NAMES[lv]} · ${items.length}</div>`;
     for (const it of items){
@@ -1378,6 +1483,7 @@ function renderChips(){
       `<button data-cat="${id}" class="${activeLv === id ? "on" : ""}">${name}</button>`;
     const cnt = id => pool.filter(c => c.cat === id).length;
     host.innerHTML = mk("all", "All (" + pool.length + ")")
+      + mk("ev", "Everyday (" + cnt("ev") + ")")
       + mk("s1", "Level 1 · Easy (" + cnt("s1") + ")")
       + mk("s2", "Level 2 · Medium (" + cnt("s2") + ")")
       + mk("s3", "Level 3 · Hard (" + cnt("s3") + ")");
