@@ -767,7 +767,7 @@ const SENTENCES = [
 {lv:3, th:"飞机能飞，人不能飞", r:"fēijī néng fēi, rén bù néng fēi", e:"Planes can fly; people can't."},
 ];
 const SENT_CARDS = SENTENCES.map(s => ({cat:"s"+s.lv, th:s.th, rom:s.r, en:s.e, speakText:s.th, isSent:true, l:1}));
-const LV_NAMES = {ev:"Everyday", s1:"Level 1 · Easy", s2:"Level 2 · Medium", s3:"Level 3 · Hard"};
+const LV_NAMES = {ev:"Everyday", cb:"Cebuano 🇵🇭", s1:"Level 1 · Easy", s2:"Level 2 · Medium", s3:"Level 3 · Hard"};
 
 /* --- LESSON 2 sentences: use sheet 1 + sheet 2 vocabulary only --- */
 const SENTENCES2 = [
@@ -1290,6 +1290,61 @@ const EVERYDAY = [
 ];
 const SENT_EV = EVERYDAY.map(s => ({cat:"ev", th:s.th, rom:s.r, en:s.e, speakText:s.th.replace(/…/g,""), isSent:true, l:0}));
 
+/* --- Top 50 Cebuano sentences --- */
+const CEBUANO = [
+{th:"Maayong buntag", e:"Good morning."},
+{th:"Maayong hapon", e:"Good afternoon."},
+{th:"Maayong gabii", e:"Good evening."},
+{th:"Kumusta ka?", e:"How are you?"},
+{th:"Maayo ra ko", e:"I'm fine."},
+{th:"Ikaw?", e:"And you?"},
+{th:"Salamat", e:"Thank you."},
+{th:"Daghang salamat", e:"Thank you very much."},
+{th:"Walay sapayan", e:"You're welcome."},
+{th:"Pasayloa ko", e:"Sorry / excuse me."},
+{th:"Palihug", e:"Please."},
+{th:"Oo", e:"Yes."},
+{th:"Dili", e:"No."},
+{th:"Wala", e:"None / don't have."},
+{th:"Naa", e:"There is / I have."},
+{th:"Ambot", e:"I don't know."},
+{th:"Wala ko kasabot", e:"I don't understand."},
+{th:"Nakasabot ko", e:"I understand."},
+{th:"Hinaya lang og sulti, palihug", e:"Please speak slowly."},
+{th:"Kabalo ka og English?", e:"Do you know English?"},
+{th:"Gamay ra akong Bisaya", e:"I speak only a little Bisaya."},
+{th:"Unsa ni?", e:"What is this?"},
+{th:"Unsay imong ngalan?", e:"What's your name?"},
+{th:"Ang akong ngalan kay …", e:"My name is …"},
+{th:"Taga-asa ka?", e:"Where are you from?"},
+{th:"Taga-Austria ko", e:"I'm from Austria."},
+{th:"Asa ang CR?", e:"Where is the bathroom?"},
+{th:"Asa ka padulong?", e:"Where are you going?"},
+{th:"Padulong ko sa …", e:"I'm going to …"},
+{th:"Asa ang merkado?", e:"Where is the market?"},
+{th:"Layo ba?", e:"Is it far?"},
+{th:"Duol ra", e:"It's close."},
+{th:"Pila ni?", e:"How much is this?"},
+{th:"Mahal kaayo", e:"Too expensive!"},
+{th:"Pwede pa menos?", e:"Can you make it cheaper?"},
+{th:"Palit ko ani", e:"I'll buy this one."},
+{th:"Dili ko gusto", e:"I don't want it."},
+{th:"Gusto ko ani", e:"I like this."},
+{th:"Gigutom ko", e:"I'm hungry."},
+{th:"Giuhaw ko", e:"I'm thirsty."},
+{th:"Gusto ko mokaon", e:"I want to eat."},
+{th:"Lami kaayo", e:"Very delicious!"},
+{th:"Dili lami", e:"Not tasty."},
+{th:"Tubig, palihug", e:"Water, please."},
+{th:"Usa pa, palihug", e:"One more, please."},
+{th:"Pila tanan?", e:"How much is everything? (the bill)"},
+{th:"Busog na ko", e:"I'm full."},
+{th:"Lugar lang!", e:"Stop here, please. (jeepney/taxi)"},
+{th:"Magkita ta ugma", e:"See you tomorrow."},
+{th:"Amping!", e:"Take care!"},
+];
+const SENT_CB = CEBUANO.map(s => ({cat:"cb", th:s.th, rom:"", en:s.e, speakText:s.th.replace(/…/g,""), isSent:true, l:0, vl:"ceb"}));
+
 /* Build unified card list */
 const ALL = [
   ...WORDS.map(w => ({cat:w.c, th:w.th, rom:w.r, en:w.e, speakText:w.th.replace(/ \/ /g, "，"), isPattern:false, l:1})),
@@ -1300,7 +1355,7 @@ const ALL = [
 /* ================= STATE ================= */
 let lesson = 3;             // 1 / 2 / 3 = cumulative sheets
 const wordPool = () => ALL.filter(c => c.l <= lesson);
-const sentPool = () => [...SENT_EV, ...SENT_CARDS, ...SENT_CARDS2, ...SENT_CARDS3].filter(c => c.l <= lesson);
+const sentPool = () => [...SENT_EV, ...SENT_CB, ...SENT_CARDS, ...SENT_CARDS2, ...SENT_CARDS3].filter(c => c.l <= lesson);
 let dir = "en2th";          // en2th | th2en
 let mode = "vocab";         // vocab | sent
 let activeCat = "all";      // vocab category filter
@@ -1328,13 +1383,22 @@ if (window.speechSynthesis){
   findThaiVoice();
   speechSynthesis.onvoiceschanged = findThaiVoice;
 }
-function speakThai(text){
+function speakThai(text, vl){
   if (!window.speechSynthesis) return;
   speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);
-  u.lang = "zh-CN";
-  if (thaiVoice) u.voice = thaiVoice;
-  u.rate = 0.85;
+  if (vl === "ceb"){
+    // no Cebuano voice exists on phones — Filipino is the closest match
+    const vs = speechSynthesis.getVoices();
+    const fil = vs.find(v => /^(fil|tl)/i.test(v.lang || ""));
+    u.lang = "fil-PH";
+    if (fil) u.voice = fil;
+    u.rate = 0.9;
+  } else {
+    u.lang = "zh-CN";
+    if (thaiVoice) u.voice = thaiVoice;
+    u.rate = 0.85;
+  }
   speechSynthesis.speak(u);
 }
 
@@ -1372,7 +1436,7 @@ function sideHTML(card, side){
     }
     return `<div class="cat-tag">${catName(card.cat)}</div>
       <div class="big sentTh">${card.th}</div>
-      <div class="rom sentRom">${card.rom}</div>
+      ${card.rom ? `<div class="rom sentRom">${card.rom}</div>` : ""}
       <div class="hint">tap to flip</div>`;
   }
   if (card.isPattern){
@@ -1419,7 +1483,7 @@ function renderCard(keepFlip){
   }
   document.getElementById("progress").textContent = (idx + 1) + " / " + deck.length;
   // In TH→EN mode the Thai side is showing right away → pronounce it
-  if (soundOn && dir === "th2en" && !flipped) speakThai(card.speakText);
+  if (soundOn && dir === "th2en" && !flipped) speakThai(card.speakText, card.vl);
 }
 
 function flipCard(){
@@ -1427,7 +1491,7 @@ function flipCard(){
   document.getElementById("flip").classList.toggle("flipped", flipped);
   const card = deck[idx];
   const thaiVisible = (dir === "en2th" && flipped) || (dir === "th2en" && !flipped);
-  if (soundOn && thaiVisible) speakThai(card.speakText);
+  if (soundOn && thaiVisible) speakThai(card.speakText, card.vl);
 }
 
 function move(step){
@@ -1460,14 +1524,14 @@ function renderList(){
   // sentences, in their own clearly separated section
   html += `<div class="group-h" style="margin-top:34px; font-size:.8rem;">— Sentences —</div>`;
   const sp = sentPool();
-  for (const lv of ["ev","s1","s2","s3"]){
+  for (const lv of ["ev","cb","s1","s2","s3"]){
     const items = sp.filter(c => c.cat === lv);
     html += `<div class="group-h">${LV_NAMES[lv]} · ${items.length}</div>`;
     for (const it of items){
       html += `<div class="lrow">
         <div class="txt"><div class="t1"><span class="th">${it.th}</span></div>
-        <div class="t2">${it.rom} — ${it.en}</div></div>
-        <button onclick="speakThai('${it.speakText.replace(/'/g,"\\'")}')">🔈</button>
+        <div class="t2">${it.rom ? it.rom + " — " : ""}${it.en}</div></div>
+        <button onclick="speakThai('${it.speakText.replace(/'/g,"\\'")}','${it.vl||""}')">🔈</button>
       </div>`;
     }
   }
@@ -1484,6 +1548,7 @@ function renderChips(){
     const cnt = id => pool.filter(c => c.cat === id).length;
     host.innerHTML = mk("all", "All (" + pool.length + ")")
       + mk("ev", "Everyday (" + cnt("ev") + ")")
+      + mk("cb", "Cebuano (" + cnt("cb") + ")")
       + mk("s1", "Level 1 · Easy (" + cnt("s1") + ")")
       + mk("s2", "Level 2 · Medium (" + cnt("s2") + ")")
       + mk("s3", "Level 3 · Hard (" + cnt("s3") + ")");
@@ -1511,7 +1576,7 @@ function renderChips(){
 document.getElementById("flip").addEventListener("click", flipCard);
 document.getElementById("prevBtn").onclick = () => move(-1);
 document.getElementById("nextBtn").onclick = () => move(1);
-document.getElementById("speakBtn").onclick = () => speakThai(deck[idx].speakText);
+document.getElementById("speakBtn").onclick = () => speakThai(deck[idx].speakText, deck[idx].vl);
 document.getElementById("shuffleBtn").onclick = () => { shuffled = true; buildDeck(); };
 
 document.getElementById("dirEN").onclick = () => setDir("en2th");
