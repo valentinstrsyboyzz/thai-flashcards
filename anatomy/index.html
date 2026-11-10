@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>A&P Flashcards</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="A&P Cards">
+<meta name="theme-color" content="#0e1314">
+<link rel="apple-touch-icon" href="icon.png">
+<style>
+  :root{
+    --bg:#0e1314; --card:#17201f; --card2:#1d2928; --ink:#eef4f2; --muted:#8fa6a0;
+    --acc:#35c2a8; --acc-soft:#8fe6d4; --rose:#e4596b; --green:#46b86b;
+    --chip:#1a2423; --chip-on:#35c2a8; --radius:20px;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0; padding:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    height:100%; overscroll-behavior:none;}
+  body::before{content:""; position:fixed; top:0; left:0; right:0; z-index:50;
+    height:calc(env(safe-area-inset-top, 0px) + 4px);
+    background:rgba(14,19,20,.88); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);}
+  #app{max-width:560px; margin:0 auto; display:flex; flex-direction:column; min-height:100dvh;
+    padding:calc(env(safe-area-inset-top, 0px) + 14px) 16px calc(env(safe-area-inset-bottom, 0px) + 24px);}
+
+  header{display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin-bottom:4px;}
+  h1{font-size:1.15rem; margin:0; font-weight:700;}
+  h1 span{color:var(--acc);}
+  #overall{font-size:.78rem; color:var(--muted); font-variant-numeric:tabular-nums;}
+  .sub{font-size:.72rem; color:#5d726d; margin-bottom:10px;}
+
+  .tabs{display:flex; gap:6px; margin-bottom:10px;}
+  .tabs button{flex:1; border:0; background:var(--chip); color:var(--muted); font-size:.85rem; font-weight:700;
+    padding:10px 0; border-radius:12px; cursor:pointer;}
+  .tabs button.on{background:var(--card2); color:var(--ink); box-shadow:inset 0 0 0 1px #2d3c3a;}
+
+  .chips{display:flex; gap:7px; overflow-x:auto; padding:2px 2px 10px; scrollbar-width:none;}
+  .chips::-webkit-scrollbar{display:none;}
+  .chips button{flex:0 0 auto; border:0; background:var(--chip); color:var(--muted); font-size:.78rem;
+    font-weight:600; padding:8px 13px; border-radius:999px; cursor:pointer;}
+  .chips button.on{background:var(--chip-on); color:#07211c;}
+
+  .seg{display:flex; background:var(--chip); border-radius:999px; padding:3px; margin-bottom:10px;}
+  .seg button{flex:1; border:0; background:transparent; color:var(--muted); font-size:.78rem; font-weight:600;
+    padding:7px 0; border-radius:999px; cursor:pointer; white-space:nowrap;}
+  .seg button.on{background:var(--acc); color:#07211c;}
+
+  /* card */
+  #cardWrap{flex:1; display:flex; flex-direction:column; min-height:380px;}
+  .scene{perspective:1200px; width:100%;}
+  .flip{position:relative; width:100%; min-height:330px; transform-style:preserve-3d;
+    transition:transform .4s cubic-bezier(.2,.7,.3,1); cursor:pointer;}
+  .flip.flipped{transform:rotateY(180deg);}
+  .face{position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden;
+    background:linear-gradient(160deg,var(--card2),var(--card));
+    border:1px solid #273532; border-radius:var(--radius); padding:40px 22px 30px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:10px;
+    box-shadow:0 12px 30px rgba(0,0,0,.35); overflow-y:auto;}
+  .face.back{transform:rotateY(180deg);}
+  .cat-tag{position:absolute; top:12px; left:16px; right:16px; font-size:.66rem; letter-spacing:.07em;
+    text-transform:uppercase; color:var(--muted); font-weight:700; text-align:left;
+    display:flex; justify-content:space-between; gap:8px;}
+  .cat-tag .st{letter-spacing:0; text-transform:none; font-weight:600;}
+  .q{font-size:1.25rem; font-weight:700; line-height:1.4;}
+  .a{font-size:1.05rem; line-height:1.55; color:var(--acc-soft); font-weight:500;}
+  .hint{position:absolute; bottom:10px; left:0; right:0; font-size:.68rem; color:#53675f;}
+
+  .grade{display:flex; gap:10px; margin-top:14px; min-height:54px;}
+  .grade button{flex:1; border:0; border-radius:14px; font-size:.95rem; font-weight:700; padding:15px 0; cursor:pointer;}
+  #againBtn{background:#3a2228; color:#ff9aa8;}
+  #gotBtn{background:#1c362a; color:#7fe0a2;}
+  .grade .ghost{background:var(--chip); color:var(--muted); font-weight:600;}
+
+  .controls{display:flex; align-items:center; justify-content:space-between; margin-top:12px;}
+  #progress{font-size:.82rem; color:var(--muted); font-variant-numeric:tabular-nums;}
+  .mini{border:0; background:var(--chip); color:var(--muted); font-size:.78rem; font-weight:600;
+    padding:8px 13px; border-radius:10px; cursor:pointer;}
+  #doneCard{display:none; text-align:center; padding:60px 20px; color:var(--muted); line-height:1.6;}
+  #doneCard .big{font-size:2.6rem; margin-bottom:10px;}
+
+  /* quiz */
+  #quizView{display:none; flex:1;}
+  .qbox{background:linear-gradient(160deg,var(--card2),var(--card)); border:1px solid #273532;
+    border-radius:var(--radius); padding:20px 18px; margin-bottom:12px;}
+  .qbox .tag{font-size:.66rem; text-transform:uppercase; letter-spacing:.07em; color:var(--muted); font-weight:700; margin-bottom:8px;}
+  .qbox .qq{font-size:1.08rem; font-weight:700; line-height:1.45;}
+  .opt{display:block; width:100%; text-align:left; border:1px solid #273532; background:var(--card);
+    color:var(--ink); border-radius:14px; padding:13px 14px; margin-bottom:9px; font-size:.92rem;
+    line-height:1.45; cursor:pointer;}
+  .opt.correct{background:#1c362a; border-color:#2f7a4d; color:#a8f0c2;}
+  .opt.wrong{background:#3a2228; border-color:#8a3a48; color:#ffb3bd;}
+  .opt:disabled{opacity:1;}
+  #quizMeta{display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;
+    font-size:.82rem; color:var(--muted); font-variant-numeric:tabular-nums;}
+  #nextQ{display:none; width:100%; border:0; background:var(--acc); color:#07211c; font-weight:800;
+    font-size:1rem; padding:14px 0; border-radius:14px; cursor:pointer; margin-top:4px;}
+
+  /* browse */
+  #listView{display:none;}
+  #searchBox{width:100%; background:var(--card); border:1px solid #273532; color:var(--ink);
+    border-radius:12px; padding:11px 14px; font-size:.95rem; margin-bottom:12px; outline:none;}
+  #searchBox::placeholder{color:#53675f;}
+  .group-h{font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; color:var(--acc);
+    font-weight:800; margin:20px 2px 8px;}
+  .lrow{display:flex; align-items:flex-start; gap:10px; background:var(--card); border:1px solid #223130;
+    border-radius:14px; padding:12px 13px; margin-bottom:7px; cursor:pointer;}
+  .dot{flex:0 0 auto; width:10px; height:10px; border-radius:50%; margin-top:6px; background:#3a4a47;}
+  .dot.k{background:var(--green);}
+  .dot.l{background:var(--rose);}
+  .lrow .txt{flex:1; min-width:0;}
+  .lrow .t1{font-size:.92rem; font-weight:700; line-height:1.4;}
+  .lrow .t2{font-size:.82rem; color:var(--muted); margin-top:3px; line-height:1.45;}
+  #resetBtn{width:100%; border:0; background:#241a1d; color:#c97c88; font-weight:700; font-size:.85rem;
+    padding:13px 0; border-radius:12px; cursor:pointer; margin:18px 0 6px;}
+  .legend{font-size:.72rem; color:#5d726d; text-align:center; margin-bottom:8px;}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <h1>🧬 A&P <span>Flashcards</span></h1>
+    <span id="overall"></span>
+  </header>
+  <div class="sub">Seeley's Essentials of Anatomy &amp; Physiology — 6 chapters</div>
+
+  <div class="tabs">
+    <button id="tabStudy" class="on">Study</button>
+    <button id="tabQuiz">Quiz</button>
+    <button id="tabList">Browse</button>
+  </div>
+
+  <div class="chips" id="chips"></div>
+
+  <div class="seg" id="statusSeg">
+    <button data-f="all" class="on">All cards</button>
+    <button data-f="todo">To learn</button>
+    <button data-f="known">Known</button>
+  </div>
+
+  <div id="cardWrap">
+    <div class="scene">
+      <div class="flip" id="flip">
+        <div class="face front" id="faceFront"></div>
+        <div class="face back" id="faceBack"></div>
+      </div>
+    </div>
+    <div id="doneCard"><div class="big">🎉</div>Nothing left in this pile.<br>Switch the filter or chapter — or hit Shuffle to go again.</div>
+    <div class="grade" id="gradeRow"></div>
+    <div class="controls">
+      <button class="mini" id="prevBtn">‹ Prev</button>
+      <span id="progress"></span>
+      <button class="mini" id="shuffleBtn">🔀 Shuffle</button>
+    </div>
+  </div>
+
+  <div id="quizView">
+    <div id="quizMeta"><span id="quizScore"></span><span id="quizStreak"></span></div>
+    <div class="qbox"><div class="tag" id="quizTag"></div><div class="qq" id="quizQ"></div></div>
+    <div id="quizOpts"></div>
+    <button id="nextQ">Next question ›</button>
+  </div>
+
+  <div id="listView">
+    <input id="searchBox" type="search" placeholder="Search questions and answers…">
+    <div class="legend">tap a card to mark it ● known / ● learning — gray = not seen yet</div>
+    <div id="listHost"></div>
+    <button id="resetBtn">Reset all progress</button>
+  </div>
+</div>
+
+<script>
+/* ================= DATA ================= */
+/* ============ CHAPTERS ============ */
+const CHAPTERS = [
+  {id:"ch6",  num:"Ch 6",  name:"Skeletal System", icon:"🦴"},
+  {id:"ch8",  num:"Ch 8",  name:"Nervous System", icon:"🧠"},
+  {id:"ch9",  num:"Ch 9",  name:"Respiratory System", icon:"🫁"},
+  {id:"ch11", num:"Ch 11", name:"Blood", icon:"🩸"},
+  {id:"ch12", num:"Ch 12", name:"Heart", icon:"🫀"},
+  {id:"ch13", num:"Ch 13", name:"Blood Vessels & Circulation", icon:"🩺"},
+];
+
+/* ============ CARDS: ch = chapter id, t = topic, q = question, a = answer ============ */
+const CARDS = [
+/* ================= CH 12 — HEART ================= */
+{ch:"ch12", t:"Basics", q:"What are the three components of the cardiovascular system?", a:"The heart, the blood vessels, and the blood."},
+{ch:"ch12", t:"Basics", q:"How much blood does a healthy adult heart pump at rest?", a:"About 5 liters per minute."},
+{ch:"ch12", t:"Basics", q:"Which side of the heart pumps blood to the lungs, and what is that circuit called?", a:"The right side — the pulmonary circulation."},
+{ch:"ch12", t:"Basics", q:"Which side of the heart pumps blood to the rest of the body, and what is that circuit called?", a:"The left side — the systemic circulation."},
+{ch:"ch12", t:"Basics", q:"Name the four functions of the heart.", a:"1) Generates blood pressure, 2) Routes blood, 3) Ensures one-way blood flow, 4) Regulates blood supply."},
+{ch:"ch12", t:"Basics", q:"Describe the size, location, and orientation of the heart.", a:"Size of a fist, weighs under 1 lb; located between the lungs in the thoracic cavity; the apex (bottom) points toward the left side."},
+{ch:"ch12", t:"Pericardium", q:"What is the pericardium?", a:"A double-layered sac that anchors and protects the heart."},
+{ch:"ch12", t:"Pericardium", q:"Parietal pericardium vs. visceral pericardium — what's the difference?", a:"Parietal pericardium = membrane around the heart's cavity; visceral pericardium = membrane on the heart's surface."},
+{ch:"ch12", t:"Pericardium", q:"What is the pericardial cavity?", a:"The space around the heart (between the parietal and visceral pericardium)."},
+{ch:"ch12", t:"External anatomy", q:"What are sulci on the heart, and which three are the main ones?", a:"Grooves on the external surface marking chamber boundaries: the coronary sulcus (encircles the heart horizontally), the anterior interventricular sulcus (front), and the posterior interventricular sulcus (back)."},
+{ch:"ch12", t:"External anatomy", q:"Which vessels bring blood INTO the right atrium?", a:"The superior vena cava and inferior vena cava (blood from the body)."},
+{ch:"ch12", t:"External anatomy", q:"Which vessels bring blood INTO the left atrium?", a:"The four pulmonary veins (blood from the lungs)."},
+{ch:"ch12", t:"External anatomy", q:"What are the two 'great arteries' that carry blood away from the ventricles?", a:"The pulmonary trunk (from the right ventricle) and the aorta (from the left ventricle)."},
+{ch:"ch12", t:"External anatomy", q:"The pulmonary trunk splits into what?", a:"The right and left pulmonary arteries, which carry blood to the lungs."},
+{ch:"ch12", t:"Chambers", q:"Name the four chambers of the heart.", a:"Left atrium (LA), right atrium (RA), left ventricle (LV), right ventricle (RV)."},
+{ch:"ch12", t:"Chambers", q:"What separates the atria from the ventricles externally?", a:"The coronary sulcus."},
+{ch:"ch12", t:"Chambers", q:"Describe the atria (position, role, walls).", a:"Superior 'holding' chambers; small and thin-walled; contract minimally to push blood into the ventricles. The interatrial septum separates right and left atria."},
+{ch:"ch12", t:"Chambers", q:"Describe the ventricles (position, role, walls).", a:"Inferior 'pumping' chambers; thick, strong walls; contract forcefully to propel blood out of the heart. The interventricular septum separates them."},
+{ch:"ch12", t:"Valves", q:"Where is the tricuspid valve and how many cusps does it have?", a:"Between the right atrium and right ventricle — 3 cusps."},
+{ch:"ch12", t:"Valves", q:"Where is the bicuspid (mitral) valve and how many cusps does it have?", a:"Between the left atrium and left ventricle — 2 cusps."},
+{ch:"ch12", t:"Valves", q:"Where is the pulmonary semilunar valve?", a:"Between the right ventricle and the pulmonary trunk."},
+{ch:"ch12", t:"Valves", q:"Where is the aortic semilunar valve?", a:"Between the left ventricle and the aorta."},
+{ch:"ch12", t:"Valves", q:"How many cusps do the semilunar valves have and what shape are they?", a:"Three half-moon–shaped cusps each."},
+{ch:"ch12", t:"Blood flow", q:"Trace blood flow from the right atrium to the lungs.", a:"RA → tricuspid valve → RV → pulmonary semilunar valve → pulmonary trunk → pulmonary arteries → lungs."},
+{ch:"ch12", t:"Blood flow", q:"Trace blood flow from the lungs to the body.", a:"Lungs → pulmonary veins → LA → bicuspid (mitral) valve → LV → aortic semilunar valve → aorta → body."},
+{ch:"ch12", t:"Coronary vessels", q:"What do the coronary arteries do and where do they originate?", a:"They supply blood to the heart wall; they originate from the base of the aorta, just above the aortic semilunar valve."},
+{ch:"ch12", t:"Coronary vessels", q:"What does the left coronary artery supply?", a:"It has 3 branches and supplies the anterior heart wall and the left ventricle."},
+{ch:"ch12", t:"Coronary vessels", q:"What does the right coronary artery supply?", a:"It originates on the right side of the aorta and supplies the right ventricle."},
+{ch:"ch12", t:"Coronary vessels", q:"How does blood drain from the heart muscle back to a chamber?", a:"Cardiac veins drain the cardiac muscle; most drain into the coronary sinus, which empties into the right atrium."},
+{ch:"ch12", t:"Heart wall", q:"Name the three layers of the heart wall from outside to inside.", a:"Epicardium (outer surface) → myocardium (thick middle layer of cardiac muscle) → endocardium (smooth inner surface)."},
+{ch:"ch12", t:"Cardiac cycle", q:"What is the cardiac cycle?", a:"A summative description of all events during one single heartbeat. The atria act as primers; the ventricles are the actual pumps."},
+{ch:"ch12", t:"Cardiac cycle", q:"Define systole and diastole for both atria and ventricles.", a:"Atrial systole = atria contract; ventricular systole = ventricles contract; atrial diastole = atria relax; ventricular diastole = ventricles relax."},
+{ch:"ch12", t:"Heart sounds", q:"What causes the first heart sound ('lub')?", a:"Closure of the atrioventricular (AV) valves."},
+{ch:"ch12", t:"Heart sounds", q:"What causes the second heart sound ('dub')?", a:"Closure of the semilunar valves."},
+{ch:"ch12", t:"Disease", q:"What is coronary artery disease?", a:"Decreased blood supply to the heart because the coronary arteries are narrowed."},
+{ch:"ch12", t:"Disease", q:"What is a myocardial infarction (heart attack)?", a:"Closure of one or more coronary arteries — the area of cardiac muscle lacking adequate blood supply dies."},
+{ch:"ch12", t:"Procedures", q:"Angioplasty, stent, bypass — what does each do?", a:"Angioplasty opens blocked vessels; a stent is a structure inserted to keep vessels open; bypass reroutes blood away from blocked arteries."},
+
+/* ================= CH 11 — BLOOD ================= */
+{ch:"ch11", t:"Functions", q:"Name the functions of blood.", a:"Transport of gases, nutrients, waste products, processed molecules and regulatory molecules; regulation of pH; maintenance of body temperature; protection against foreign substances; clot formation."},
+{ch:"ch11", t:"Composition", q:"What are the two main components of blood and their percentages?", a:"Plasma (55%) and formed elements (45%)."},
+{ch:"ch11", t:"Composition", q:"What is plasma made of?", a:"A pale yellow liquid: 91% water, 7% proteins, 2% other substances."},
+{ch:"ch11", t:"Composition", q:"What are the formed elements of blood?", a:"Cells and cell fragments: erythrocytes (RBCs), leukocytes (WBCs), and thrombocytes (platelets)."},
+{ch:"ch11", t:"Plasma proteins", q:"Albumin — how much of plasma protein, and what does it do?", a:"58% of plasma proteins; helps maintain water balance."},
+{ch:"ch11", t:"Plasma proteins", q:"Globulins — how much of plasma protein, and what do they do?", a:"38% of plasma proteins; help the immune system."},
+{ch:"ch11", t:"Plasma proteins", q:"Fibrinogen — how much of plasma protein, and what does it do?", a:"4% of plasma proteins; aids in clot formation."},
+{ch:"ch11", t:"Hematopoiesis", q:"What is hematopoiesis and where does it occur after birth?", a:"The process that produces formed elements. After birth it is confined primarily to red bone marrow (some WBCs are made in lymphatic tissues)."},
+{ch:"ch11", t:"Hematopoiesis", q:"Where does hematopoiesis occur in the fetus?", a:"In several tissues: liver, thymus, spleen, lymph nodes, and red bone marrow."},
+{ch:"ch11", t:"Hematopoiesis", q:"From what cell are ALL formed elements derived?", a:"A single population of stem cells called hemocytoblasts, which differentiate into the different cell lines."},
+{ch:"ch11", t:"Erythrocytes", q:"Describe the shape and key features of red blood cells.", a:"Disk-shaped with thick edges; the nucleus is lost during development; they live about 120 days."},
+{ch:"ch11", t:"Erythrocytes", q:"What is the function of erythrocytes?", a:"Transport O2 to the tissues."},
+{ch:"ch11", t:"Hemoglobin", q:"How does hemoglobin carry oxygen?", a:"Each globin protein is attached to a heme molecule; each heme contains one iron atom, and O2 binds to the iron."},
+{ch:"ch11", t:"Hemoglobin", q:"What is oxyhemoglobin?", a:"Hemoglobin with an O2 attached."},
+{ch:"ch11", t:"Erythrocytes", q:"Explain the erythropoietin feedback loop.", a:"Low blood O2 → kidneys increase erythropoietin production → erythropoietin stimulates red bone marrow to make more erythrocytes → blood O2 rises."},
+{ch:"ch11", t:"Erythrocytes", q:"How are old red blood cells removed, and what happens to the hemoglobin?", a:"Macrophages in the spleen and liver remove them. Globin → amino acids; iron is recycled; heme → bilirubin, which the liver releases into the small intestine as part of bile."},
+{ch:"ch11", t:"Leukocytes", q:"How do white blood cells differ from red blood cells?", a:"WBCs lack hemoglobin, are larger than RBCs, and contain a nucleus."},
+{ch:"ch11", t:"Leukocytes", q:"What are the functions of leukocytes?", a:"Fight infections and remove dead cells and debris by phagocytosis."},
+{ch:"ch11", t:"Leukocytes", q:"Which leukocytes are granulocytes?", a:"Neutrophils, eosinophils, and basophils (they contain specific granules)."},
+{ch:"ch11", t:"Leukocytes", q:"Neutrophils — key facts?", a:"The most common WBC; phagocytes; remain in the blood 10–12 hours, then move into the tissues."},
+{ch:"ch11", t:"Leukocytes", q:"Eosinophils — functions?", a:"Reduce inflammation and destroy parasites."},
+{ch:"ch11", t:"Leukocytes", q:"Basophils — key facts?", a:"The least common WBC; release histamine and heparin."},
+{ch:"ch11", t:"Leukocytes", q:"Which leukocytes are agranulocytes?", a:"Monocytes and lymphocytes (no specific granules)."},
+{ch:"ch11", t:"Leukocytes", q:"Monocytes — key facts?", a:"The largest white blood cells; they produce macrophages."},
+{ch:"ch11", t:"Leukocytes", q:"Lymphocytes — key facts?", a:"Responsible for the immune response; several types (T cells and B cells); lead to the production of antibodies."},
+{ch:"ch11", t:"Platelets", q:"What are platelets and where do they come from?", a:"Minute cell fragments (cytoplasm surrounded by membrane) that break off from megakaryocytes in red bone marrow. They play an important role in preventing blood loss."},
+{ch:"ch11", t:"Clotting", q:"What are the three mechanisms that prevent blood loss?", a:"1) Vascular spasm (temporary vessel constriction), 2) platelet plugs (adhesion → activation → aggregation), 3) blood clotting (coagulation)."},
+{ch:"ch11", t:"Clotting", q:"Key facts about clotting factors?", a:"Proteins in plasma, made in the liver, require vitamin K, and are only activated after injury."},
+{ch:"ch11", t:"Clotting", q:"What is hemophilia?", a:"An inherited bleeding disorder."},
+{ch:"ch11", t:"Clotting", q:"What do anticoagulants do? Give two examples.", a:"They prevent clots from forming — e.g., heparin and warfarin. At an injury, enough clotting factors are activated that anticoagulants can't work in that area."},
+{ch:"ch11", t:"Blood groups", q:"What is agglutination (a transfusion reaction)?", a:"Clumping of blood cells — caused by antibodies reacting with antigens on transfused erythrocytes."},
+{ch:"ch11", t:"Blood groups", q:"What antigens and antibodies does type A blood have?", a:"Type A antigens on the RBCs and anti-B antibodies in the plasma."},
+{ch:"ch11", t:"Blood groups", q:"What antigens and antibodies does type B blood have?", a:"Type B antigens on the RBCs and anti-A antibodies in the plasma."},
+{ch:"ch11", t:"Blood groups", q:"What antigens and antibodies does type AB blood have?", a:"Both A and B antigens — and neither type of antibody in the plasma."},
+{ch:"ch11", t:"Blood groups", q:"What antigens and antibodies does type O blood have?", a:"Neither A nor B antigens — but both anti-A and anti-B antibodies in the plasma."},
+{ch:"ch11", t:"Blood groups", q:"Why is type O the universal donor?", a:"Type O red cells have no A or B antigens, so recipient antibodies have nothing to attack."},
+{ch:"ch11", t:"Blood groups", q:"Which blood types can each ABO type receive?", a:"A ← A and O; B ← B and O; AB ← A, B, and AB (and O); O ← only O."},
+{ch:"ch11", t:"Blood groups", q:"What does Rh positive mean, and how common is it?", a:"You have Rh antigens on your red cells; almost 85% of the population is Rh+."},
+{ch:"ch11", t:"Blood tests", q:"What does a complete blood count (CBC) report?", a:"RBC count, hemoglobin, hematocrit, and WBC count."},
+{ch:"ch11", t:"Blood tests", q:"What is hematocrit?", a:"The percentage of total blood volume composed of red blood cells."},
+{ch:"ch11", t:"Blood tests", q:"What is prothrombin time and its normal value?", a:"The time it takes for blood to begin clotting — normally 9 to 12 seconds."},
+{ch:"ch11", t:"Blood tests", q:"Give the normal WBC differential percentages.", a:"Neutrophils 60–70%, lymphocytes 20–25%, monocytes 3–8%, eosinophils 2–4%, basophils 0.5–1%."},
+{ch:"ch11", t:"Disorders", q:"Leukopenia vs. leukocytosis?", a:"Leukopenia = low WBC count (radiation, chemotherapy, tumors, viral infections). Leukocytosis = high WBC count (infections and leukemia)."},
+
+/* ================= CH 9 — RESPIRATORY ================= */
+{ch:"ch9", t:"Basics", q:"What four processes make up respiration?", a:"1) Ventilation (breathing), 2) exchange of O2/CO2 between lung air and blood, 3) transport of O2/CO2 in the blood, 4) exchange of O2/CO2 between blood and tissues."},
+{ch:"ch9", t:"Basics", q:"Name the functions of the respiratory system.", a:"Respiration, regulation of blood pH, voice production, olfaction, and innate immunity."},
+{ch:"ch9", t:"Upper tract", q:"What makes up the upper respiratory tract?", a:"External nose, nasal cavity, and pharynx."},
+{ch:"ch9", t:"Upper tract", q:"What makes up the lower respiratory tract?", a:"Larynx, trachea, bronchi, and lungs."},
+{ch:"ch9", t:"Nose", q:"What is the external nose mainly composed of?", a:"Hyaline cartilage."},
+{ch:"ch9", t:"Nose", q:"What does the nasal cavity extend between?", a:"From the nostrils (external nares) to the choanae (internal nares — the openings to the pharynx). Its floor is the hard palate (anterior) and soft palate (posterior)."},
+{ch:"ch9", t:"Nose", q:"What are the paranasal sinuses?", a:"Air-filled spaces within bone, lined with mucous membranes, that open into the nasal cavity."},
+{ch:"ch9", t:"Nose", q:"What are the conchae and what do they do?", a:"Structures on each side of the nasal cavity that increase its surface area and help clean, humidify, and warm the air."},
+{ch:"ch9", t:"Nose", q:"What do the nasolacrimal ducts do?", a:"Carry tears from the eyes into the nasal cavity."},
+{ch:"ch9", t:"Pharynx", q:"What is the pharynx?", a:"The common passageway for the respiratory and digestive systems."},
+{ch:"ch9", t:"Pharynx", q:"Nasopharynx vs. oropharynx vs. laryngopharynx — what passes through each?", a:"Nasopharynx: air only. Oropharynx (uvula → epiglottis): food, drink, and air. Laryngopharynx (epiglottis → esophagus): food and drink."},
+{ch:"ch9", t:"Larynx", q:"What is the larynx?", a:"The cartilaginous passageway for air between the pharynx and trachea — also called the voice box."},
+{ch:"ch9", t:"Larynx", q:"What is the thyroid cartilage?", a:"The largest piece of laryngeal cartilage — known as the Adam's apple."},
+{ch:"ch9", t:"Larynx", q:"What is the epiglottis?", a:"A cartilage flap that prevents swallowed materials from entering the larynx."},
+{ch:"ch9", t:"Larynx", q:"How do the vocal folds produce sound, and what determines loudness?", a:"Air moving past them makes them vibrate, producing sound; the force of the air determines loudness."},
+{ch:"ch9", t:"Larynx", q:"What is laryngitis?", a:"Inflammation of the vocal folds — caused by overuse, dry air, or infection."},
+{ch:"ch9", t:"Trachea", q:"Describe the structure of the trachea.", a:"The 'windpipe' — 16 to 20 C-shaped pieces of cartilage, with goblet cells and cilia (ciliated pseudostratified columnar epithelium)."},
+{ch:"ch9", t:"Trachea", q:"What does smoking do to the trachea, and what clears it?", a:"Smoking kills the cilia; coughing dislodges materials from the trachea."},
+{ch:"ch9", t:"Trachea", q:"What does the trachea divide into?", a:"The right and left primary bronchi, which connect to the lungs."},
+{ch:"ch9", t:"Lungs", q:"How many lobes does each lung have?", a:"Right lung: 3 lobes. Left lung: 2 lobes."},
+{ch:"ch9", t:"Lungs", q:"Where are the base and apex of each lung?", a:"The base rests on the diaphragm; the apex extends above the clavicle."},
+{ch:"ch9", t:"Airways", q:"List the airway passages from primary bronchi to alveoli.", a:"Primary bronchi → lobar (secondary) bronchi → segmental (tertiary) bronchi → bronchioles → terminal bronchioles → respiratory bronchioles → alveolar ducts → alveoli. Structures get smaller and more numerous."},
+{ch:"ch9", t:"Airways", q:"What are alveoli?", a:"Small air sacs where gas exchange occurs, surrounded by capillaries — about 300 million per lungs."},
+{ch:"ch9", t:"Airways", q:"What happens during an asthma attack?", a:"Contraction of the terminal bronchioles leads to reduced air flow."},
+{ch:"ch9", t:"Gas exchange", q:"What is the respiratory membrane?", a:"The membrane in the lungs where gas exchange between air and blood occurs — formed by the walls of the alveoli and capillaries, and very thin for diffusion."},
+{ch:"ch9", t:"Pleura", q:"Parietal pleura vs. visceral pleura?", a:"Parietal pleura lines the thoracic cavity; visceral pleura covers the lung's surface. The pleural cavity is the space for each lung."},
+{ch:"ch9", t:"Ventilation", q:"What is ventilation and which key muscle does it use?", a:"The process of moving air in and out of the lungs; it uses the diaphragm — a skeletal muscle separating the thoracic and abdominal cavities."},
+{ch:"ch9", t:"Ventilation", q:"What happens during inspiration?", a:"The diaphragm contracts and moves down; intercostal muscles contract lifting the ribs up and out; thoracic volume increases; air flows in."},
+{ch:"ch9", t:"Ventilation", q:"What happens during expiration?", a:"The diaphragm relaxes and moves up; intercostal muscles relax; thoracic volume decreases; air flows out."},
+{ch:"ch9", t:"Ventilation", q:"How do pressure changes drive airflow?", a:"When thoracic volume increases, pressure decreases (and vice versa); air flows from high to low pressure."},
+{ch:"ch9", t:"Ventilation", q:"What factors influence pulmonary volumes?", a:"Gender, age, height, and weight."},
+{ch:"ch9", t:"Gas exchange", q:"Where does gas exchange NOT occur?", a:"In the bronchioles, bronchi, and trachea — only at the respiratory membrane."},
+{ch:"ch9", t:"Gas exchange", q:"What three factors influence gas exchange at the respiratory membrane?", a:"Thickness of the membrane, total surface area of the membrane, and the partial pressure of the gases."},
+{ch:"ch9", t:"Gas exchange", q:"Why does pulmonary edema affect O2 before CO2?", a:"Increased membrane thickness decreases diffusion, and CO2 diffuses more easily than O2 — so O2 exchange is affected first."},
+{ch:"ch9", t:"Gas exchange", q:"What is the total surface area of the respiratory membrane, and what reduces it?", a:"About 70 square meters; it is decreased by removal of lung tissue and by emphysema."},
+{ch:"ch9", t:"Partial pressure", q:"What is partial pressure, and what is the atmospheric total at sea level?", a:"The pressure exerted by a specific gas in a gas mixture; total atmospheric pressure at sea level is 760 mm Hg."},
+{ch:"ch9", t:"Partial pressure", q:"The atmosphere is 21% O2 — what is the partial pressure of O2?", a:"160 mm Hg (written Po2)."},
+{ch:"ch9", t:"Gas exchange", q:"In the lungs, which way do O2 and CO2 diffuse?", a:"O2 diffuses from the alveoli into the pulmonary capillaries; CO2 diffuses from the capillaries into the alveoli."},
+{ch:"ch9", t:"CO2 & pH", q:"How is CO2 transported in the blood?", a:"Dissolved in plasma, combined with blood proteins, and as bicarbonate ions."},
+{ch:"ch9", t:"CO2 & pH", q:"What happens when CO2 reacts with water?", a:"CO2 + H2O → H2CO3 (carbonic acid), which dissociates into H+ + HCO3− (a hydrogen ion and a bicarbonate ion)."},
+{ch:"ch9", t:"CO2 & pH", q:"What enzyme speeds the CO2 + water reaction, and where is it?", a:"Carbonic anhydrase, in red blood cells."},
+{ch:"ch9", t:"CO2 & pH", q:"What happens to blood pH when CO2 levels increase?", a:"Blood pH decreases (more acidic)."},
+{ch:"ch9", t:"Control", q:"What is the normal respiratory rate for adults and for children?", a:"Adults: 12–20 breaths per minute; children: 20–40 per minute."},
+{ch:"ch9", t:"Control", q:"What part of the brain controls the rhythm of ventilation?", a:"Neurons in the medulla oblongata."},
+];
+
+/* ================= CH 13 — BLOOD VESSELS & CIRCULATION ================= */
+const CARDS2 = [
+{ch:"ch13", t:"Basics", q:"What are the two classes of blood vessels outside the heart?", a:"Pulmonary vessels (right ventricle → lungs → left atrium) and systemic vessels (left ventricle → body → right atrium)."},
+{ch:"ch13", t:"Basics", q:"Name the functions of blood vessels.", a:"Carry blood; exchange nutrients, waste products, and gases with tissues; transport substances; regulate blood pressure; direct blood flow to tissues."},
+{ch:"ch13", t:"Structure", q:"Arteries vs. veins — direction and wall structure?", a:"Arteries carry blood AWAY from the heart (thick walls, lots of elastic fibers). Veins carry blood TOWARD the heart (thin walls, less elastic fiber)."},
+{ch:"ch13", t:"Structure", q:"What happens in capillaries?", a:"Exchange between blood and tissue fluids."},
+{ch:"ch13", t:"Structure", q:"Trace blood flow from arteries back to the heart.", a:"Arteries → arterioles → capillaries → venules → small veins → veins → heart."},
+{ch:"ch13", t:"Structure", q:"Name the three layers (tunics) of a blood vessel wall.", a:"Tunica intima (innermost, simple squamous), tunica media (middle, smooth muscle with elastic and collagen), tunica adventitia (outermost, connective tissue)."},
+{ch:"ch13", t:"Structure", q:"Elastic arteries — features and examples?", a:"Largest diameter, thickest walls — e.g., the aorta and pulmonary trunk."},
+{ch:"ch13", t:"Structure", q:"Muscular arteries — features and examples?", a:"Medium to small size, thick walls containing smooth muscle cells — e.g., the radial and brachial arteries."},
+{ch:"ch13", t:"Structure", q:"What regulates blood flow into a capillary network?", a:"Smooth muscle cells called precapillary sphincters."},
+{ch:"ch13", t:"Structure", q:"What is the order of vein sizes returning to the heart?", a:"Venules → small veins → medium-sized veins → large veins. All 3 tunics are present already in small veins."},
+{ch:"ch13", t:"Circuits", q:"In the pulmonary circulation, what do the pulmonary trunk and pulmonary veins each carry?", a:"Pulmonary trunk: blood pumped from the right ventricle toward the lungs. Pulmonary veins: O2-rich blood from the lungs to the left atrium."},
+{ch:"ch13", t:"Circuits", q:"Is the blood returning to the heart oxygenated or deoxygenated?", a:"Systemic circulation: deoxygenated. Pulmonary circulation (pulmonary veins): oxygenated."},
+{ch:"ch13", t:"Head & neck arteries", q:"What are the three branches of the aortic arch, in order?", a:"1) Brachiocephalic artery, 2) left common carotid artery, 3) left subclavian artery."},
+{ch:"ch13", t:"Head & neck arteries", q:"What does the brachiocephalic artery supply, and what branches from it?", a:"It is the first branch of the aortic arch, supplying the right side of the head and neck; the right common carotid and right subclavian arteries branch from it."},
+{ch:"ch13", t:"Head & neck arteries", q:"What do the common carotid arteries supply?", a:"The head and neck (right common carotid: right side; left common carotid: left side)."},
+{ch:"ch13", t:"Head & neck arteries", q:"What do the subclavian arteries supply?", a:"The upper limbs (right subclavian: right arm; left subclavian: left arm)."},
+{ch:"ch13", t:"Upper limb arteries", q:"Which artery is the continuation of the subclavian, and which continues from it?", a:"The axillary artery continues from the subclavian; the brachial artery continues from the axillary."},
+{ch:"ch13", t:"Upper limb arteries", q:"Where are blood pressure measurements taken?", a:"At the brachial artery."},
+{ch:"ch13", t:"Upper limb arteries", q:"Where is the pulse usually taken on the wrist, and what does that artery supply?", a:"The radial artery — a branch of the brachial that supplies the forearm and hand."},
+{ch:"ch13", t:"Upper limb arteries", q:"What is the ulnar artery?", a:"A branch of the brachial artery near the elbow."},
+{ch:"ch13", t:"Abdominal arteries", q:"What does the celiac trunk supply?", a:"Stomach, pancreas, spleen, liver, and upper duodenum."},
+{ch:"ch13", t:"Abdominal arteries", q:"Superior vs. inferior mesenteric arteries — what does each supply?", a:"Superior mesenteric: small intestine and upper colon. Inferior mesenteric: colon."},
+{ch:"ch13", t:"Abdominal arteries", q:"What do the renal, hepatic, testicular, and ovarian arteries supply?", a:"Renal: kidneys. Hepatic: liver. Testicular: testes. Ovarian: ovaries."},
+{ch:"ch13", t:"Abdominal arteries", q:"What do the inferior phrenic and lumbar arteries supply?", a:"Inferior phrenic: the diaphragm. Lumbar: lumbar vertebrae and back muscles."},
+{ch:"ch13", t:"Pelvic arteries", q:"What are the common iliac arteries and what do they divide into?", a:"Branches of the abdominal aorta that divide into the internal iliac (pelvic area) and external iliac (lower limbs) arteries."},
+{ch:"ch13", t:"Lower limb arteries", q:"Match: femoral, popliteal, anterior/posterior tibial, fibular arteries.", a:"Femoral: thigh. Popliteal: knee. Anterior and posterior tibial: leg and foot. Fibular: lateral leg and foot."},
+{ch:"ch13", t:"Veins", q:"What does the superior vena cava drain and where does it empty?", a:"Blood from the head, neck, thorax, and upper limbs — into the right atrium."},
+{ch:"ch13", t:"Veins", q:"What does the inferior vena cava drain and where does it empty?", a:"Blood from the abdomen, pelvis, and lower limbs — into the right atrium."},
+{ch:"ch13", t:"Head & neck veins", q:"External vs. internal jugular veins — what does each drain?", a:"External jugular: head and neck. Internal jugular: brain, face, and neck. Both empty into the subclavian veins."},
+{ch:"ch13", t:"Head & neck veins", q:"How is the superior vena cava formed?", a:"Subclavian veins form the brachiocephalic veins, and the two brachiocephalic veins join to form the superior vena cava."},
+{ch:"ch13", t:"Upper limb veins", q:"Where do the brachial and cephalic veins empty?", a:"Both empty into the axillary vein."},
+{ch:"ch13", t:"Upper limb veins", q:"Where is the median cubital vein and what does it connect to?", a:"Near the elbow; it connects to the cephalic vein. (It's the classic blood-draw site.)"},
+{ch:"ch13", t:"Thorax veins", q:"Which veins drain the thorax into the superior vena cava?", a:"The right and left brachiocephalic veins and the azygos veins."},
+{ch:"ch13", t:"Abdomen & pelvis veins", q:"How is the common iliac vein formed and where does it empty?", a:"Formed from the external iliac (drains lower limbs) and internal iliac (drains pelvic region) veins; it empties into the inferior vena cava."},
+{ch:"ch13", t:"Abdomen & pelvis veins", q:"What does the renal vein drain?", a:"Blood from the kidneys."},
+{ch:"ch13", t:"Lower limb veins", q:"Femoral, great saphenous, popliteal veins — what does each drain into?", a:"Femoral: drains the thigh into the external iliac vein. Great saphenous: drains from the foot into the femoral vein. Popliteal: drains the knee into the femoral vein."},
+{ch:"ch13", t:"Blood pressure", q:"What is blood pressure, and what are systolic and diastolic pressure?", a:"The force blood exerts against vessel walls. Systolic = during heart contraction; diastolic = during heart relaxation. Average: 120/80."},
+{ch:"ch13", t:"Aging", q:"Arteriosclerosis vs. atherosclerosis?", a:"Arteriosclerosis makes arteries less elastic; atherosclerosis is a type of arteriosclerosis caused by deposits (plaque) in artery walls."},
+{ch:"ch13", t:"Aging", q:"What factors contribute to atherosclerosis?", a:"Lack of exercise, smoking, obesity, a diet high in cholesterol and trans fats, and some genetics."},
+
+/* ================= CH 8 — NERVOUS SYSTEM ================= */
+{ch:"ch8", t:"Basics", q:"Name the functions of the nervous system.", a:"Receiving sensory input; integrating information; controlling muscles and glands; maintaining homeostasis; establishing and maintaining mental activity."},
+{ch:"ch8", t:"Divisions", q:"What makes up the CNS and the PNS?", a:"CNS: brain and spinal cord. PNS: all nervous tissue (nerves and ganglia) outside the CNS."},
+{ch:"ch8", t:"Divisions", q:"Sensory vs. motor division of the PNS?", a:"Sensory division carries information TO the brain; motor division carries instructions FROM the brain to the body."},
+{ch:"ch8", t:"Divisions", q:"Somatic vs. autonomic nervous system?", a:"Somatic: manages voluntary body movements via skeletal muscles. Autonomic: manages involuntary internal functions and organ processes."},
+{ch:"ch8", t:"Receptors", q:"What do mechanoreceptors detect?", a:"Physical changes like touch, pressure, vibration, sound, and balance."},
+{ch:"ch8", t:"Receptors", q:"What do chemoreceptors and thermoreceptors detect?", a:"Chemoreceptors: chemicals in the environment or blood. Thermoreceptors: changes in temperature."},
+{ch:"ch8", t:"Receptors", q:"What do photoreceptors and nociceptors detect?", a:"Photoreceptors: light energy. Nociceptors: tissue-damaging stimuli the brain interprets as pain."},
+{ch:"ch8", t:"Cells", q:"Neurons vs. glial cells — roles?", a:"Neurons receive stimuli, conduct action potentials, and transmit signals. Glial cells are the supportive cells of the CNS and PNS that enhance neuron function."},
+{ch:"ch8", t:"Neurons", q:"Name the three parts of a neuron and their jobs.", a:"Cell body (contains the nucleus), dendrites (receive information and carry it to the cell body), axon (conducts impulses away from the cell body)."},
+{ch:"ch8", t:"Neurons", q:"Multipolar neurons — structure and where found?", a:"Many dendrites and a single axon; most CNS neurons and nearly all motor neurons are multipolar."},
+{ch:"ch8", t:"Neurons", q:"Bipolar neurons — structure and where found?", a:"Two processes (one dendrite, one axon); found in some sensory organs like the retina and nasal cavity."},
+{ch:"ch8", t:"Neurons", q:"Pseudo-unipolar neurons — structure?", a:"A single process from the cell body that splits in two: one extension to the periphery, one to the CNS — functioning as a single axon with sensory receptors at the periphery."},
+{ch:"ch8", t:"Glial cells", q:"What do astrocytes do?", a:"They are the major supporting cells of the CNS and form the blood-brain barrier."},
+{ch:"ch8", t:"Glial cells", q:"What do ependymal cells do?", a:"Line the brain cavities that contain cerebrospinal fluid."},
+{ch:"ch8", t:"Glial cells", q:"What do microglial cells do?", a:"Act as immune cells of the CNS — removing bacteria and cell debris."},
+{ch:"ch8", t:"Glial cells", q:"Which cells make myelin in the CNS, and which in the PNS?", a:"CNS: oligodendrocytes. PNS: Schwann cells."},
+{ch:"ch8", t:"Myelin", q:"What does the myelin sheath do?", a:"It insulates axons, preventing ion leakage, and increases the speed and efficiency of electrical impulse transmission."},
+{ch:"ch8", t:"Myelin", q:"What disease attacks the myelin sheath?", a:"Multiple sclerosis — causing loss of muscle function."},
+{ch:"ch8", t:"Spinal cord", q:"Where does the spinal cord extend from and to?", a:"From the foramen magnum to the 2nd lumbar vertebra; protected by the vertebral column."},
+{ch:"ch8", t:"Spinal cord", q:"Gray matter vs. white matter in the spinal cord?", a:"Gray matter is in the center (shaped like an H or butterfly); white matter is on the outside."},
+{ch:"ch8", t:"Reflexes", q:"What is a reflex?", a:"An automatic, involuntary action produced in response to a stimulus — fast, and without conscious thought."},
+{ch:"ch8", t:"Reflexes", q:"What is a stretch reflex? Give the classic example.", a:"Muscles contract in response to a stretching force — e.g., the knee-jerk (patellar) reflex."},
+{ch:"ch8", t:"Reflexes", q:"What is the withdrawal reflex?", a:"A protective reflex triggered by harmful/painful stimuli — e.g., pulling your hand away from a hot object."},
+{ch:"ch8", t:"Reflexes", q:"What do the pupillary light reflex and corneal (blink) reflex do?", a:"Pupillary: changes pupil size to control light entering the eye. Corneal: the orbicularis oculi closes both eyelids in a fraction of a second to protect the eyes."},
+{ch:"ch8", t:"Spinal nerves", q:"Dorsal roots vs. ventral roots?", a:"Dorsal roots transmit sensory information INTO the spinal cord; ventral roots transmit motor commands OUT to the body."},
+{ch:"ch8", t:"Spinal nerves", q:"How many pairs of spinal nerves are there, and how are they organized?", a:"31 pairs, categorized by vertebral region (e.g., C for cervical) and organized in plexuses (branching networks of intersecting nerves)."},
+{ch:"ch8", t:"Plexuses", q:"Cervical plexus — nerves and what it supplies?", a:"C1–C4; supplies parts of the neck and skin near the ear and shoulder; contains the phrenic nerve, which innervates the diaphragm."},
+{ch:"ch8", t:"Plexuses", q:"Brachial plexus — nerves and what it supplies?", a:"C5–T1; supplies the upper limb and shoulder."},
+{ch:"ch8", t:"Plexuses", q:"Lumbosacral plexus — nerves and what it supplies?", a:"L1–S4; supplies the lower limbs."},
+{ch:"ch8", t:"Dermatomes", q:"What is a dermatome?", a:"The area of skin supplied with sensory innervation by a pair of spinal nerves (every spinal nerve except C1 has one)."},
+{ch:"ch8", t:"Brainstem", q:"What are the three components of the brainstem?", a:"Medulla oblongata, pons, and midbrain."},
+{ch:"ch8", t:"Brainstem", q:"Medulla oblongata — location and functions?", a:"Continuous with the spinal cord; regulates heart rate, blood vessel diameter, breathing, swallowing, vomiting, coughing, sneezing, and balance. Its pyramids are involved in conscious control of skeletal muscle."},
+{ch:"ch8", t:"Brainstem", q:"Pons — location and functions?", a:"Above the medulla, a bridge between cerebrum and cerebellum; involved in breathing, sleep-wake cycle, salivation, and swallowing."},
+{ch:"ch8", t:"Brainstem", q:"Midbrain — location and functions?", a:"Above the pons; coordinates eye movement, pupil diameter, and turning the head toward noise."},
+{ch:"ch8", t:"Brainstem", q:"Reticular formation — location and functions?", a:"Scattered throughout the brainstem; regulates cyclical motor functions (respiration, walking, chewing), arouses and maintains consciousness, and regulates the sleep-wake cycle."},
+{ch:"ch8", t:"Cerebellum", q:"Cerebellum — meaning, location, and functions?", a:"'Little brain'; attached to the brainstem by the cerebellar peduncles; controls balance, muscle tone, and coordination of fine motor movement."},
+{ch:"ch8", t:"Diencephalon", q:"What are the three components of the diencephalon?", a:"Thalamus, hypothalamus, and epithalamus (located between the brainstem and cerebrum)."},
+{ch:"ch8", t:"Diencephalon", q:"Thalamus — key facts?", a:"The largest portion of the diencephalon; influences moods and detects pain."},
+{ch:"ch8", t:"Diencephalon", q:"Epithalamus — location and function?", a:"Above the thalamus; involved in emotional and visceral responses to odors; includes the pineal gland."},
+{ch:"ch8", t:"Diencephalon", q:"Hypothalamus — location and functions?", a:"Below the thalamus; controls the pituitary gland (connected by the infundibulum); controls homeostasis, body temperature, thirst, hunger, fear, rage, and sexual emotions."},
+{ch:"ch8", t:"Cerebrum", q:"What separates the two cerebral hemispheres, and what connects them?", a:"The longitudinal fissure separates them; the corpus callosum connects them."},
+{ch:"ch8", t:"Cerebrum", q:"Gyri vs. sulci vs. fissures?", a:"Gyri: folds that increase the cortex surface area. Sulci: shallow depressions. Fissures: deep indentations."},
+{ch:"ch8", t:"Cerebrum", q:"What is each hemisphere responsible for?", a:"Left: controls the right side of the body; math, analytics, speech. Right: controls the left side; music, art, abstract ideas."},
+{ch:"ch8", t:"Lobes", q:"Frontal lobe — location and functions?", a:"Front; controls voluntary motor functions, aggression, moods, and smell."},
+{ch:"ch8", t:"Lobes", q:"Parietal lobe — location and functions?", a:"Top; evaluates sensory input such as touch, pain, pressure, temperature, and taste."},
+{ch:"ch8", t:"Lobes", q:"Occipital and temporal lobes — functions?", a:"Occipital (back): vision. Temporal (sides): hearing, smell, and memory."},
+{ch:"ch8", t:"Speech", q:"Wernicke's area — lobe and function?", a:"Sensory speech area in the parietal lobe — where words are heard and comprehended."},
+{ch:"ch8", t:"Speech", q:"Broca's area — lobe and function?", a:"Motor speech area in the frontal lobe — where words are formulated for speech production and language expression. Speech is mainly in the left hemisphere."},
+{ch:"ch8", t:"Memory", q:"What are the three types of memory encoding?", a:"Visual (images), acoustic (sounds), and semantic (processing meaning)."},
+{ch:"ch8", t:"Memory", q:"Name the memory types: episodic, semantic, procedural.", a:"Episodic: places and events. Semantic: facts and knowledge. Procedural: skills and habits."},
+{ch:"ch8", t:"Memory", q:"Short-term vs. long-term memory?", a:"Short-term: information retained a few seconds or minutes. Long-term: lasts a few minutes or permanently, depending on retrieval."},
+{ch:"ch8", t:"Limbic system", q:"What does the limbic system influence, and where is it?", a:"Beneath the cerebral cortex, above the brainstem; influences long-term declarative memory, emotions, visceral responses to emotions, motivation, and mood."},
+{ch:"ch8", t:"Limbic system", q:"Hippocampus vs. amygdala?", a:"Hippocampus: the brain's primary memory center. Amygdala: manages emotional responses and attaches emotional weight to memories."},
+{ch:"ch8", t:"Limbic system", q:"What is a major sensory input to the limbic system, and what is it functionally connected to?", a:"The olfactory nerves (smell); it is connected to and functionally associated with the hypothalamus."},
+{ch:"ch8", t:"Meninges", q:"Name the three meninges from outside to inside.", a:"Dura mater (toughest, outermost) → arachnoid mater (thin, wispy) → pia mater (tightly bound to the brain and spinal cord surface)."},
+{ch:"ch8", t:"Meninges", q:"Where is cerebrospinal fluid found in the meninges?", a:"In the subarachnoid space (along with blood vessels). The subdural space between dura and arachnoid is normally only a potential space."},
+{ch:"ch8", t:"Cranial nerves", q:"How many pairs of cranial nerves are there, and how are they named?", a:"12 pairs, named by Roman numerals; their functions are sensory, motor, or both."},
+{ch:"ch8", t:"Cranial nerves", q:"CN I and CN II — names and functions?", a:"I Olfactory: pure sensory, smell. II Optic: pure sensory, vision."},
+{ch:"ch8", t:"Cranial nerves", q:"Which cranial nerves are pure motor nerves for eye movement?", a:"III Oculomotor, IV Trochlear, and VI Abducens."},
+{ch:"ch8", t:"Cranial nerves", q:"CN V (Trigeminal) — functions?", a:"Both motor and sensory: sensory for pain, touch, and temperature of the eye and jaws; motor for the muscles of chewing."},
+{ch:"ch8", t:"Cranial nerves", q:"CN VII (Facial) — functions?", a:"Both: sensory for taste, motor for facial expression."},
+{ch:"ch8", t:"Cranial nerves", q:"CN VIII (Vestibulocochlear) — function?", a:"Pure sensory: hearing and equilibrium."},
+{ch:"ch8", t:"Cranial nerves", q:"CN IX (Glossopharyngeal) — functions?", a:"Both: sensory for taste, motor for swallowing."},
+{ch:"ch8", t:"Cranial nerves", q:"CN X (Vagus) — functions?", a:"Both: sensory and motor for organs in the thoracic and abdominal cavities."},
+{ch:"ch8", t:"Cranial nerves", q:"CN XI (Accessory) and CN XII (Hypoglossal) — functions?", a:"XI: pure motor for trapezius, sternocleidomastoid, and larynx muscles. XII: pure motor for the tongue."},
+{ch:"ch8", t:"Autonomic NS", q:"What does the autonomic nervous system innervate?", a:"Smooth muscle, cardiac muscle, and glands — largely controlled unconsciously. It has sympathetic and parasympathetic divisions."},
+{ch:"ch8", t:"Autonomic NS", q:"Sympathetic division — what does it do?", a:"'Fight-or-flight': prepares the body for physical activity during stress, danger, or exertion; takes over to increase activities."},
+{ch:"ch8", t:"Autonomic NS", q:"Parasympathetic division — what does it do?", a:"'Housekeeping': controls rest, conserves energy, maintains daily body functions like digestion."},
+
+/* ================= CH 6 — SKELETAL SYSTEM ================= */
+{ch:"ch6", t:"Basics", q:"What are the components of the skeletal system?", a:"Bones, cartilages, tendons, and ligaments."},
+{ch:"ch6", t:"Basics", q:"Name the five functions of the skeletal system.", a:"Support, protection, movement, storage, and blood cell production."},
+{ch:"ch6", t:"Bone cells", q:"Osteoblasts, osteocytes, osteoclasts — what does each do?", a:"Osteoblasts: form bone. Osteocytes: maintain bone matrix (formed from osteoblasts surrounded by matrix). Osteoclasts: remove existing bone for repair and remodeling."},
+{ch:"ch6", t:"Matrix", q:"What does the extracellular matrix of skeletal tissues always contain?", a:"Collagen, proteoglycans, other organic molecules, water, and minerals."},
+{ch:"ch6", t:"Matrix", q:"What are collagen and proteoglycans?", a:"Collagen: a tough, ropelike protein. Proteoglycans: large molecules of polysaccharides around core proteins that hold water. Tendons and ligaments are collagen-rich, making them tough like ropes."},
+{ch:"ch6", t:"Bone shapes", q:"Name the four bone shape classes with an example of each.", a:"Long (limb bones), short (wrist and ankle bones), flat (skull, sternum), irregular (vertebrae, facial bones)."},
+{ch:"ch6", t:"Long bone", q:"Diaphysis vs. epiphysis?", a:"Diaphysis: the shaft, made of compact bone on the outside. Epiphysis: the ends, made of spongy bone."},
+{ch:"ch6", t:"Long bone", q:"What is articular cartilage?", a:"Cartilage covering the epiphyses that reduces friction in joints."},
+{ch:"ch6", t:"Long bone", q:"Periosteum vs. endosteum?", a:"Periosteum: membrane around the bone's outer surface. Endosteum: membrane lining the medullary cavity."},
+{ch:"ch6", t:"Marrow", q:"Red marrow vs. yellow marrow?", a:"Red marrow: site of blood-forming cells. Yellow marrow: mostly fat."},
+{ch:"ch6", t:"Marrow", q:"Where is red marrow found in adults?", a:"Mostly in flat bones and in the long bones of the femur and humerus (in adults, diaphysis red marrow is replaced by yellow marrow; newborns have mostly red marrow)."},
+{ch:"ch6", t:"Calcium", q:"How does bone participate in calcium homeostasis?", a:"Bone is the major calcium storage site: calcium moves INTO bone as osteoblasts build bone and OUT as osteoclasts break it down. Regulated by parathyroid hormone (PTH) and calcitonin."},
+{ch:"ch6", t:"Bone terms", q:"Define: facet, condyle, process, tubercle.", a:"Facet: flat surface. Condyle: smooth rounded end (occipital condyles). Process: projection (mastoid process). Tubercle: small rounded bump (greater tubercle)."},
+{ch:"ch6", t:"Bone terms", q:"Define: fossa, fissure, foramen, meatus, sinus, spine.", a:"Fossa: depression (glenoid fossa). Fissure: slit through bone. Foramen: hole through bone (foramen magnum). Meatus: canal-like passageway. Sinus: air-filled space. Spine: sharp pointed projection."},
+{ch:"ch6", t:"Axial skeleton", q:"What makes up the axial skeleton?", a:"The skull, the vertebral column, and the thoracic cage."},
+{ch:"ch6", t:"Axial skeleton", q:"How many bones are in the skull, braincase, and face?", a:"Skull: 22 bones total — 8 braincase bones surrounding the brain and 14 facial bones. Plus 3 auditory ossicles in each middle ear (6 total)."},
+{ch:"ch6", t:"Axial skeleton", q:"Which skull bone is freely movable?", a:"The mandible (lower jaw) — the other 13 facial bones are solidly connected."},
+{ch:"ch6", t:"Cranial bones", q:"Locate: frontal, parietal, occipital, temporal bones.", a:"Frontal: anterior cranium. Parietal: sides and roof. Occipital: posterior portion and floor. Temporal: inferior to the parietals on each side (form the temporomandibular joint)."},
+{ch:"ch6", t:"Cranial bones", q:"What is the sella turcica and which bone has it?", a:"A depression in the sphenoid bone that holds the pituitary gland."},
+{ch:"ch6", t:"Cranial bones", q:"Key facts about the ethmoid bone?", a:"Forms the anterior cranium, including the medial eye orbit surface and roof of the nasal cavity; its nasal conchae are curled bones extending into the nasal cavity."},
+{ch:"ch6", t:"Facial bones", q:"What do the maxillae form?", a:"The upper jaw, anterior hard palate, part of the lateral nasal walls, and the floors of the eye orbits; contain the maxillary sinuses."},
+{ch:"ch6", t:"Facial bones", q:"What do the palatine bones form?", a:"The posterior portion of the hard palate and the lateral wall of the nasal cavity."},
+{ch:"ch6", t:"Facial bones", q:"Zygomatic, lacrimal, and nasal bones — what are they?", a:"Zygomatic: cheekbones (also floor/lateral wall of eye orbits). Lacrimal: medial surfaces of the eye orbits. Nasal: form the bridge of the nose."},
+{ch:"ch6", t:"Facial bones", q:"What does the vomer form?", a:"It sits in the midline of the nasal cavity and forms the nasal septum together with the ethmoid bone."},
+{ch:"ch6", t:"Sinuses", q:"Name the four paranasal sinuses.", a:"Frontal, ethmoid, sphenoid, and maxillary — large cavities within bones that open into the nasal cavity."},
+{ch:"ch6", t:"Hyoid", q:"What makes the hyoid bone unique?", a:"It is the only bone that does not articulate with any other bone — a U-shaped bone providing attachment for tongue muscles and neck muscles that elevate the larynx."},
+{ch:"ch6", t:"Vertebral column", q:"How many bones does the adult vertebral column have, and what are its curvatures?", a:"26 bones in five regions. Curvatures: cervical (anterior), thoracic (posterior), lumbar (anterior), sacrococcygeal (posterior)."},
+{ch:"ch6", t:"Vertebral column", q:"Give the vertebra counts by region.", a:"7 cervical, 12 thoracic, 5 lumbar, 1 sacrum, 1 coccyx."},
+{ch:"ch6", t:"Vertebral column", q:"Atlas vs. axis?", a:"Atlas: 1st vertebra — holds the head. Axis: 2nd vertebra — rotates the head."},
+{ch:"ch6", t:"Vertebral column", q:"Functions of the vertebral column?", a:"Supports body weight, protects the spinal cord, lets spinal nerves exit, provides muscle attachment sites, and allows movement of the head and trunk."},
+{ch:"ch6", t:"Thoracic cage", q:"True ribs vs. false ribs vs. floating ribs?", a:"12 pairs total. True ribs attach directly to the sternum by cartilage; false ribs attach indirectly; floating ribs don't attach to the sternum at all."},
+{ch:"ch6", t:"Pectoral girdle", q:"What two bones form the pectoral girdle?", a:"The scapula (shoulder blade) and the clavicle (collar bone)."},
+{ch:"ch6", t:"Upper limb", q:"Name the upper limb bones.", a:"Humerus (upper arm), ulna and radius (forearm), carpals (wrist), metacarpals (hand), phalanges (fingers)."},
+{ch:"ch6", t:"Pelvic girdle", q:"What three bones fuse to form the adult hip bone?", a:"Ilium, ischium, and pubis — they fuse during puberty. The pelvis includes the pelvic girdle and coccyx."},
+{ch:"ch6", t:"Lower limb", q:"Name the lower limb bones.", a:"Femur (thigh), patella (kneecap), tibia (large lower leg bone), fibula (small lower leg bone), tarsals (ankle), metatarsals (foot), phalanges (toes)."},
+{ch:"ch6", t:"Joints", q:"What is an articulation, and what are the two ways to classify joints?", a:"A joint is where two bones come together. Classified structurally (fibrous, cartilaginous, synovial) or functionally by degree of motion (synarthrosis, amphiarthrosis, diarthrosis)."},
+{ch:"ch6", t:"Joints", q:"Fibrous vs. cartilaginous vs. synovial joints?", a:"Fibrous: united by fibrous connective tissue. Cartilaginous: united by cartilage. Synovial: joined by a fluid cavity — most joints of the appendicular skeleton."},
+{ch:"ch6", t:"Joints", q:"Synarthrosis, amphiarthrosis, diarthrosis — define with examples.", a:"Synarthrosis: non-movable (skull bone articulations). Amphiarthrosis: slightly movable (between vertebrae). Diarthrosis: freely movable (knee, elbow, wrist)."},
+{ch:"ch6", t:"Movements", q:"Flexion vs. extension?", a:"Flexion: bending. Extension: straightening."},
+{ch:"ch6", t:"Movements", q:"Abduction vs. adduction?", a:"Abduction: movement away from the midline. Adduction: movement toward the midline."},
+{ch:"ch6", t:"Movements", q:"Pronation vs. supination?", a:"Pronation: rotating the forearm so the palm faces down. Supination: rotating so the palm faces up. (Tip: you can hold SOUP with supination.)"},
+{ch:"ch6", t:"Movements", q:"What is rotation?", a:"Movement of a structure about its long axis — e.g., turning the head side to side."},
+{ch:"ch6", t:"Aging", q:"What are the effects of aging on the skeletal system?", a:"Decreased collagen production, loss of bone density, and degenerative changes."},
+];
+
+CARDS2.forEach(c => CARDS.push(c));
+const __chOrder = {}; CHAPTERS.forEach((c, i) => __chOrder[c.id] = i);
+CARDS.sort((a, b) => __chOrder[a.ch] - __chOrder[b.ch]);
+CARDS.forEach((c, i) => c.id = c.ch + "-" + i);
+
+/* ================= STATE ================= */
+let tab = "study";
+let activeCh = "all";
+let statusF = "all";
+let deck = [];
+let idx = 0;
+let flipped = false;
+
+/* progress: {} id -> "k" (known) | "l" (learning) */
+const PKEY = "anat-progress-v1";
+let prog = {};
+try { prog = JSON.parse(localStorage.getItem(PKEY) || "{}") || {}; } catch(e){ prog = {}; }
+function saveProg(){ try { localStorage.setItem(PKEY, JSON.stringify(prog)); } catch(e){} }
+
+const chName = id => { const c = CHAPTERS.find(x => x.id === id); return c ? c.num + " · " + c.name : ""; };
+const pool = () => activeCh === "all" ? CARDS : CARDS.filter(c => c.ch === activeCh);
+const statusOf = c => prog[c.id] || "n";
+const matchesF = c => statusF === "all" ? true : statusF === "known" ? statusOf(c) === "k" : statusOf(c) !== "k";
+
+function updateOverall(){
+  const known = CARDS.filter(c => statusOf(c) === "k").length;
+  document.getElementById("overall").textContent = "known " + known + " / " + CARDS.length;
+}
+
+/* ================= STUDY ================= */
+function buildDeck(keepIdx){
+  deck = pool().filter(matchesF);
+  if (!keepIdx) idx = 0;
+  if (idx >= deck.length) idx = 0;
+  renderCard();
+}
+function shuffleDeck(){
+  for (let i = deck.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [deck[i], deck[j]] = [deck[j], deck[i]];
+  }
+  idx = 0;
+  renderCard();
+}
+const stLabel = s => s === "k" ? "✅ known" : s === "l" ? "🔁 learning" : "✨ new";
+
+function renderCard(){
+  const flipEl = document.getElementById("flip");
+  const done = document.getElementById("doneCard");
+  const grade = document.getElementById("gradeRow");
+  updateOverall();
+  if (!deck.length){
+    flipEl.parentElement.style.display = "none";
+    done.style.display = "block";
+    grade.innerHTML = "";
+    document.getElementById("progress").textContent = "0 / 0";
+    return;
+  }
+  flipEl.parentElement.style.display = "block";
+  done.style.display = "none";
+  const card = deck[idx];
+  const tag = `<div class="cat-tag"><span>${chName(card.ch)} — ${card.t}</span><span class="st">${stLabel(statusOf(card))}</span></div>`;
+  document.getElementById("faceFront").innerHTML = tag + `<div class="q">${card.q}</div><div class="hint">tap to reveal</div>`;
+  document.getElementById("faceBack").innerHTML  = tag + `<div class="a">${card.a}</div><div class="hint">how did you do?</div>`;
+  flipped = false;
+  flipEl.style.transition = "none";
+  flipEl.classList.remove("flipped");
+  void flipEl.offsetWidth;
+  flipEl.style.transition = "";
+  document.getElementById("progress").textContent = (idx + 1) + " / " + deck.length;
+  renderGrade();
+}
+function renderGrade(){
+  const grade = document.getElementById("gradeRow");
+  if (!deck.length){ grade.innerHTML = ""; return; }
+  if (!flipped){
+    grade.innerHTML = `<button class="ghost" id="skipBtn">Show answer</button>`;
+    document.getElementById("skipBtn").onclick = () => flipCard();
+  } else {
+    grade.innerHTML = `<button id="againBtn">✗ Again</button><button id="gotBtn">✓ Got it</button>`;
+    document.getElementById("againBtn").onclick = () => gradeCard("l");
+    document.getElementById("gotBtn").onclick = () => gradeCard("k");
+  }
+}
+function flipCard(){
+  if (!deck.length) return;
+  flipped = !flipped;
+  document.getElementById("flip").classList.toggle("flipped", flipped);
+  renderGrade();
+}
+function gradeCard(s){
+  const card = deck[idx];
+  prog[card.id] = s;
+  saveProg();
+  // advance; if the card no longer matches the filter, remove it from the pile
+  if (!matchesF(card)){
+    deck.splice(idx, 1);
+    if (idx >= deck.length) idx = 0;
+    renderCard();
+  } else {
+    move(1);
+  }
+}
+function move(step){
+  if (!deck.length) return;
+  idx = (idx + step + deck.length) % deck.length;
+  renderCard();
+}
+
+/* ================= QUIZ ================= */
+let quizScore = 0, quizTotal = 0, quizStreak = 0, quizCard = null, quizLocked = false;
+function quizPool(){
+  const base = pool().filter(c => c.a.length <= 150);
+  return base.length >= 4 ? base : pool();
+}
+function newQuiz(){
+  const qp = quizPool();
+  if (qp.length < 4){ document.getElementById("quizQ").textContent = "Not enough cards here for a quiz."; return; }
+  quizCard = qp[Math.floor(Math.random() * qp.length)];
+  // distractors: same chapter first, then anywhere
+  const sameCh = CARDS.filter(c => c.ch === quizCard.ch && c.id !== quizCard.id && c.a.length <= 170);
+  const others = CARDS.filter(c => c.ch !== quizCard.ch && c.a.length <= 170);
+  const ds = [];
+  const take = arr => {
+    while (arr.length && ds.length < 3){
+      const i = Math.floor(Math.random() * arr.length);
+      const cand = arr.splice(i, 1)[0];
+      if (cand.a !== quizCard.a && !ds.includes(cand.a)) ds.push(cand.a);
+    }
+  };
+  take([...sameCh]); take([...others]);
+  const opts = [quizCard.a, ...ds].sort(() => Math.random() - 0.5);
+  document.getElementById("quizTag").textContent = chName(quizCard.ch) + " — " + quizCard.t;
+  document.getElementById("quizQ").textContent = quizCard.q;
+  const host = document.getElementById("quizOpts");
+  host.innerHTML = "";
+  quizLocked = false;
+  document.getElementById("nextQ").style.display = "none";
+  opts.forEach(o => {
+    const b = document.createElement("button");
+    b.className = "opt";
+    b.textContent = o.length > 160 ? o.slice(0, 157) + "…" : o;
+    b.onclick = () => answerQuiz(b, o);
+    host.appendChild(b);
+  });
+  updateQuizMeta();
+}
+function answerQuiz(btn, o){
+  if (quizLocked) return;
+  quizLocked = true;
+  quizTotal++;
+  const right = o === quizCard.a;
+  if (right){ quizScore++; quizStreak++; btn.classList.add("correct"); prog[quizCard.id] = "k"; }
+  else {
+    quizStreak = 0;
+    btn.classList.add("wrong");
+    [...document.querySelectorAll(".opt")].forEach(b => {
+      if (b.textContent === (quizCard.a.length > 160 ? quizCard.a.slice(0,157) + "…" : quizCard.a)) b.classList.add("correct");
+    });
+    prog[quizCard.id] = "l";
+  }
+  saveProg();
+  updateOverall();
+  updateQuizMeta();
+  document.getElementById("nextQ").style.display = "block";
+}
+function updateQuizMeta(){
+  document.getElementById("quizScore").textContent = "Score " + quizScore + " / " + quizTotal;
+  document.getElementById("quizStreak").textContent = quizStreak >= 2 ? "🔥 streak " + quizStreak : "";
+}
+document.getElementById("nextQ").onclick = newQuiz;
+
+/* ================= BROWSE ================= */
+function renderList(){
+  const host = document.getElementById("listHost");
+  const term = document.getElementById("searchBox").value.trim().toLowerCase();
+  let html = "";
+  for (const chap of CHAPTERS){
+    if (activeCh !== "all" && chap.id !== activeCh) continue;
+    const items = CARDS.filter(c => c.ch === chap.id &&
+      (!term || c.q.toLowerCase().includes(term) || c.a.toLowerCase().includes(term) || c.t.toLowerCase().includes(term)));
+    if (!items.length) continue;
+    const known = items.filter(c => statusOf(c) === "k").length;
+    html += `<div class="group-h">${chap.icon} ${chap.num} — ${chap.name} · ${known}/${items.length} known</div>`;
+    for (const it of items){
+      html += `<div class="lrow" data-id="${it.id}">
+        <div class="dot ${statusOf(it) === "n" ? "" : statusOf(it)}"></div>
+        <div class="txt"><div class="t1">${it.q}</div><div class="t2">${it.a}</div></div>
+      </div>`;
+    }
+  }
+  host.innerHTML = html || `<div class="legend" style="margin-top:30px;">No cards match.</div>`;
+  host.querySelectorAll(".lrow").forEach(r => r.onclick = () => {
+    const id = r.dataset.id;
+    const cur = prog[id];
+    if (cur === "k") prog[id] = "l"; else prog[id] = "k";   // toggle known <-> learning
+    saveProg();
+    renderList();
+    updateOverall();
+  });
+}
+document.getElementById("searchBox").addEventListener("input", renderList);
+document.getElementById("resetBtn").onclick = () => {
+  if (!confirm("Reset all progress? This clears every known/learning mark.")) return;
+  prog = {};
+  saveProg();
+  renderList(); updateOverall(); buildDeck();
+};
+
+/* ================= UI WIRING ================= */
+function renderChips(){
+  const host = document.getElementById("chips");
+  const mk = (id, name) => `<button data-ch="${id}" class="${activeCh === id ? "on" : ""}">${name}</button>`;
+  host.innerHTML = mk("all", "All (" + CARDS.length + ")")
+    + CHAPTERS.map(c => mk(c.id, c.icon + " " + c.num + " " + c.name.split(" ")[0])).join("");
+  host.querySelectorAll("button").forEach(b => b.onclick = () => {
+    activeCh = b.dataset.ch;
+    renderChips();
+    if (tab === "study") buildDeck();
+    else if (tab === "quiz"){ newQuiz(); }
+    else renderList();
+  });
+}
+document.getElementById("statusSeg").querySelectorAll("button").forEach(b => b.onclick = () => {
+  statusF = b.dataset.f;
+  document.getElementById("statusSeg").querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b));
+  buildDeck();
+});
+document.getElementById("flip").addEventListener("click", flipCard);
+document.getElementById("prevBtn").onclick = () => move(-1);
+document.getElementById("shuffleBtn").onclick = shuffleDeck;
+
+document.getElementById("tabStudy").onclick = () => setTab("study");
+document.getElementById("tabQuiz").onclick = () => setTab("quiz");
+document.getElementById("tabList").onclick = () => setTab("list");
+function setTab(t){
+  tab = t;
+  document.getElementById("tabStudy").classList.toggle("on", t === "study");
+  document.getElementById("tabQuiz").classList.toggle("on", t === "quiz");
+  document.getElementById("tabList").classList.toggle("on", t === "list");
+  document.getElementById("cardWrap").style.display = t === "study" ? "flex" : "none";
+  document.getElementById("statusSeg").style.display = t === "study" ? "flex" : "none";
+  document.getElementById("quizView").style.display = t === "quiz" ? "block" : "none";
+  document.getElementById("listView").style.display = t === "list" ? "block" : "none";
+  if (t === "quiz" && !quizCard) newQuiz();
+  if (t === "list") renderList();
+  if (t === "study") buildDeck(true);
+}
+
+/* init */
+renderChips();
+buildDeck();
+updateOverall();
+</script>
+</body>
+</html>
